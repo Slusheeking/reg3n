@@ -1,0 +1,155 @@
+# Trading Pipeline Configuration for reg3n Trading System
+# Configuration for Alpaca REST API and WebSocket integration
+
+# API Configuration
+api:
+  alpaca:
+    base_url: "https://paper-api.alpaca.markets"  # Paper trading
+    # base_url: "https://api.alpaca.markets"  # Live trading
+    websocket_url: "wss://paper-api.alpaca.markets/stream"  # Paper trading WebSocket
+    # websocket_url: "wss://stream.data.alpaca.markets/v2"  # Live trading WebSocket
+    environment: "paper"  # paper or live
+    timeout: 30
+    max_retries: 3
+
+# Trading Configuration
+trading:
+  # Order Management
+  orders:
+    default_time_in_force: "day"  # day, gtc, ioc, fok
+    default_order_type: "market"  # market, limit, stop, stop_limit
+    enable_extended_hours: false
+    max_order_size: 10000  # Maximum order size in shares
+    max_position_size: 50000  # Maximum position size in dollars
+    
+  # Risk Management
+  risk_management:
+    max_daily_loss: 5000  # Maximum daily loss in dollars
+    max_portfolio_risk: 0.02  # 2% maximum portfolio risk per trade
+    position_size_limit: 0.1  # 10% maximum position size as % of portfolio
+    stop_loss_percentage: 0.05  # 5% stop loss
+    take_profit_percentage: 0.15  # 15% take profit
+    
+  # Portfolio Management
+  portfolio:
+    rebalance_frequency: "daily"  # daily, weekly, monthly
+    cash_reserve_percentage: 0.05  # 5% cash reserve
+    max_positions: 20  # Maximum number of positions
+    min_position_value: 1000  # Minimum position value in dollars
+
+# Rate Limiting & Performance
+rate_limiting:
+  requests_per_minute: 200  # Alpaca rate limit
+  requests_per_second: 10
+  order_rate_limit: 5  # Orders per second
+  min_request_interval: 0.1  # 100ms minimum between requests
+  heartbeat_interval: 30
+
+# Connection Health Monitoring
+health_monitoring:
+  enabled: true
+  heartbeat_interval: 30
+  max_reconnect_attempts: 10
+  reconnect_backoff_base: 1.0
+  reconnect_backoff_max: 60.0
+  data_timeout_seconds: 60
+  
+# Error Handling
+error_handling:
+  unified_logging: true
+  log_level: "INFO"
+  retry_on_errors:
+    - 429  # Rate limit
+    - 500  # Internal server error
+    - 502  # Bad gateway
+    - 503  # Service unavailable
+    - 504  # Gateway timeout
+  
+  order_error_handling:
+    retry_failed_orders: true
+    max_order_retries: 3
+    order_retry_delay: 5  # seconds
+
+# Data Synchronization
+synchronization:
+  enabled: true
+  websocket_rest_sync: true
+  order_status_sync: true
+  position_sync_interval: 30  # seconds
+  account_sync_interval: 60  # seconds
+
+# WebSocket Streams
+websocket_streams:
+  trade_updates: true
+  account_updates: true
+  position_updates: true
+  order_updates: true
+  
+# Callbacks and Notifications
+callbacks:
+  trade_execution: true
+  order_fills: true
+  account_updates: true
+  error_notifications: true
+  performance_alerts: true
+
+# Performance Metrics
+metrics:
+  enabled: true
+  track_latency: true
+  track_fill_rates: true
+  track_slippage: true
+  track_execution_quality: true
+  export_prometheus: false  # For future monitoring integration
+
+# Logging Configuration
+logging:
+  enabled: true  # Master switch to enable/disable all logging
+  level: "INFO"
+  format: "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+  file_logging: true
+  console_logging: true
+  colored_output: true  # Enable colored console output
+  log_rotation: true
+  max_log_size_mb: 100
+  backup_count: 5
+  
+  # Component-specific logging controls
+  components:
+    alpaca_rest: true
+    alpaca_websocket: true
+    trading_engine: true
+    risk_management: true
+    portfolio_manager: true
+    order_manager: true
+
+# Strategy Integration
+strategy:
+  signal_processing: true
+  execution_delay_ms: 100  # Maximum delay for order execution
+  signal_confidence_threshold: 0.7  # Minimum confidence for trade execution
+  position_sizing_method: "fixed"  # fixed, percentage, volatility_adjusted
+  
+# Backtesting Configuration (for future use)
+backtesting:
+  enabled: false
+  start_date: "2023-01-01"
+  end_date: "2024-12-31"
+  initial_capital: 100000
+  commission_per_trade: 0  # Alpaca has zero commissions
+  
+# Paper Trading Specific Settings
+paper_trading:
+  enabled: true
+  simulate_market_impact: false
+  simulate_slippage: false
+  realistic_fills: true
+  
+# Live Trading Specific Settings (when ready)
+live_trading:
+  enabled: false
+  confirmation_required: true
+  max_daily_trades: 100
+  trading_hours_only: true
+  pre_market_trading: false
+  after_hours_trading: false
