@@ -536,6 +536,6 @@ resource_usage/
 latency_measurements/
 
 # Temp
-alpaca_momentum_executor.py
-polygon_rest_api.py
-polygon_websocket.py
+#alpaca_momentum_executor.py
+#polygon_client.py
+#run_adaptive_trading.py

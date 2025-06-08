@@ -1,11 +1,20 @@
 #!/usr/bin/env python3
 
 import os
+import time
 from datetime import datetime
 
 # =============================================================================
 # HARDCODED SYSTEM LOGGER FOR MAXIMUM SPEED - NO EXTERNAL DEPENDENCIES
 # =============================================================================
+
+# ANSI color codes for terminal output
+class Colors:
+    RED = '\033[91m'      # ERROR
+    YELLOW = '\033[93m'   # WARNING
+    BLUE = '\033[94m'     # DEBUG
+    WHITE = '\033[97m'    # INFO
+    RESET = '\033[0m'     # Reset to default
 
 class SystemLogger:
     """Ultra-fast system logger with hardcoded configuration for maximum HFT performance"""
@@ -24,6 +33,15 @@ class SystemLogger:
         # Hardcoded log path
         self.log_path = os.path.join(self.log_dir, log_file)
         
+        # Color mapping for different log levels
+        self.color_map = {
+            'ERROR': Colors.RED,
+            'WARNING': Colors.YELLOW,
+            'DEBUG': Colors.BLUE,
+            'INFO': Colors.WHITE,
+            'CRITICAL': Colors.RED
+        }
+        
         # Initialize with hardcoded settings for maximum speed
         self._init_logger()
     
@@ -32,22 +50,27 @@ class SystemLogger:
         # No complex logging setup - direct file and console output for speed
         pass
     
-    def _format_message(self, level: str, message: str) -> str:
+    def _format_message(self, level: str, message: str, colored: bool = True) -> str:
         """Format log message with hardcoded format for maximum speed"""
-        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        return f"{timestamp} - {self.name} - {level} - {message}"
+        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+        
+        if colored:
+            color = self.color_map.get(level, Colors.WHITE)
+            return f"[{timestamp}] - {color}{level}{Colors.RESET} - [{self.name}]: {message}"
+        else:
+            return f"[{timestamp}] - {level} - [{self.name}]: {message}"
     
     def _write_log(self, level: str, message: str):
         """Write log message to both file and console for maximum speed"""
-        formatted_message = self._format_message(level, message)
+        # Console output with colors
+        colored_message = self._format_message(level, message, colored=True)
+        print(colored_message)
         
-        # Console output
-        print(formatted_message)
-        
-        # File output
+        # File output without colors
+        plain_message = self._format_message(level, message, colored=False)
         try:
             with open(self.log_path, 'a', encoding='utf-8') as f:
-                f.write(formatted_message + '\n')
+                f.write(plain_message + '\n')
         except Exception:
             # Fail silently for maximum speed - don't let logging slow down trading
             pass

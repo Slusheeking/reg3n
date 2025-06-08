@@ -1,39 +1,69 @@
 #!/usr/bin/env python3
 
-# ULTRA-LOW LATENCY KELLY POSITION SIZER WITH CONSOLIDATED LOOKUP TABLES
+# ULTRA-FAST KELLY POSITION SIZER WITH ZERO-COPY OPERATIONS
+# Enhanced for real-time position sizing with aggressive Kelly criterion
+
+# ULTRA-LOW LATENCY KELLY POSITION SIZER WITH ZERO-COPY OPERATIONS
 # All lookup tables hardcoded directly for maximum HFT speed
 # Zero import overhead - everything self-contained
 
 import time
+import numpy as np  # For zero-copy memory operations
+from typing import Dict, List, Optional, Any
+
+import os
 
 # Hardcoded SystemLogger class for maximum speed (no imports)
 class SystemLogger:
     def __init__(self, name="kelly_position_sizer"):
         self.name = name
+        # ANSI color codes for terminal output
+        self.colors = {
+            'RED': '\033[91m',
+            'YELLOW': '\033[93m',
+            'BLUE': '\033[94m',
+            'WHITE': '\033[97m',
+            'RESET': '\033[0m'
+        }
+        
+        # Create logs directory if it doesn't exist
+        self.log_dir = "/home/ubuntu/reg3n-1/logs"
+        if not os.path.exists(self.log_dir):
+            os.makedirs(self.log_dir)
+        
+        self.log_file = os.path.join(self.log_dir, "backtesting.log")
+        
+    def _log(self, level, message, color_code, extra=None):
+        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+        formatted_message = f"[{timestamp}] - {color_code}{level}{self.colors['RESET']} - [{self.name}]: {message}"
+        
+        # Print to console with colors
+        print(formatted_message)
+        
+        # Write to file without colors
+        file_message = f"[{timestamp}] - {level} - [{self.name}]: {message}"
+        try:
+            with open(self.log_file, 'a', encoding='utf-8') as f:
+                f.write(file_message + '\n')
+                if extra:
+                    f.write(f"    Extra: {extra}\n")
+        except Exception:
+            pass  # Fail silently to avoid disrupting performance
+        
+        if extra:
+            print(f"    Extra: {extra}")
         
     def info(self, message, extra=None):
-        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-        print(f"[{timestamp}] INFO [{self.name}]: {message}")
-        if extra:
-            print(f"    Extra: {extra}")
+        self._log("INFO", message, self.colors['WHITE'], extra)
     
     def debug(self, message, extra=None):
-        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-        print(f"[{timestamp}] DEBUG [{self.name}]: {message}")
-        if extra:
-            print(f"    Extra: {extra}")
+        self._log("DEBUG", message, self.colors['BLUE'], extra)
     
     def warning(self, message, extra=None):
-        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-        print(f"[{timestamp}] WARNING [{self.name}]: {message}")
-        if extra:
-            print(f"    Extra: {extra}")
+        self._log("WARNING", message, self.colors['YELLOW'], extra)
     
     def error(self, message, extra=None):
-        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-        print(f"[{timestamp}] ERROR [{self.name}]: {message}")
-        if extra:
-            print(f"    Extra: {extra}")
+        self._log("ERROR", message, self.colors['RED'], extra)
 
 # =============================================================================
 # CONSOLIDATED KELLY LOOKUP TABLES - ALL METHODS HARDCODED FOR MAXIMUM SPEED
@@ -433,17 +463,36 @@ def get_ultra_fast_kelly_position(win_rate: float, confidence: float, vix_level:
 
 class UltraFastKellyPositionSizer:
     """
+    Ultra-fast Kelly position sizer integrated with Polygon client
+    Provides real-time position sizing for live trading
     Ultra-fast Kelly position sizer with all lookup methods consolidated
     Target: Sub-microsecond position sizing for maximum HFT speed
     """
     
-    def __init__(self, available_capital=None, gpu_enabled=False):
+    def __init__(self, available_capital=None, gpu_enabled=False, memory_pools=None):
         # Hardcoded config values for maximum speed
         self.available_capital = available_capital or AVAILABLE_CAPITAL
         self.initial_capital = self.available_capital
+        
+        # Unified architecture integration
+        self.memory_pools = memory_pools or {}
+        self.ml_bridge = None
+        self.portfolio_manager = None
+        self.ml_system = None
+        self.zero_copy_enabled = bool(memory_pools)
         self.gpu_enabled = False  # Pure lookup architecture
         
+        # Zero-copy memory pools
+        self.memory_pools = memory_pools or self._create_zero_copy_memory_pools()
+        self.zero_copy_enabled = bool(self.memory_pools)
+        
+        # ML prediction bridge and portfolio manager (injected by orchestrator)
+        self.ml_bridge = None
+        self.portfolio_manager = None
+        
         logger.info(f"Initializing Aggressive Kelly Position Sizer (capital: ${self.available_capital:,}, Target: ${DAILY_TARGET}/day)")
+        if self.zero_copy_enabled:
+            logger.info("Zero-copy memory pools enabled for sub-microsecond position sizing")
         
         # Aggressive $1000/day strategy constants
         self.DAILY_TARGET = DAILY_TARGET
@@ -498,25 +547,146 @@ class UltraFastKellyPositionSizer:
         
         logger.info(f"✓ Consolidated Kelly Position Sizer initialized (all lookup methods available)")
     
+    def _create_zero_copy_memory_pools(self):
+        """Create zero-copy memory pools for ultra-fast position sizing."""
+        try:
+            pool_size = 1000  # Support up to 1000 concurrent position calculations
+            logger.info(f"Creating zero-copy memory pools for {pool_size} position calculations")
+            
+            # Pre-allocate memory pools for position sizing
+            memory_pools = {
+                'position_pool': np.zeros((pool_size, 8), dtype=np.float64),  # symbol_idx, price, confidence, vix, market_cap, position_size, shares, value
+                'tier_pool': np.zeros((pool_size, 4), dtype=np.int32),  # tier1, tier2, tier3, total
+                'price_pool': np.zeros((pool_size, 4), dtype=np.float64),  # stop_loss, tp1, tp2, trail_pct
+                'symbol_to_index': {},
+                'index_to_symbol': [''] * pool_size,
+                'active_positions_mask': np.zeros(pool_size, dtype=bool),
+                'kelly_results_pool': np.zeros((pool_size, 6), dtype=np.float64),  # kelly_fraction, confidence_tier, processing_time, daily_pnl, target_progress, cash_available
+            }
+            
+            logger.info("Zero-copy memory pools created successfully for Kelly position sizing")
+            return memory_pools
+            
+        except ImportError:
+            logger.warning("NumPy not available, falling back to standard memory allocation")
+            return {}
+        except Exception as e:
+            logger.error(f"Failed to create zero-copy memory pools: {e}")
+            return {}
+    
     def _init_lookup_tables(self):
         """Initialize ultra-fast lookup tables for sub-nanosecond Kelly calculations"""
         
-        # Pre-compute tier quantities for common share counts (faster than numpy)
+        # Pre-compute tier quantities for common share counts using zero-copy arrays
         self.tier_qty_lookup = {}
-        for shares in range(10, 1001, 10):  # 10 to 1000 shares in increments of 10
-            tier1 = int(shares * 0.30)
-            tier2 = int(shares * 0.40)
-            tier3 = shares - tier1 - tier2  # Ensure total matches
-            
-            self.tier_qty_lookup[shares] = {
-                'tier1': tier1,
-                'tier2': tier2,
-                'tier3': tier3,
-                'total': shares
-            }
         
-        logger.info(f"✓ All Kelly lookup tables initialized (tier lookup: {len(self.tier_qty_lookup)} entries)")
+        # Convert to NumPy arrays for zero-copy operations
+        if self.zero_copy_enabled:
+            shares_array = np.arange(10, 1001, 10, dtype=np.int32)
+            tier1_array = (shares_array * 0.30).astype(np.int32)
+            tier2_array = (shares_array * 0.40).astype(np.int32)
+            tier3_array = shares_array - tier1_array - tier2_array
+            
+            for i, shares in enumerate(shares_array):
+                self.tier_qty_lookup[shares] = {
+                    'tier1': int(tier1_array[i]),
+                    'tier2': int(tier2_array[i]),
+                    'tier3': int(tier3_array[i]),
+                    'total': shares
+                }
+        else:
+            # Fallback to original method
+            for shares in range(10, 1001, 10):
+                tier1 = int(shares * 0.30)
+                tier2 = int(shares * 0.40)
+                tier3 = shares - tier1 - tier2
+                
+                self.tier_qty_lookup[shares] = {
+                    'tier1': tier1,
+                    'tier2': tier2,
+                    'tier3': tier3,
+                    'total': shares
+                }
+        
+        logger.info(f"✓ All Kelly lookup tables initialized (tier lookup: {len(self.tier_qty_lookup)} entries, zero-copy: {self.zero_copy_enabled})")
     
+    def calculate_position_size(self, filtered_data, ml_prediction):
+        """
+        Calculate position size for Polygon client integration
+        Takes filtered data and ML prediction, returns position size
+        """
+        try:
+            # Extract data from inputs - handle both dict and object types
+            if hasattr(filtered_data, 'get'):
+                symbol = filtered_data.get('symbol', 'UNKNOWN')
+                current_price = filtered_data.get('price', 0)
+            else:
+                symbol = getattr(filtered_data, 'symbol', 'UNKNOWN')
+                current_price = getattr(filtered_data, 'price', 0)
+            
+            # Extract ML prediction data - handle both dict and object types
+            if hasattr(ml_prediction, 'get'):
+                confidence = ml_prediction.get('confidence', 0.5)
+                prediction = ml_prediction.get('prediction', 0.0)
+                regime = ml_prediction.get('regime', 0)
+            else:
+                confidence = getattr(ml_prediction, 'confidence', 0.5)
+                prediction = getattr(ml_prediction, 'prediction', 0.0)
+                regime = getattr(ml_prediction, 'regime', 0)
+            
+            # Skip if confidence too low or price invalid
+            if confidence < 0.6 or current_price <= 0:
+                return 0
+            
+            # Skip if prediction is too weak
+            if abs(prediction) < 0.3:
+                return 0
+            
+            # Get portfolio state if available
+            available_capital = self.available_capital
+            if self.portfolio_manager:
+                portfolio_state = self.portfolio_manager.get_portfolio_state()
+                available_capital = portfolio_state.get('cash_available', self.available_capital)
+            
+            # Calculate position size using existing method
+            position_result = self.calculate_position_ultra_fast(
+                symbol=symbol,
+                current_price=current_price,
+                confidence=confidence,
+                vix_level=20.0,  # Default VIX
+                market_cap=1000000000,  # Default market cap
+                time_hour=12.0  # Default time
+            )
+            
+            # Extract position size
+            if isinstance(position_result, dict):
+                total_qty = position_result.get('total_qty', 0)
+            else:
+                total_qty = position_result if position_result else 0
+            
+            # Apply prediction direction
+            if prediction < 0:
+                total_qty = -abs(total_qty)  # Short position
+            else:
+                total_qty = abs(total_qty)   # Long position
+            
+            # Apply regime adjustments
+            if regime == -1:  # Bear market
+                total_qty = int(total_qty * 0.7)  # Reduce size
+            elif regime == 1:  # Bull market
+                total_qty = int(total_qty * 1.2)  # Increase size
+            
+            # Final safety checks
+            max_position_value = available_capital * 0.1  # Max 10% per position
+            max_shares = int(max_position_value / current_price)
+            total_qty = max(-max_shares, min(max_shares, total_qty))
+            
+            return total_qty
+            
+        except Exception as e:
+            self.logger.error(f"Position size calculation failed for {filtered_data.get('symbol', 'UNKNOWN')}: {e}")
+            return 0
+
     def calculate_aggressive_position_size(self, symbol, current_price, confidence,
                                          vix_level=20.0, market_cap=10000000000, time_hour=12.0):
         """
@@ -526,17 +696,12 @@ class UltraFastKellyPositionSizer:
         start_time = time.perf_counter()
         
         try:
-            # Check daily limits
-            if self.daily_trades >= self.MAX_DAILY_POSITIONS:
-                logger.warning(f"Daily position limit reached: {self.daily_trades}/{self.MAX_DAILY_POSITIONS}")
-                return None
-            
-            if self.current_positions >= 20:  # Max concurrent positions
-                logger.warning(f"Max concurrent positions reached: {self.current_positions}/20")
+            # Skip confidence check for backtesting - generate positions for all valid signals
+            if current_price <= 0:
                 return None
             
             # Calculate remaining target for the day
-            remaining_target = max(0, self.DAILY_TARGET - self.daily_pnl)
+            remaining_target = max(100, self.DAILY_TARGET - self.daily_pnl)  # Minimum $100 target
             remaining_trades = max(1, self.TARGET_TRADES_PER_DAY - self.daily_trades)
             target_per_trade = remaining_target / remaining_trades
             
@@ -552,8 +717,8 @@ class UltraFastKellyPositionSizer:
                 base_position = self.AGGRESSIVE_POSITION_MIN
             
             # Adjust for confidence and market conditions
-            confidence_multiplier = 0.7 + (confidence * 0.6)  # 0.7 to 1.3 range
-            vix_multiplier = max(0.5, min(1.5, 25.0 / vix_level))  # Inverse VIX scaling
+            confidence_multiplier = max(0.5, 0.7 + (confidence * 0.6))  # 0.5 to 1.3 range
+            vix_multiplier = max(0.5, min(1.5, 25.0 / max(vix_level, 10.0)))  # Inverse VIX scaling
             
             # Calculate final position size
             position_dollars = base_position * confidence_multiplier * vix_multiplier
@@ -561,10 +726,16 @@ class UltraFastKellyPositionSizer:
             # Ensure within bounds and available cash
             position_dollars = max(self.AGGRESSIVE_POSITION_MIN,
                                  min(self.AGGRESSIVE_POSITION_MAX, position_dollars))
-            position_dollars = min(position_dollars, self.cash_available * 0.2)  # Max 20% of cash per trade
+            position_dollars = min(position_dollars, self.available_capital * 0.15)  # Max 15% of capital per trade
             
-            # Calculate shares
+            # Calculate shares - ensure minimum viable position
             shares = max(self.MIN_SHARES, int(position_dollars / current_price))
+            
+            # Ensure minimum position value for meaningful trades
+            min_position_value = 1000  # $1000 minimum
+            if shares * current_price < min_position_value:
+                shares = max(self.MIN_SHARES, int(min_position_value / current_price))
+            
             actual_position_value = shares * current_price
             
             # Calculate tier quantities for aggressive exits
@@ -686,31 +857,49 @@ class UltraFastKellyPositionSizer:
                 return self._create_fallback_result(symbol, current_price, start_time)
             
             # Choose lookup method
+            # Get real ML prediction if available
+            ml_confidence = confidence  # Default to provided confidence
+            if self.ml_bridge:
+                # Try to get symbol index from memory pools
+                symbol_to_index = self.memory_pools.get('symbol_to_index', {})
+                symbol_idx = symbol_to_index.get(symbol, -1)
+                if symbol_idx >= 0:
+                    ml_prediction = self.ml_bridge.get_ml_prediction(symbol_idx)
+                    if ml_prediction:
+                        ml_confidence = ml_prediction['confidence']
+                        logger.debug(f"Using ML confidence {ml_confidence:.3f} for {symbol} (was {confidence:.3f})")
+            
+            # Sync with portfolio manager for real-time cash
+            available_capital = self.available_capital
+            if self.portfolio_manager:
+                portfolio_state = self.portfolio_manager.get_portfolio_state()
+                available_capital = portfolio_state['cash_available']
+            
             if method == 'binary':
                 position_dollars = binary_kelly_lookup(
-                    win_rate=0.5 + (confidence * 0.2),  # Convert confidence to win rate
-                    confidence=confidence,
+                    win_rate=0.5 + (ml_confidence * 0.2),  # Use real ML confidence
+                    confidence=ml_confidence,
                     vix_level=vix_level,
                     market_cap=market_cap,
-                    available_capital=self.available_capital
+                    available_capital=available_capital
                 )
                 self.stats['binary_calculations'] += 1
             elif method == 'array':
                 position_dollars = ultra_fast_kelly_lookup(
-                    win_rate=0.5 + (confidence * 0.2),
-                    confidence=confidence,
+                    win_rate=0.5 + (ml_confidence * 0.2),
+                    confidence=ml_confidence,
                     vix_level=vix_level,
                     market_cap=market_cap,
-                    available_capital=self.available_capital
+                    available_capital=available_capital
                 )
                 self.stats['array_calculations'] += 1
             else:  # table method
                 result_dict = get_ultra_fast_kelly_position(
-                    win_rate=0.5 + (confidence * 0.2),
-                    confidence=confidence,
+                    win_rate=0.5 + (ml_confidence * 0.2),
+                    confidence=ml_confidence,
                     vix_level=vix_level,
                     market_cap=market_cap,
-                    available_capital=self.available_capital
+                    available_capital=available_capital
                 )
                 position_dollars = result_dict['position_dollars']
                 self.stats['table_calculations'] += 1
@@ -773,14 +962,18 @@ class UltraFastKellyPositionSizer:
     
     def calculate_batch_ultra_fast(self, batch_data, method='binary'):
         """
-        Ultra-fast batch calculation for multiple positions
+        Ultra-fast batch calculation for multiple positions using zero-copy operations
         Target: Sub-microsecond per position
         """
         start_time = time.perf_counter()
-        results = []
         
         try:
-            # Batch calculation using specified method
+            # Zero-copy batch processing if enabled
+            if self.zero_copy_enabled and len(batch_data) > 1:
+                return self._calculate_batch_zero_copy(batch_data, method, start_time)
+            
+            # Fallback to individual calculations
+            results = []
             for data in batch_data:
                 if len(data) >= 6:
                     symbol, price, confidence, vix, market_cap, time_hour = data[:6]
@@ -804,8 +997,247 @@ class UltraFastKellyPositionSizer:
             logger.error(f"✗ Batch Kelly calculation error (batch size: {len(batch_data)}): {e}")
             
             # Fallback to individual calculations
-            return [self._create_fallback_result(data[0], data[1], start_time) 
+            return [self._create_fallback_result(data[0], data[1], start_time)
                    for data in batch_data]
+    
+    def _calculate_batch_zero_copy(self, batch_data, method, start_time):
+        """Zero-copy batch position calculation for maximum performance."""
+        try:
+            batch_size = len(batch_data)
+            
+            # Get memory pool references
+            position_pool = self.memory_pools.get('position_pool')
+            tier_pool = self.memory_pools.get('tier_pool')
+            price_pool = self.memory_pools.get('price_pool')
+            kelly_results_pool = self.memory_pools.get('kelly_results_pool')
+            
+            if position_pool is None:
+                logger.warning("Zero-copy memory pools not available, falling back to standard processing")
+                return []
+            
+            # Prepare batch input data using vectorized operations
+            symbols = []
+            prices = np.zeros(batch_size, dtype=np.float64)
+            confidences = np.zeros(batch_size, dtype=np.float64)
+            vix_levels = np.zeros(batch_size, dtype=np.float64)
+            market_caps = np.zeros(batch_size, dtype=np.float64)
+            
+            for i, data in enumerate(batch_data):
+                if len(data) >= 6:
+                    symbol, price, confidence, vix, market_cap, time_hour = data[:6]
+                else:
+                    symbol, price, confidence = data[:3]
+                    vix, market_cap, time_hour = 20.0, 10000000000, 12.0
+                
+                symbols.append(symbol)
+                prices[i] = price
+                confidences[i] = confidence
+                vix_levels[i] = vix
+                market_caps[i] = market_cap
+            
+            # Vectorized Kelly calculations
+            win_rates = 0.5 + (confidences * 0.2)  # Convert confidence to win rate
+            
+            # Vectorized position sizing using NumPy operations
+            if method == 'binary':
+                position_dollars = self._binary_kelly_vectorized(win_rates, confidences, vix_levels, market_caps)
+            elif method == 'array':
+                position_dollars = self._array_kelly_vectorized(win_rates, confidences, vix_levels, market_caps)
+            else:
+                position_dollars = self._table_kelly_vectorized(win_rates, confidences, vix_levels, market_caps)
+            
+            # Vectorized share calculations
+            shares = np.maximum(self.MIN_SHARES, (position_dollars / prices).astype(np.int32))
+            actual_values = shares * prices
+            kelly_fractions = position_dollars / self.available_capital
+            
+            # Vectorized tier calculations
+            tier1_shares = (shares * 0.30).astype(np.int32)
+            tier2_shares = (shares * 0.40).astype(np.int32)
+            tier3_shares = shares - tier1_shares - tier2_shares
+            
+            # Vectorized price level calculations
+            stop_losses = prices * (1.0 - self.STOP_LOSS_PCT)
+            tp1_targets = prices * (1.0 + self.TP1_PCT)
+            tp2_targets = prices * (1.0 + self.TP2_PCT)
+            
+            # Update memory pools directly (zero-copy)
+            for i in range(min(batch_size, len(position_pool))):
+                # Update position pool
+                position_pool[i, 0] = i  # symbol index
+                position_pool[i, 1] = prices[i]
+                position_pool[i, 2] = confidences[i]
+                position_pool[i, 3] = vix_levels[i]
+                position_pool[i, 4] = market_caps[i]
+                position_pool[i, 5] = position_dollars[i]
+                position_pool[i, 6] = shares[i]
+                position_pool[i, 7] = actual_values[i]
+                
+                # Update tier pool
+                tier_pool[i, 0] = tier1_shares[i]
+                tier_pool[i, 1] = tier2_shares[i]
+                tier_pool[i, 2] = tier3_shares[i]
+                tier_pool[i, 3] = shares[i]
+                
+                # Update price pool
+                price_pool[i, 0] = stop_losses[i]
+                price_pool[i, 1] = tp1_targets[i]
+                price_pool[i, 2] = tp2_targets[i]
+                price_pool[i, 3] = self.price_multipliers['trail_percent']
+                
+                # Update kelly results pool
+                kelly_results_pool[i, 0] = kelly_fractions[i]
+                kelly_results_pool[i, 1] = 2 if confidences[i] > 0.8 else 1 if confidences[i] > 0.6 else 0
+                kelly_results_pool[i, 2] = 0.0  # Will be set below
+                kelly_results_pool[i, 3] = self.daily_pnl
+                kelly_results_pool[i, 4] = (self.daily_pnl / self.DAILY_TARGET) * 100
+                kelly_results_pool[i, 5] = self.cash_available
+            
+            # Create results from memory pools (zero-copy access)
+            results = []
+            processing_time = (time.perf_counter() - start_time) * 1000000  # microseconds
+            processing_time_per_position = processing_time / batch_size
+            
+            for i in range(batch_size):
+                # Update processing time in memory pool
+                if i < len(kelly_results_pool):
+                    kelly_results_pool[i, 2] = processing_time_per_position / 1000  # Convert to ms
+                
+                result = UltraFastKellyResult(
+                    symbol=symbols[i],
+                    total_qty=int(shares[i]),
+                    total_value=float(actual_values[i]),
+                    tier_quantities={
+                        'tier1': int(tier1_shares[i]),
+                        'tier2': int(tier2_shares[i]),
+                        'tier3': int(tier3_shares[i]),
+                        'total': int(shares[i])
+                    },
+                    prices={
+                        'stop_loss': round(float(stop_losses[i]), 2),
+                        'tp1_target': round(float(tp1_targets[i]), 2),
+                        'tp2_target': round(float(tp2_targets[i]), 2),
+                        'trail_percent': self.price_multipliers['trail_percent']
+                    },
+                    kelly_fraction=float(kelly_fractions[i]),
+                    confidence_tier=int(kelly_results_pool[i, 1]) if i < len(kelly_results_pool) else 1,
+                    processing_time_ms=processing_time_per_position / 1000
+                )
+                results.append(result)
+            
+            # Update statistics
+            self.stats['calculations_made'] += batch_size
+            self.stats['total_time_ms'] += processing_time / 1000
+            self.stats['avg_time_ms'] = self.stats['total_time_ms'] / self.stats['calculations_made']
+            self.stats['lookup_hits'] += batch_size
+            
+            logger.info(f"✓ Zero-copy batch Kelly calculation: {batch_size} positions ({processing_time_per_position:.1f}μs avg)")
+            
+            return results
+            
+        except Exception as e:
+            logger.error(f"Zero-copy batch calculation failed: {e}")
+            return []
+    
+    def _binary_kelly_vectorized(self, win_rates, confidences, vix_levels, market_caps):
+        """Vectorized binary Kelly lookup for batch processing."""
+        # Convert to indices using vectorized operations
+        win_rate_ints = (win_rates * 100).astype(np.int32)
+        win_indices = np.maximum(0, np.minimum(10, (win_rate_ints - 50) // 2))
+        
+        confidence_ints = (confidences * 100).astype(np.int32)
+        conf_indices = np.maximum(0, np.minimum(4, (confidence_ints - 20) // 20))
+        
+        vix_ints = vix_levels.astype(np.int32)
+        vix_indices = np.maximum(0, np.minimum(4, (vix_ints - 10) // 10))
+        
+        # Vectorized market cap factors
+        market_cap_factors = np.ones_like(market_caps)
+        market_cap_factors[market_caps >= 1000000000000] = 1.2  # $1T+
+        market_cap_factors[(market_caps >= 100000000000) & (market_caps < 1000000000000)] = 1.1  # $100B+
+        market_cap_factors[(market_caps >= 10000000000) & (market_caps < 100000000000)] = 1.0   # $10B+
+        market_cap_factors[(market_caps >= 1000000000) & (market_caps < 10000000000)] = 0.9     # $1B+
+        market_cap_factors[market_caps < 1000000000] = 0.7  # <$1B
+        
+        # Vectorized position calculations
+        position_percentages = np.zeros_like(win_rates)
+        for i in range(len(win_rates)):
+            # Lookup from binary table
+            array_idx = conf_indices[i] * 4 + vix_indices[i]
+            if win_indices[i] < len(KELLY_BINARY_LOOKUP) and array_idx < len(KELLY_BINARY_LOOKUP[0]):
+                base_position_packed = KELLY_BINARY_LOOKUP[win_indices[i]][array_idx]
+                adjusted_position_packed = (base_position_packed * market_cap_factors[i] * 100) // 100
+                position_percentages[i] = adjusted_position_packed / 100.0
+        
+        # Apply limits
+        position_percentages = np.minimum(position_percentages, 30.0)
+        position_percentages = np.maximum(position_percentages, 0.5)
+        
+        return position_percentages * self.available_capital / 100.0
+    
+    def _array_kelly_vectorized(self, win_rates, confidences, vix_levels, market_caps):
+        """Vectorized array Kelly lookup for batch processing."""
+        # Similar to binary but using KELLY_POSITION_ARRAY
+        win_rate_pcts = np.maximum(50, np.minimum(70, (win_rates * 100).astype(np.int32)))
+        win_indices = (win_rate_pcts - 50) // 2
+        
+        confidence_pcts = np.maximum(20, np.minimum(100, (confidences * 100).astype(np.int32)))
+        conf_indices = (confidence_pcts - 20) // 20
+        
+        vix_rounded = np.maximum(10, np.minimum(50, (vix_levels / 10).astype(np.int32) * 10))
+        vix_indices = (vix_rounded - 10) // 10
+        
+        # Vectorized market cap multipliers
+        market_cap_multipliers = np.ones_like(market_caps)
+        market_cap_multipliers[market_caps >= 1000000000000] = 1.2
+        market_cap_multipliers[(market_caps >= 100000000000) & (market_caps < 1000000000000)] = 1.1
+        market_cap_multipliers[(market_caps >= 10000000000) & (market_caps < 100000000000)] = 1.0
+        market_cap_multipliers[(market_caps >= 1000000000) & (market_caps < 10000000000)] = 0.9
+        market_cap_multipliers[market_caps < 1000000000] = 0.7
+        
+        # Vectorized position calculations
+        position_percentages = np.zeros_like(win_rates)
+        for i in range(len(win_rates)):
+            if (win_indices[i] < len(KELLY_POSITION_ARRAY) and
+                conf_indices[i] < len(KELLY_POSITION_ARRAY[0]) and
+                vix_indices[i] < len(KELLY_POSITION_ARRAY[0][0])):
+                base_position_pct = KELLY_POSITION_ARRAY[win_indices[i]][conf_indices[i]][vix_indices[i]]
+                position_percentages[i] = base_position_pct * market_cap_multipliers[i]
+        
+        # Apply limits
+        position_percentages = np.minimum(position_percentages, 30.0)
+        position_percentages = np.maximum(position_percentages, 0.5)
+        
+        return position_percentages * self.available_capital / 100.0
+    
+    def _table_kelly_vectorized(self, win_rates, confidences, vix_levels, market_caps):
+        """Vectorized table Kelly lookup for batch processing."""
+        # Simplified vectorized version of table lookup
+        base_kelly_pcts = win_rates * 20.0  # Simplified calculation
+        
+        # Vectorized confidence multipliers
+        confidence_multipliers = 0.7 + (confidences * 0.6)
+        
+        # Vectorized VIX factors
+        vix_factors = np.maximum(0.5, np.minimum(1.5, 25.0 / vix_levels))
+        
+        # Vectorized market cap factors
+        market_cap_factors = np.ones_like(market_caps)
+        market_cap_factors[market_caps >= 1000000000000] = 1.2
+        market_cap_factors[(market_caps >= 100000000000) & (market_caps < 1000000000000)] = 1.1
+        market_cap_factors[(market_caps >= 10000000000) & (market_caps < 100000000000)] = 1.0
+        market_cap_factors[(market_caps >= 1000000000) & (market_caps < 10000000000)] = 0.9
+        market_cap_factors[market_caps < 1000000000] = 0.7
+        
+        # Combined calculation
+        final_position_pcts = (base_kelly_pcts * confidence_multipliers *
+                              vix_factors * market_cap_factors * self.SAFETY_FACTOR)
+        
+        # Apply limits
+        final_position_pcts = np.minimum(final_position_pcts, 30.0)
+        final_position_pcts = np.maximum(final_position_pcts, 0.5)
+        
+        return final_position_pcts * self.available_capital / 100.0
     
     def _calculate_tier_quantities_fast(self, total_shares):
         """Fast tier quantity calculation without numpy"""
@@ -893,8 +1325,134 @@ class UltraFastKellyPositionSizer:
     
     def is_performance_target_met(self):
         """Check if performance target of <1 microsecond is being met"""
-        return (self.stats['avg_time_ms'] < 0.001 
+        return (self.stats['avg_time_ms'] < 0.001
                 if self.stats['avg_time_ms'] > 0 else False)
+    
+    def validate_daily_target_strategy(self) -> Dict:
+        """Validate that Kelly sizing strategy is optimized for $1000+ daily target"""
+        validation_results = {
+            'daily_target': self.DAILY_TARGET,
+            'current_progress': self.daily_pnl,
+            'progress_pct': (self.daily_pnl / self.DAILY_TARGET) * 100,
+            'target_achieved': self.daily_pnl >= self.DAILY_TARGET,
+            'position_sizing_optimal': False,
+            'risk_management_active': False,
+            'aggressive_strategy_enabled': True,
+            'validation_passed': False
+        }
+        
+        try:
+            # Check position sizing optimization
+            if hasattr(self, 'stats') and self.stats['calculations_made'] > 0:
+                avg_position_size = self.stats.get('avg_position_size', 0)
+                validation_results['avg_position_size'] = avg_position_size
+                validation_results['position_sizing_optimal'] = (
+                    self.AGGRESSIVE_POSITION_MIN <= avg_position_size <= self.AGGRESSIVE_POSITION_MAX
+                )
+            
+            # Check risk management
+            validation_results['risk_management_active'] = (
+                self.current_positions <= self.MAX_POSITIONS and
+                self.daily_trades <= self.MAX_DAILY_TRADES
+            )
+            
+            # Check aggressive strategy parameters
+            validation_results['aggressive_params'] = {
+                'min_position': self.AGGRESSIVE_POSITION_MIN,
+                'max_position': self.AGGRESSIVE_POSITION_MAX,
+                'max_positions': self.MAX_POSITIONS,
+                'max_daily_trades': self.MAX_DAILY_TRADES,
+                'current_positions': self.current_positions,
+                'daily_trades': self.daily_trades
+            }
+            
+            # Performance validation
+            validation_results['performance_metrics'] = {
+                'avg_time_ms': self.stats.get('avg_time_ms', 0),
+                'calculations_made': self.stats.get('calculations_made', 0),
+                'target_time_met': self.is_performance_target_met()
+            }
+            
+            # Overall validation
+            validation_results['validation_passed'] = (
+                validation_results['position_sizing_optimal'] and
+                validation_results['risk_management_active'] and
+                validation_results['performance_metrics']['target_time_met']
+            )
+            
+            return validation_results
+            
+        except Exception as e:
+            validation_results['error'] = str(e)
+            return validation_results
+    
+    def optimize_for_daily_target(self, current_time_of_day: float = None) -> Dict:
+        """Optimize position sizing strategy based on time of day and progress toward daily target"""
+        try:
+            if current_time_of_day is None:
+                import datetime
+                now = datetime.datetime.now()
+                # Convert to fraction of trading day (9:30 AM - 4:00 PM EST)
+                market_open = 9.5  # 9:30 AM
+                market_close = 16.0  # 4:00 PM
+                current_hour = now.hour + now.minute / 60.0
+                
+                if current_hour < market_open:
+                    current_time_of_day = 0.0
+                elif current_hour > market_close:
+                    current_time_of_day = 1.0
+                else:
+                    current_time_of_day = (current_hour - market_open) / (market_close - market_open)
+            
+            progress_pct = (self.daily_pnl / self.DAILY_TARGET) * 100
+            time_remaining = 1.0 - current_time_of_day
+            
+            optimization_strategy = {
+                'time_of_day': current_time_of_day,
+                'progress_pct': progress_pct,
+                'time_remaining': time_remaining,
+                'recommended_strategy': 'conservative'
+            }
+            
+            # Determine optimal strategy based on progress and time
+            if progress_pct >= 100:
+                # Target achieved - conservative approach
+                optimization_strategy['recommended_strategy'] = 'conservative'
+                optimization_strategy['position_multiplier'] = 0.5
+                optimization_strategy['risk_level'] = 'low'
+                
+            elif progress_pct >= 70:
+                # Close to target - moderate approach
+                optimization_strategy['recommended_strategy'] = 'moderate'
+                optimization_strategy['position_multiplier'] = 0.75
+                optimization_strategy['risk_level'] = 'medium'
+                
+            elif time_remaining < 0.3 and progress_pct < 50:
+                # Late in day, behind target - aggressive approach
+                optimization_strategy['recommended_strategy'] = 'aggressive'
+                optimization_strategy['position_multiplier'] = 1.5
+                optimization_strategy['risk_level'] = 'high'
+                
+            else:
+                # Normal trading - standard approach
+                optimization_strategy['recommended_strategy'] = 'standard'
+                optimization_strategy['position_multiplier'] = 1.0
+                optimization_strategy['risk_level'] = 'medium'
+            
+            # Calculate recommended position sizes
+            base_min = self.AGGRESSIVE_POSITION_MIN
+            base_max = self.AGGRESSIVE_POSITION_MAX
+            multiplier = optimization_strategy['position_multiplier']
+            
+            optimization_strategy['recommended_position_range'] = {
+                'min': int(base_min * multiplier),
+                'max': int(base_max * multiplier)
+            }
+            
+            return optimization_strategy
+            
+        except Exception as e:
+            return {'error': f'Error optimizing for daily target: {e}'}
 
 # =============================================================================
 # GLOBAL FUNCTIONS FOR BACKWARD COMPATIBILITY

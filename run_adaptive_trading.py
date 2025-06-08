@@ -7,7 +7,7 @@ import asyncio
 import atexit
 import signal
 import sys
-from polygon_websocket import RealTimeDataFeed
+from polygon_client import RealTimeDataFeed
 
 # Global cleanup function for CUDA contexts
 def cleanup_cuda_contexts():
@@ -15,16 +15,39 @@ def cleanup_cuda_contexts():
     try:
         # Try to import and cleanup CUDA contexts
         import pycuda.driver as cuda
-        # Pop any remaining contexts from the stack
-        while True:
-            try:
-                ctx = cuda.Context.get_current()
-                if ctx:
-                    ctx.pop()
-                else:
+        import pycuda.autoinit
+        
+        # Check if there's a current context
+        try:
+            current_ctx = cuda.Context.get_current()
+            if current_ctx:
+                # Synchronize before cleanup
+                cuda.Context.synchronize()
+                # Pop the context safely
+                current_ctx.pop()
+        except cuda.LogicError:
+            # Context already popped or invalid
+            pass
+        except Exception:
+            # Other CUDA errors, ignore
+            pass
+            
+        # Clean up any remaining contexts in the stack
+        try:
+            while True:
+                try:
+                    ctx = cuda.Context.get_current()
+                    if ctx:
+                        ctx.pop()
+                    else:
+                        break
+                except cuda.LogicError:
                     break
-            except:
-                break
+                except Exception:
+                    break
+        except Exception:
+            pass
+            
     except ImportError:
         pass  # PyCUDA not available
     except Exception:
