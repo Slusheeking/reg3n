@@ -539,3 +539,4 @@ latency_measurements/
 #alpaca_momentum_executor.py
 #polygon_client.py
 #run_adaptive_trading.py
+reg3n_hft.py

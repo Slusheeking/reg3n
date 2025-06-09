@@ -1,0 +1,28 @@
+Single Multi-Task 1D CNN 
+This is the sweet spot for your use case:
+python# Optimized Architecture
+Input: [batch_size=1, sequence=50, features=20]
+
+# Shared Backbone (Multi-scale feature extraction)
+Conv1D(32, kernel=3, dilation=1)   # Short-term patterns
+Conv1D(64, kernel=5, dilation=2)   # Medium-term trends  
+Conv1D(32, kernel=3, dilation=4)   # Longer context
+BatchNorm + ReLU
+
+# Attention-lite mechanism (optional)
+GlobalMaxPool + GlobalAvgPool → Concat
+
+# Shared dense layers
+Dense(64) + Dropout(0.1)
+Dense(32)
+
+# Task-specific heads
+├── Dense(3, softmax) [micro: buy/hold/sell]
+├── Dense(1, sigmoid) [volatility: 0-1 scaled]
+└── Dense(1, tanh) [momentum: -1 to 1]
+Performance Targets
+
+Inference time: 0.3-0.8ms (TensorRT INT8)
+Accuracy retention: 90-95% of ensemble performance
+Memory: <50MB
+Throughput: >1000 inferences/sec
