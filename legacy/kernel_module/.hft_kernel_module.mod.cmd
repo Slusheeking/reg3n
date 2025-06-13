@@ -1,0 +1,1 @@
+savedcmd_/home/ubuntu/reg3n-1/kernel_module/hft_kernel_module.mod := printf '%s\n'   hft_kernel_module.o | awk '!x[$$0]++ { print("/home/ubuntu/reg3n-1/kernel_module/"$$0) }' > /home/ubuntu/reg3n-1/kernel_module/hft_kernel_module.mod

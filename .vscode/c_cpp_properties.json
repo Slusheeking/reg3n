@@ -1,0 +1,74 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/include",
+                "/usr/local/include",
+                "/usr/include/x86_64-linux-gnu",
+                "/usr/include/c++/11",
+                "/usr/include/x86_64-linux-gnu/c++/11",
+                "/usr/include/c++/11/backward",
+                "/usr/lib/gcc/x86_64-linux-gnu/11/include",
+                "/usr/include/boost"
+            ],
+            "defines": [
+                "_GNU_SOURCE"
+            ],
+            "compilerPath": "/usr/bin/g++",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        },
+        {
+            "name": "Linux Kernel",
+            "includePath": [
+                "${workspaceFolder}/kernel_module",
+                "/usr/src/linux-headers-6.8.0-52-generic/include",
+                "/usr/src/linux-headers-6.8.0-52-generic/include/linux",
+                "/usr/src/linux-headers-6.8.0-52-generic/include/uapi",
+                "/usr/src/linux-headers-6.8.0-52-generic/include/uapi/linux",
+                "/usr/src/linux-headers-6.8.0-52-generic/arch/x86/include",
+                "/usr/src/linux-headers-6.8.0-52-generic/arch/x86/include/asm",
+                "/usr/src/linux-headers-6.8.0-52-generic/arch/x86/include/uapi",
+                "/usr/src/linux-headers-6.8.0-52-generic/arch/x86/include/generated",
+                "/usr/src/linux-headers-6.8.0-52-generic/arch/x86/include/generated/asm",
+                "/usr/src/linux-headers-6.8.0-52-generic/arch/x86/include/generated/uapi",
+                "/usr/src/linux-headers-6.8.0-52-generic/include/asm-generic",
+                "/usr/lib/gcc/x86_64-linux-gnu/11/include"
+            ],
+            "defines": [
+                "__KERNEL__",
+                "MODULE",
+                "LINUX",
+                "__linux__",
+                "__x86_64__",
+                "_GNU_SOURCE",
+                "KBUILD_MODNAME=\"hft_packet_processor\"",
+                "CONFIG_X86_64=1",
+                "CONFIG_64BIT=1"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-x64",
+            "compilerArgs": [
+                "-nostdinc",
+                "-isystem",
+                "/usr/lib/gcc/x86_64-linux-gnu/11/include",
+                "-include",
+                "/usr/src/linux-headers-6.8.0-52-generic/include/linux/compiler-version.h",
+                "-include",
+                "/usr/src/linux-headers-6.8.0-52-generic/include/linux/kconfig.h",
+                "-D__KERNEL__",
+                "-DMODULE",
+                "-fno-strict-aliasing",
+                "-fno-common",
+                "-fshort-wchar",
+                "-fno-PIE"
+            ]
+        }
+    ],
+    "version": 4
+}

@@ -1,0 +1,1 @@
+savedcmd_/home/ubuntu/reg3n-1/kernel_module/hft_kernel_module.ko := ld -r -m elf_x86_64 -z noexecstack --build-id=sha1  -T scripts/module.lds -o /home/ubuntu/reg3n-1/kernel_module/hft_kernel_module.ko /home/ubuntu/reg3n-1/kernel_module/hft_kernel_module.o /home/ubuntu/reg3n-1/kernel_module/hft_kernel_module.mod.o

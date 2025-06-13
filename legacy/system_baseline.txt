@@ -1,0 +1,18 @@
+2025-06-13 05:43:44 [364970] === HFT System Status ===
+CPU Governors:
+
+Huge Pages:
+  2MB pages: 0
+  1GB pages: 0
+
+Kernel Module:
+  HFT kernel module: NOT LOADED
+
+NUMA:
+  Balancing: 0
+
+Network Interface (eno1):
+RX:		8192
+TX:		8192
+RX:		1024
+TX:		1024

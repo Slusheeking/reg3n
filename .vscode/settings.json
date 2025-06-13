@@ -1,0 +1,16 @@
+{
+    "C_Cpp.default.configurationProvider": "ms-vscode.cpptools",
+    "files.associations": {
+        "*.c": "c",
+        "*.h": "c"
+    },
+    "C_Cpp.configurationWarnings": "disabled",
+    "C_Cpp.intelliSenseEngine": "default",
+    "C_Cpp.errorSquiggles": "enabled",
+    "C_Cpp.autoAddFileAssociations": false,
+    "C_Cpp.files.exclude": {
+        "**/build/**": true,
+        "**/.git/**": true,
+        "**/node_modules/**": true
+    }
+}

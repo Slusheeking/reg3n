@@ -1,0 +1,2514 @@
+[2025-06-13 18:15:14] [INFO] SimpleHFTEngine created
+[2025-06-13 18:15:14] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 18:15:14] [INFO] Testing Alpaca connection...
+[2025-06-13 18:15:14] [INFO] Alpaca connection successful
+[2025-06-13 18:15:14] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 18:15:17] [ERROR] CRITICAL: Failed to connect to Polygon WebSocket
+[2025-06-13 18:18:08] [INFO] SimpleHFTEngine created
+[2025-06-13 18:18:08] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 18:18:08] [INFO] Testing Alpaca connection...
+[2025-06-13 18:18:08] [INFO] Alpaca connection successful
+[2025-06-13 18:18:08] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 18:18:11] [ERROR] CRITICAL: Failed to connect to Polygon WebSocket
+[2025-06-13 18:20:47] [INFO] SimpleHFTEngine created
+[2025-06-13 18:20:47] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 18:20:47] [INFO] Testing Alpaca connection...
+[2025-06-13 18:20:48] [INFO] Alpaca connection successful
+[2025-06-13 18:20:48] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 18:20:51] [ERROR] CRITICAL: Failed to connect to Polygon WebSocket
+[2025-06-13 18:22:47] [INFO] SimpleHFTEngine created
+[2025-06-13 18:22:47] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 18:22:47] [INFO] Testing Alpaca connection...
+[2025-06-13 18:22:47] [INFO] Alpaca connection successful
+[2025-06-13 18:22:47] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 18:22:57] [ERROR] CRITICAL: Failed to connect to Polygon WebSocket
+[2025-06-13 18:25:58] [INFO] SimpleHFTEngine created
+[2025-06-13 18:25:58] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 18:25:58] [INFO] Testing Alpaca connection...
+[2025-06-13 18:25:58] [INFO] Alpaca connection successful
+[2025-06-13 18:25:58] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 18:25:58] [INFO] Subscribing to market data...
+[2025-06-13 18:25:58] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 18:25:58] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 18:25:58] [INFO] Starting SimpleHFTEngine...
+[2025-06-13 18:25:58] [INFO] === SIMPLE HFT ENGINE STARTED ===
+[2025-06-13 18:25:58] [INFO] Symbols: 25
+[2025-06-13 18:25:58] [INFO] Confidence threshold: 0.650000
+[2025-06-13 18:25:58] [INFO] Position size: 2.000000%
+[2025-06-13 18:25:58] [INFO] Max positions: 5
+[2025-06-13 18:25:58] [INFO] =====================================
+[2025-06-13 18:25:59] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:25:59] [INFO] SIGNAL: TSLA reversion direction=1 confidence=1.000000
+[2025-06-13 18:25:59] [INFO] Placing bracket order for TSLA at $328.166000
+[2025-06-13 18:25:59] [WARN] ❌ Order failed: Order rejected: invalid limit_price 328.166. sub-penny increment does not fulfill minimum pricing criteria
+[2025-06-13 18:25:59] [INFO] Stopping SimpleHFTEngine...
+[2025-06-13 18:25:59] [INFO] === FINAL STATISTICS ===
+[2025-06-13 18:25:59] [INFO] Total messages processed: 422
+[2025-06-13 18:25:59] [INFO] Total signals generated: 1
+[2025-06-13 18:25:59] [INFO] Total orders placed: 1
+[2025-06-13 18:25:59] [INFO] Total successful orders: 0
+[2025-06-13 18:25:59] [INFO] Total errors: 0
+[2025-06-13 18:25:59] [INFO] Order success rate: 0.000000%
+[2025-06-13 18:25:59] [INFO] Signal generation rate: 0.236967%
+[2025-06-13 18:25:59] [INFO] ========================
+[2025-06-13 18:25:59] [INFO] SimpleHFTEngine stopped
+[2025-06-13 18:27:33] [INFO] SimpleHFTEngine created
+[2025-06-13 18:27:33] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 18:27:33] [INFO] Testing Alpaca connection...
+[2025-06-13 18:27:33] [INFO] Alpaca connection successful
+[2025-06-13 18:27:33] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 18:27:33] [INFO] Subscribing to market data...
+[2025-06-13 18:27:33] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 18:27:33] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 18:27:33] [INFO] Starting SimpleHFTEngine...
+[2025-06-13 18:27:33] [INFO] === SIMPLE HFT ENGINE STARTED ===
+[2025-06-13 18:27:33] [INFO] Symbols: 25
+[2025-06-13 18:27:33] [INFO] Confidence threshold: 0.650000
+[2025-06-13 18:27:33] [INFO] Position size: 2.000000%
+[2025-06-13 18:27:33] [INFO] Max positions: 5
+[2025-06-13 18:27:33] [INFO] =====================================
+[2025-06-13 18:27:34] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:27:34] [INFO] SIGNAL: TSLA reversion direction=1 confidence=1.000000
+[2025-06-13 18:27:34] [INFO] Placing bracket order for TSLA at $326.730000
+[2025-06-13 18:27:34] [WARN] ❌ Order failed: Order rejected: invalid take_profit.limit_price 329.34384. sub-penny increment does not fulfill minimum pricing criteria
+[2025-06-13 18:27:34] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:27:34] [INFO] SIGNAL: SOXL momentum direction=-1 confidence=1.000000
+[2025-06-13 18:27:34] [INFO] Placing bracket order for SOXL at $20.265000
+[2025-06-13 18:27:34] [WARN] ❌ Order failed: Order rejected: invalid limit_price 20.265. sub-penny increment does not fulfill minimum pricing criteria
+[2025-06-13 18:27:34] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:27:34] [INFO] SIGNAL: QQQ momentum direction=-1 confidence=1.000000
+[2025-06-13 18:27:34] [INFO] Placing bracket order for QQQ at $527.790000
+[2025-06-13 18:27:34] [WARN] ❌ Order failed: Order rejected: invalid take_profit.limit_price 523.56768. sub-penny increment does not fulfill minimum pricing criteria
+[2025-06-13 18:27:35] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:27:35] [INFO] SIGNAL: NVDA momentum direction=1 confidence=1.000000
+[2025-06-13 18:27:35] [INFO] Placing bracket order for NVDA at $141.750000
+[2025-06-13 18:27:35] [WARN] ❌ Order failed: Order rejected: invalid take_profit.limit_price 142.88400000000002. sub-penny increment does not fulfill minimum pricing criteria
+[2025-06-13 18:27:35] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:27:35] [INFO] SIGNAL: AAPL reversion direction=-1 confidence=1.000000
+[2025-06-13 18:27:35] [INFO] Placing bracket order for AAPL at $196.340000
+[2025-06-13 18:27:35] [WARN] ❌ Order failed: Order rejected: invalid take_profit.limit_price 194.76928. sub-penny increment does not fulfill minimum pricing criteria
+[2025-06-13 18:27:35] [DEBUG] Calculated features for SPY
+[2025-06-13 18:27:35] [INFO] SIGNAL: SPY reversion direction=-1 confidence=1.000000
+[2025-06-13 18:27:35] [INFO] Placing bracket order for SPY at $597.420000
+[2025-06-13 18:27:35] [WARN] ❌ Order failed: Order rejected: invalid take_profit.limit_price 592.64064. sub-penny increment does not fulfill minimum pricing criteria
+[2025-06-13 18:27:35] [DEBUG] Calculated features for XOM
+[2025-06-13 18:27:35] [INFO] SIGNAL: XOM reversion direction=-1 confidence=1.000000
+[2025-06-13 18:27:35] [INFO] Placing bracket order for XOM at $111.935000
+[2025-06-13 18:27:35] [WARN] ❌ Order failed: Order rejected: invalid limit_price 111.935. sub-penny increment does not fulfill minimum pricing criteria
+[2025-06-13 18:27:35] [DEBUG] Calculated features for AMD
+[2025-06-13 18:27:35] [INFO] SIGNAL: AMD momentum direction=1 confidence=1.000000
+[2025-06-13 18:27:35] [INFO] Placing bracket order for AMD at $115.570000
+[2025-06-13 18:27:35] [WARN] ❌ Order failed: Order rejected: invalid take_profit.limit_price 116.49455999999999. sub-penny increment does not fulfill minimum pricing criteria
+[2025-06-13 18:27:36] [DEBUG] Calculated features for TQQQ
+[2025-06-13 18:27:36] [INFO] SIGNAL: TQQQ reversion direction=-1 confidence=1.000000
+[2025-06-13 18:27:36] [INFO] Placing bracket order for TQQQ at $73.149900
+[2025-06-13 18:27:36] [WARN] ❌ Order failed: Order rejected: invalid limit_price 73.1499. sub-penny increment does not fulfill minimum pricing criteria
+[2025-06-13 18:27:36] [DEBUG] Calculated features for GLD
+[2025-06-13 18:27:36] [INFO] SIGNAL: GLD reversion direction=-1 confidence=1.000000
+[2025-06-13 18:27:36] [INFO] Placing bracket order for GLD at $316.140000
+[2025-06-13 18:27:36] [WARN] ❌ Order failed: Order rejected: invalid take_profit.limit_price 313.61088. sub-penny increment does not fulfill minimum pricing criteria
+[2025-06-13 18:27:36] [INFO] Stopping SimpleHFTEngine...
+[2025-06-13 18:27:36] [INFO] === FINAL STATISTICS ===
+[2025-06-13 18:27:36] [INFO] Total messages processed: 2417
+[2025-06-13 18:27:36] [INFO] Total signals generated: 10
+[2025-06-13 18:27:36] [INFO] Total orders placed: 10
+[2025-06-13 18:27:36] [INFO] Total successful orders: 0
+[2025-06-13 18:27:36] [INFO] Total errors: 0
+[2025-06-13 18:27:36] [INFO] Order success rate: 0.000000%
+[2025-06-13 18:27:36] [INFO] Signal generation rate: 0.413736%
+[2025-06-13 18:27:36] [INFO] ========================
+[2025-06-13 18:27:36] [INFO] SimpleHFTEngine stopped
+[2025-06-13 18:30:39] [INFO] SimpleHFTEngine created
+[2025-06-13 18:30:39] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 18:30:39] [INFO] Testing Alpaca connection...
+[2025-06-13 18:30:39] [INFO] Alpaca connection successful
+[2025-06-13 18:30:39] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 18:30:40] [INFO] Subscribing to market data...
+[2025-06-13 18:30:40] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 18:30:40] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 18:30:40] [INFO] Starting SimpleHFTEngine...
+[2025-06-13 18:30:40] [INFO] === SIMPLE HFT ENGINE STARTED ===
+[2025-06-13 18:30:40] [INFO] Symbols: 25
+[2025-06-13 18:30:40] [INFO] Confidence threshold: 0.650000
+[2025-06-13 18:30:40] [INFO] Position size: 2.000000%
+[2025-06-13 18:30:40] [INFO] Max positions: 5
+[2025-06-13 18:30:40] [INFO] =====================================
+[2025-06-13 18:30:40] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:30:40] [INFO] SIGNAL: NVDA momentum direction=1 confidence=1.000000
+[2025-06-13 18:30:40] [INFO] Placing bracket order for NVDA at $141.610000
+[2025-06-13 18:30:40] [INFO] ✅ Order successful: 9a8564e6-706b-412b-8114-07cf2e02b928
+[2025-06-13 18:30:40] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:30:40] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:30:40] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:30:40] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:30:40] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:30:40] [INFO] SIGNAL: MSFT reversion direction=-1 confidence=1.000000
+[2025-06-13 18:30:40] [INFO] Placing bracket order for MSFT at $474.030000
+[2025-06-13 18:30:40] [INFO] ✅ Order successful: da461d7e-f4f0-4147-885f-8a5d11c3aea9
+[2025-06-13 18:30:40] [DEBUG] Calculated features for SPY
+[2025-06-13 18:30:40] [INFO] SIGNAL: SPY momentum direction=1 confidence=1.000000
+[2025-06-13 18:30:40] [INFO] Placing bracket order for SPY at $597.210000
+[2025-06-13 18:30:40] [INFO] ✅ Order successful: 1a7a8132-7281-4ac4-b87f-c421a092e324
+[2025-06-13 18:30:40] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:30:40] [INFO] SIGNAL: TSLA momentum direction=1 confidence=1.000000
+[2025-06-13 18:30:40] [INFO] Placing bracket order for TSLA at $326.440000
+[2025-06-13 18:30:40] [INFO] ✅ Order successful: 63a482a7-85f5-4b56-ad36-35bc7eff9ca4
+[2025-06-13 18:30:40] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:30:40] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:30:40] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:30:40] [INFO] SIGNAL: QQQ momentum direction=1 confidence=1.000000
+[2025-06-13 18:30:40] [INFO] Placing bracket order for QQQ at $527.530000
+[2025-06-13 18:30:40] [INFO] ✅ Order successful: 85791c6d-29d5-45d7-a94e-debcb3368fe7
+[2025-06-13 18:30:40] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:30:40] [INFO] SIGNAL: AMZN reversion direction=-1 confidence=1.000000
+[2025-06-13 18:30:40] [INFO] Placing bracket order for AMZN at $212.579400
+[2025-06-13 18:30:40] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:30:40] [DEBUG] Calculated features for AMD
+[2025-06-13 18:30:40] [DEBUG] Calculated features for AMD
+[2025-06-13 18:30:40] [INFO] SIGNAL: AMD reversion direction=-1 confidence=1.000000
+[2025-06-13 18:30:40] [INFO] Placing bracket order for AMD at $115.560000
+[2025-06-13 18:30:40] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:30:40] [DEBUG] Calculated features for TQQQ
+[2025-06-13 18:30:40] [INFO] SIGNAL: TQQQ reversion direction=1 confidence=0.668240
+[2025-06-13 18:30:40] [INFO] Placing bracket order for TQQQ at $73.040000
+[2025-06-13 18:30:40] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:30:40] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:30:40] [INFO] SIGNAL: AAPL reversion direction=-1 confidence=1.000000
+[2025-06-13 18:30:40] [INFO] Placing bracket order for AAPL at $196.250000
+[2025-06-13 18:30:40] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:30:40] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:30:40] [INFO] SIGNAL: SOXL reversion direction=1 confidence=1.000000
+[2025-06-13 18:30:40] [INFO] Placing bracket order for SOXL at $20.235000
+[2025-06-13 18:30:40] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:30:41] [DEBUG] Calculated features for META
+[2025-06-13 18:30:41] [DEBUG] Calculated features for META
+[2025-06-13 18:30:41] [INFO] SIGNAL: META reversion direction=1 confidence=0.842997
+[2025-06-13 18:30:41] [INFO] Placing bracket order for META at $687.185000
+[2025-06-13 18:30:41] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:30:41] [DEBUG] Calculated features for EEM
+[2025-06-13 18:30:41] [INFO] SIGNAL: EEM reversion direction=1 confidence=0.847824
+[2025-06-13 18:30:41] [INFO] Placing bracket order for EEM at $47.050000
+[2025-06-13 18:30:41] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:30:41] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:30:41] [INFO] SIGNAL: GOOGL momentum direction=1 confidence=1.000000
+[2025-06-13 18:30:41] [INFO] Placing bracket order for GOOGL at $176.020000
+[2025-06-13 18:30:41] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:30:41] [DEBUG] Calculated features for TLT
+[2025-06-13 18:30:41] [INFO] SIGNAL: TLT momentum direction=1 confidence=1.000000
+[2025-06-13 18:30:41] [INFO] Placing bracket order for TLT at $85.960000
+[2025-06-13 18:30:41] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:30:41] [INFO] Stopping SimpleHFTEngine...
+[2025-06-13 18:30:41] [INFO] === FINAL STATISTICS ===
+[2025-06-13 18:30:41] [INFO] Total messages processed: 5948
+[2025-06-13 18:30:41] [INFO] Total signals generated: 14
+[2025-06-13 18:30:41] [INFO] Total orders placed: 14
+[2025-06-13 18:30:41] [INFO] Total successful orders: 5
+[2025-06-13 18:30:41] [INFO] Total errors: 0
+[2025-06-13 18:30:41] [INFO] Order success rate: 35.714286%
+[2025-06-13 18:30:41] [INFO] Signal generation rate: 0.235373%
+[2025-06-13 18:30:41] [INFO] ========================
+[2025-06-13 18:30:41] [INFO] SimpleHFTEngine stopped
+[2025-06-13 18:32:38] [INFO] SimpleHFTEngine created
+[2025-06-13 18:32:38] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 18:32:38] [INFO] Testing Alpaca connection...
+[2025-06-13 18:32:38] [INFO] Alpaca connection successful
+[2025-06-13 18:32:38] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 18:32:39] [INFO] Subscribing to market data...
+[2025-06-13 18:32:39] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 18:32:39] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 18:32:39] [INFO] Starting SimpleHFTEngine...
+[2025-06-13 18:32:39] [INFO] === SIMPLE HFT ENGINE STARTED ===
+[2025-06-13 18:32:39] [INFO] Symbols: 25
+[2025-06-13 18:32:39] [INFO] Confidence threshold: 0.650000
+[2025-06-13 18:32:39] [INFO] Position size: 2.000000%
+[2025-06-13 18:32:39] [INFO] Max positions: 5
+[2025-06-13 18:32:39] [INFO] =====================================
+[2025-06-13 18:32:39] [DEBUG] Calculated features for TQQQ
+[2025-06-13 18:32:39] [INFO] SIGNAL: TQQQ reversion direction=-1 confidence=0.947727
+[2025-06-13 18:32:39] [INFO] Placing bracket order for TQQQ at $72.750000
+[2025-06-13 18:32:39] [INFO] ✅ Order successful: be61fd4a-d2cd-4542-ad67-d27c9cbd02ef
+[2025-06-13 18:32:39] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:32:39] [INFO] SIGNAL: TSLA momentum direction=1 confidence=1.000000
+[2025-06-13 18:32:39] [INFO] Placing bracket order for TSLA at $325.150000
+[2025-06-13 18:32:39] [INFO] ✅ Order successful: a7866680-910e-4454-8c45-c0bf151ea7f7
+[2025-06-13 18:32:39] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:32:39] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:32:39] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:32:39] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:32:39] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:32:39] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:32:39] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:32:39] [INFO] SIGNAL: QQQ momentum direction=1 confidence=1.000000
+[2025-06-13 18:32:39] [INFO] Placing bracket order for QQQ at $526.890000
+[2025-06-13 18:32:39] [INFO] ✅ Order successful: 747ca4e8-487c-4150-bf67-edb9e3de9c91
+[2025-06-13 18:32:39] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:32:39] [INFO] SIGNAL: NVDA momentum direction=1 confidence=1.000000
+[2025-06-13 18:32:39] [INFO] Placing bracket order for NVDA at $141.320000
+[2025-06-13 18:32:39] [INFO] ✅ Order successful: a449a40a-f6ff-4fac-8187-b337bbb49636
+[2025-06-13 18:32:39] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:32:39] [INFO] SIGNAL: MSFT reversion direction=-1 confidence=0.697375
+[2025-06-13 18:32:39] [INFO] Placing bracket order for MSFT at $473.540000
+[2025-06-13 18:32:39] [INFO] ✅ Order successful: 6207d32d-c900-4f9b-bd95-48b13b8cadf9
+[2025-06-13 18:32:39] [DEBUG] Calculated features for SPY
+[2025-06-13 18:32:39] [DEBUG] Calculated features for SPY
+[2025-06-13 18:32:39] [INFO] SIGNAL: SPY momentum direction=1 confidence=1.000000
+[2025-06-13 18:32:39] [INFO] Placing bracket order for SPY at $596.500000
+[2025-06-13 18:32:39] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:32:40] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:32:40] [DEBUG] Calculated features for IWM
+[2025-06-13 18:32:40] [INFO] SIGNAL: IWM reversion direction=-1 confidence=1.000000
+[2025-06-13 18:32:40] [INFO] Placing bracket order for IWM at $208.895000
+[2025-06-13 18:32:40] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:32:40] [DEBUG] Calculated features for WMT
+[2025-06-13 18:32:40] [DEBUG] Calculated features for WMT
+[2025-06-13 18:32:40] [DEBUG] Calculated features for WMT
+[2025-06-13 18:32:40] [INFO] SIGNAL: WMT momentum direction=1 confidence=0.775877
+[2025-06-13 18:32:40] [INFO] Placing bracket order for WMT at $94.460000
+[2025-06-13 18:32:40] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:32:40] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:32:40] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:32:40] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:32:40] [INFO] SIGNAL: SOXL momentum direction=1 confidence=1.000000
+[2025-06-13 18:32:40] [INFO] Placing bracket order for SOXL at $20.130300
+[2025-06-13 18:32:40] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:32:40] [DEBUG] Calculated features for AMD
+[2025-06-13 18:32:40] [DEBUG] Calculated features for AMD
+[2025-06-13 18:32:40] [DEBUG] Calculated features for AMD
+[2025-06-13 18:32:40] [INFO] SIGNAL: AMD momentum direction=1 confidence=1.000000
+[2025-06-13 18:32:40] [INFO] Placing bracket order for AMD at $115.520000
+[2025-06-13 18:32:40] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:32:40] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:32:41] [DEBUG] Calculated features for UNH
+[2025-06-13 18:32:41] [DEBUG] Calculated features for UNH
+[2025-06-13 18:32:41] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:32:41] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:32:41] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:32:41] [DEBUG] Calculated features for UNH
+[2025-06-13 18:32:41] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:32:41] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:32:41] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:32:41] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:32:41] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:32:41] [INFO] SIGNAL: GOOGL momentum direction=1 confidence=1.000000
+[2025-06-13 18:32:41] [INFO] Placing bracket order for GOOGL at $175.810000
+[2025-06-13 18:32:41] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:32:41] [DEBUG] Calculated features for GLD
+[2025-06-13 18:32:41] [DEBUG] Calculated features for GLD
+[2025-06-13 18:32:41] [DEBUG] Calculated features for GLD
+[2025-06-13 18:32:41] [DEBUG] Calculated features for GLD
+[2025-06-13 18:32:41] [DEBUG] Calculated features for GLD
+[2025-06-13 18:32:41] [DEBUG] Calculated features for GLD
+[2025-06-13 18:32:41] [INFO] SIGNAL: GLD reversion direction=-1 confidence=1.000000
+[2025-06-13 18:32:41] [INFO] Placing bracket order for GLD at $316.560000
+[2025-06-13 18:32:41] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:32:42] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:32:42] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:32:42] [DEBUG] Calculated features for META
+[2025-06-13 18:32:42] [DEBUG] Calculated features for META
+[2025-06-13 18:32:42] [DEBUG] Calculated features for UNH
+[2025-06-13 18:32:42] [INFO] SIGNAL: UNH reversion direction=-1 confidence=1.000000
+[2025-06-13 18:32:42] [INFO] Placing bracket order for UNH at $312.470000
+[2025-06-13 18:32:42] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:32:42] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:32:42] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:32:42] [DEBUG] Calculated features for META
+[2025-06-13 18:32:42] [DEBUG] Calculated features for META
+[2025-06-13 18:32:42] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:32:42] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:32:42] [DEBUG] Calculated features for META
+[2025-06-13 18:32:42] [DEBUG] Calculated features for META
+[2025-06-13 18:32:42] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:32:42] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:32:42] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:32:42] [INFO] SIGNAL: AAPL reversion direction=-1 confidence=0.687613
+[2025-06-13 18:32:42] [INFO] Placing bracket order for AAPL at $196.110000
+[2025-06-13 18:32:42] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:32:42] [DEBUG] Calculated features for META
+[2025-06-13 18:32:42] [DEBUG] Calculated features for META
+[2025-06-13 18:32:42] [DEBUG] Calculated features for META
+[2025-06-13 18:32:42] [DEBUG] Calculated features for META
+[2025-06-13 18:32:42] [DEBUG] Calculated features for META
+[2025-06-13 18:32:42] [DEBUG] Calculated features for EEM
+[2025-06-13 18:32:42] [DEBUG] Calculated features for EEM
+[2025-06-13 18:32:42] [DEBUG] Calculated features for EEM
+[2025-06-13 18:32:42] [DEBUG] Calculated features for TLT
+[2025-06-13 18:32:42] [DEBUG] Calculated features for EEM
+[2025-06-13 18:32:42] [DEBUG] Calculated features for EEM
+[2025-06-13 18:32:42] [INFO] SIGNAL: EEM reversion direction=-1 confidence=1.000000
+[2025-06-13 18:32:42] [INFO] Placing bracket order for EEM at $47.020000
+[2025-06-13 18:32:42] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:32:42] [DEBUG] Calculated features for TLT
+[2025-06-13 18:32:42] [DEBUG] Calculated features for TLT
+[2025-06-13 18:32:42] [INFO] SIGNAL: TLT reversion direction=-1 confidence=1.000000
+[2025-06-13 18:32:42] [INFO] Placing bracket order for TLT at $86.000000
+[2025-06-13 18:32:42] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:32:42] [DEBUG] Calculated features for META
+[2025-06-13 18:32:42] [INFO] SIGNAL: META momentum direction=1 confidence=0.701451
+[2025-06-13 18:32:42] [INFO] Placing bracket order for META at $686.100000
+[2025-06-13 18:32:42] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:32:42] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:32:42] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:32:43] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:32:43] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:32:43] [INFO] SIGNAL: AMZN momentum direction=1 confidence=0.688133
+[2025-06-13 18:32:43] [INFO] Placing bracket order for AMZN at $212.094900
+[2025-06-13 18:32:43] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:32:43] [DEBUG] Calculated features for COIN
+[2025-06-13 18:32:43] [DEBUG] Calculated features for COIN
+[2025-06-13 18:32:43] [DEBUG] Calculated features for XOM
+[2025-06-13 18:32:43] [INFO] SIGNAL: XOM momentum direction=1 confidence=1.000000
+[2025-06-13 18:32:43] [INFO] Placing bracket order for XOM at $112.010000
+[2025-06-13 18:32:43] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:32:43] [INFO] Stopping SimpleHFTEngine...
+[2025-06-13 18:32:43] [INFO] === FINAL STATISTICS ===
+[2025-06-13 18:32:43] [INFO] Total messages processed: 8736
+[2025-06-13 18:32:43] [INFO] Total signals generated: 19
+[2025-06-13 18:32:43] [INFO] Total orders placed: 19
+[2025-06-13 18:32:43] [INFO] Total successful orders: 5
+[2025-06-13 18:32:43] [INFO] Total errors: 0
+[2025-06-13 18:32:43] [INFO] Order success rate: 26.315789%
+[2025-06-13 18:32:43] [INFO] Signal generation rate: 0.217491%
+[2025-06-13 18:32:43] [INFO] ========================
+[2025-06-13 18:32:43] [INFO] SimpleHFTEngine stopped
+[2025-06-13 18:39:33] [INFO] SimpleHFTEngine created
+[2025-06-13 18:39:33] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 18:39:33] [INFO] Testing Alpaca connection...
+[2025-06-13 18:39:33] [INFO] Alpaca connection successful
+[2025-06-13 18:39:33] [INFO] Loading portfolio data...
+[2025-06-13 18:39:33] [INFO] Account Info:
+[2025-06-13 18:39:33] [INFO]   Portfolio Value: $49814.310000
+[2025-06-13 18:39:33] [INFO]   Buying Power: $90901.720000
+[2025-06-13 18:39:33] [INFO]   Cash: $46538.230000
+[2025-06-13 18:39:33] [INFO] Current positions: 6
+[2025-06-13 18:39:33] [INFO] Existing positions will be tracked for risk management
+[2025-06-13 18:39:33] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 18:39:34] [INFO] Subscribing to market data...
+[2025-06-13 18:39:34] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 18:39:34] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 18:39:34] [INFO] Starting SimpleHFTEngine...
+[2025-06-13 18:39:34] [INFO] === SIMPLE HFT ENGINE STARTED ===
+[2025-06-13 18:39:34] [INFO] Symbols: 25
+[2025-06-13 18:39:34] [INFO] Confidence threshold: 0.650000
+[2025-06-13 18:39:34] [INFO] Position size: 2.000000%
+[2025-06-13 18:39:34] [INFO] Max positions: 5
+[2025-06-13 18:39:34] [INFO] =====================================
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:39:34] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:39:34] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:39:34] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:39:34] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:39:34] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:39:34] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:39:34] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:39:34] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:39:34] [INFO] SIGNAL: NVDA momentum direction=1 confidence=0.664028
+[2025-06-13 18:39:34] [INFO] Placing bracket order for NVDA at $141.140000
+[2025-06-13 18:39:34] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:39:34] [DEBUG] Calculated features for TQQQ
+[2025-06-13 18:39:34] [DEBUG] Calculated features for TQQQ
+[2025-06-13 18:39:34] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:39:34] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:39:34] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:39:34] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:39:34] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:39:34] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:39:34] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:39:34] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:39:34] [INFO] SIGNAL: TSLA momentum direction=1 confidence=1.000000
+[2025-06-13 18:39:34] [INFO] Placing bracket order for TSLA at $323.710000
+[2025-06-13 18:39:34] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:39:34] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:34] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:34] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:34] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:34] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:34] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:34] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:34] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:34] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:34] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:34] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:34] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SPY
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SPY
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SPY
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SPY
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SPY
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SPY
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SPY
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SPY
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SPY
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SPY
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SPY
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SPY
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SPY
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SPY
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SPY
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SPY
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SPY
+[2025-06-13 18:39:34] [INFO] SIGNAL: SPY reversion direction=-1 confidence=0.802943
+[2025-06-13 18:39:34] [INFO] Placing bracket order for SPY at $596.140000
+[2025-06-13 18:39:34] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:39:34] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:39:34] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:39:34] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:39:34] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:39:34] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:39:34] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:39:34] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:39:34] [INFO] SIGNAL: QQQ reversion direction=-1 confidence=0.942242
+[2025-06-13 18:39:34] [INFO] Placing bracket order for QQQ at $526.310000
+[2025-06-13 18:39:34] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:39:34] [DEBUG] Calculated features for META
+[2025-06-13 18:39:34] [DEBUG] Calculated features for META
+[2025-06-13 18:39:34] [DEBUG] Calculated features for META
+[2025-06-13 18:39:34] [DEBUG] Calculated features for META
+[2025-06-13 18:39:34] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:34] [DEBUG] Calculated features for META
+[2025-06-13 18:39:34] [DEBUG] Calculated features for META
+[2025-06-13 18:39:34] [DEBUG] Calculated features for META
+[2025-06-13 18:39:34] [DEBUG] Calculated features for META
+[2025-06-13 18:39:34] [INFO] SIGNAL: META reversion direction=-1 confidence=1.000000
+[2025-06-13 18:39:34] [INFO] Placing bracket order for META at $685.260000
+[2025-06-13 18:39:34] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:39:34] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:34] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:39:34] [INFO] SIGNAL: GOOGL momentum direction=1 confidence=0.712044
+[2025-06-13 18:39:34] [INFO] Placing bracket order for GOOGL at $175.590000
+[2025-06-13 18:39:34] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:39:34] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:39:34] [INFO] SIGNAL: SOXL reversion direction=-1 confidence=0.931975
+[2025-06-13 18:39:34] [INFO] Placing bracket order for SOXL at $19.965000
+[2025-06-13 18:39:34] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:39:34] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:39:34] [INFO] SIGNAL: AAPL reversion direction=-1 confidence=0.990633
+[2025-06-13 18:39:34] [INFO] Placing bracket order for AAPL at $195.910000
+[2025-06-13 18:39:34] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:39:34] [DEBUG] Calculated features for TQQQ
+[2025-06-13 18:39:34] [DEBUG] Calculated features for TQQQ
+[2025-06-13 18:39:34] [INFO] SIGNAL: TQQQ reversion direction=-1 confidence=1.000000
+[2025-06-13 18:39:34] [INFO] Placing bracket order for TQQQ at $72.520000
+[2025-06-13 18:39:34] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:39:34] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:34] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:34] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:34] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:34] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:34] [DEBUG] Calculated features for ARKK
+[2025-06-13 18:39:35] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:35] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:35] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:39:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:39:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:39:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:39:35] [DEBUG] Calculated features for AMD
+[2025-06-13 18:39:35] [DEBUG] Calculated features for AMD
+[2025-06-13 18:39:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:39:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:39:35] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:35] [DEBUG] Calculated features for BAC
+[2025-06-13 18:39:35] [DEBUG] Calculated features for BAC
+[2025-06-13 18:39:35] [DEBUG] Calculated features for BAC
+[2025-06-13 18:39:35] [DEBUG] Calculated features for BAC
+[2025-06-13 18:39:35] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:39:35] [INFO] SIGNAL: AMZN reversion direction=-1 confidence=1.000000
+[2025-06-13 18:39:35] [INFO] Placing bracket order for AMZN at $212.010000
+[2025-06-13 18:39:35] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:39:35] [DEBUG] Calculated features for AMD
+[2025-06-13 18:39:35] [DEBUG] Calculated features for AMD
+[2025-06-13 18:39:35] [INFO] SIGNAL: AMD momentum direction=1 confidence=1.000000
+[2025-06-13 18:39:35] [INFO] Placing bracket order for AMD at $115.260000
+[2025-06-13 18:39:35] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:39:35] [DEBUG] Calculated features for IWM
+[2025-06-13 18:39:35] [DEBUG] Calculated features for IWM
+[2025-06-13 18:39:35] [DEBUG] Calculated features for IWM
+[2025-06-13 18:39:36] [DEBUG] Calculated features for UNH
+[2025-06-13 18:39:36] [DEBUG] Calculated features for UNH
+[2025-06-13 18:39:36] [DEBUG] Calculated features for UNH
+[2025-06-13 18:39:36] [DEBUG] Calculated features for IWM
+[2025-06-13 18:39:36] [DEBUG] Calculated features for UNH
+[2025-06-13 18:39:36] [DEBUG] Calculated features for UNH
+[2025-06-13 18:39:36] [DEBUG] Calculated features for ARKK
+[2025-06-13 18:39:36] [DEBUG] Calculated features for BAC
+[2025-06-13 18:39:36] [DEBUG] Calculated features for ARKK
+[2025-06-13 18:39:36] [DEBUG] Calculated features for ARKK
+[2025-06-13 18:39:36] [DEBUG] Calculated features for ARKK
+[2025-06-13 18:39:36] [DEBUG] Calculated features for ARKK
+[2025-06-13 18:39:36] [DEBUG] Calculated features for ARKK
+[2025-06-13 18:39:36] [DEBUG] Calculated features for ARKK
+[2025-06-13 18:39:36] [DEBUG] Calculated features for ARKK
+[2025-06-13 18:39:36] [DEBUG] Calculated features for ARKK
+[2025-06-13 18:39:36] [DEBUG] Calculated features for IWM
+[2025-06-13 18:39:36] [DEBUG] Calculated features for IWM
+[2025-06-13 18:39:36] [DEBUG] Calculated features for IWM
+[2025-06-13 18:39:36] [DEBUG] Calculated features for IWM
+[2025-06-13 18:39:36] [DEBUG] Calculated features for ARKK
+[2025-06-13 18:39:36] [INFO] SIGNAL: ARKK reversion direction=-1 confidence=1.000000
+[2025-06-13 18:39:36] [INFO] Placing bracket order for ARKK at $61.622000
+[2025-06-13 18:39:36] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:39:36] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:39:36] [DEBUG] Calculated features for UNH
+[2025-06-13 18:39:36] [INFO] SIGNAL: UNH momentum direction=1 confidence=1.000000
+[2025-06-13 18:39:36] [INFO] Placing bracket order for UNH at $312.500000
+[2025-06-13 18:39:36] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:39:36] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:39:37] [DEBUG] Calculated features for IWM
+[2025-06-13 18:39:37] [DEBUG] Calculated features for BAC
+[2025-06-13 18:39:37] [DEBUG] Calculated features for IWM
+[2025-06-13 18:39:37] [DEBUG] Calculated features for IWM
+[2025-06-13 18:39:37] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:39:37] [INFO] SIGNAL: MSFT momentum direction=1 confidence=1.000000
+[2025-06-13 18:39:37] [INFO] Placing bracket order for MSFT at $473.515200
+[2025-06-13 18:39:37] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:39:37] [DEBUG] Calculated features for IWM
+[2025-06-13 18:39:37] [DEBUG] Calculated features for IWM
+[2025-06-13 18:39:37] [DEBUG] Calculated features for IWM
+[2025-06-13 18:39:37] [INFO] SIGNAL: IWM momentum direction=1 confidence=1.000000
+[2025-06-13 18:39:37] [INFO] Placing bracket order for IWM at $208.730000
+[2025-06-13 18:39:37] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:39:37] [DEBUG] Calculated features for BAC
+[2025-06-13 18:39:38] [DEBUG] Calculated features for BAC
+[2025-06-13 18:39:39] [DEBUG] Calculated features for XOM
+[2025-06-13 18:39:39] [DEBUG] Calculated features for XOM
+[2025-06-13 18:39:39] [INFO] SIGNAL: XOM reversion direction=-1 confidence=0.664624
+[2025-06-13 18:39:39] [INFO] Placing bracket order for XOM at $112.010000
+[2025-06-13 18:39:39] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:39:39] [DEBUG] Calculated features for VXX
+[2025-06-13 18:39:39] [DEBUG] Calculated features for VXX
+[2025-06-13 18:39:39] [DEBUG] Calculated features for VXX
+[2025-06-13 18:39:39] [DEBUG] Calculated features for VXX
+[2025-06-13 18:39:39] [DEBUG] Calculated features for VXX
+[2025-06-13 18:39:39] [DEBUG] Calculated features for BAC
+[2025-06-13 18:39:39] [DEBUG] Calculated features for BAC
+[2025-06-13 18:39:40] [DEBUG] Calculated features for V
+[2025-06-13 18:39:40] [DEBUG] Calculated features for V
+[2025-06-13 18:39:40] [DEBUG] Calculated features for WMT
+[2025-06-13 18:39:40] [DEBUG] Calculated features for V
+[2025-06-13 18:39:40] [INFO] SIGNAL: V momentum direction=1 confidence=0.773478
+[2025-06-13 18:39:40] [INFO] Placing bracket order for V at $349.850000
+[2025-06-13 18:39:40] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:39:40] [DEBUG] Calculated features for WMT
+[2025-06-13 18:39:41] [DEBUG] Calculated features for WMT
+[2025-06-13 18:39:41] [DEBUG] Calculated features for VXX
+[2025-06-13 18:39:41] [DEBUG] Calculated features for VXX
+[2025-06-13 18:39:41] [INFO] SIGNAL: VXX reversion direction=-1 confidence=1.000000
+[2025-06-13 18:39:41] [INFO] Placing bracket order for VXX at $55.745000
+[2025-06-13 18:39:41] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:39:42] [DEBUG] Calculated features for WMT
+[2025-06-13 18:39:42] [DEBUG] Calculated features for BAC
+[2025-06-13 18:39:42] [DEBUG] Calculated features for WMT
+[2025-06-13 18:39:42] [DEBUG] Calculated features for WMT
+[2025-06-13 18:39:43] [DEBUG] Calculated features for BAC
+[2025-06-13 18:39:43] [DEBUG] Calculated features for GLD
+[2025-06-13 18:39:43] [DEBUG] Calculated features for WMT
+[2025-06-13 18:39:43] [DEBUG] Calculated features for WMT
+[2025-06-13 18:39:43] [DEBUG] Calculated features for GLD
+[2025-06-13 18:39:44] [DEBUG] Calculated features for GLD
+[2025-06-13 18:39:44] [DEBUG] Calculated features for GLD
+[2025-06-13 18:39:44] [INFO] === CURRENT STATS ===
+[2025-06-13 18:39:44] [INFO] Messages processed: 14689
+[2025-06-13 18:39:44] [INFO] Signals generated: 18
+[2025-06-13 18:39:44] [INFO] Orders placed: 18
+[2025-06-13 18:39:44] [INFO] Orders successful: 0
+[2025-06-13 18:39:44] [INFO] Total errors: 0
+[2025-06-13 18:39:44] [INFO] Polygon connected: YES
+[2025-06-13 18:39:44] [INFO] Polygon authenticated: YES
+[2025-06-13 18:39:44] [INFO] ====================
+[2025-06-13 18:39:44] [INFO] Stopping SimpleHFTEngine...
+[2025-06-13 18:39:44] [INFO] === FINAL STATISTICS ===
+[2025-06-13 18:39:44] [INFO] Total messages processed: 14689
+[2025-06-13 18:39:44] [INFO] Total signals generated: 18
+[2025-06-13 18:39:44] [INFO] Total orders placed: 18
+[2025-06-13 18:39:44] [INFO] Total successful orders: 0
+[2025-06-13 18:39:44] [INFO] Total errors: 0
+[2025-06-13 18:39:44] [INFO] Order success rate: 0.000000%
+[2025-06-13 18:39:44] [INFO] Signal generation rate: 0.122541%
+[2025-06-13 18:39:44] [INFO] ========================
+[2025-06-13 18:39:44] [INFO] SimpleHFTEngine stopped
+[2025-06-13 18:41:59] [INFO] SimpleHFTEngine created
+[2025-06-13 18:41:59] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 18:41:59] [INFO] Testing Alpaca connection...
+[2025-06-13 18:41:59] [INFO] Alpaca connection successful
+[2025-06-13 18:41:59] [INFO] Loading portfolio data...
+[2025-06-13 18:41:59] [INFO] Account Info:
+[2025-06-13 18:41:59] [INFO]   Portfolio Value: $49818.220000
+[2025-06-13 18:41:59] [INFO]   Buying Power: $90907.850000
+[2025-06-13 18:41:59] [INFO]   Cash: $46538.230000
+[2025-06-13 18:41:59] [INFO] Current positions: 6
+[2025-06-13 18:41:59] [INFO] Existing positions will be tracked for risk management
+[2025-06-13 18:41:59] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 18:42:00] [INFO] Subscribing to market data...
+[2025-06-13 18:42:00] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 18:42:00] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 18:42:00] [INFO] Starting SimpleHFTEngine...
+[2025-06-13 18:42:00] [INFO] === SIMPLE HFT ENGINE STARTED ===
+[2025-06-13 18:42:00] [INFO] Symbols: 25
+[2025-06-13 18:42:00] [INFO] Confidence threshold: 0.650000
+[2025-06-13 18:42:00] [INFO] Position size: 2.000000%
+[2025-06-13 18:42:00] [INFO] Max positions: 5
+[2025-06-13 18:42:00] [INFO] =====================================
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:42:00] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:42:00] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:42:00] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:42:00] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:42:00] [INFO] SIGNAL: QQQ reversion direction=-1 confidence=1.000000
+[2025-06-13 18:42:00] [INFO] Placing bracket order for QQQ at $526.150000
+[2025-06-13 18:42:00] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for SPY
+[2025-06-13 18:42:00] [DEBUG] Calculated features for SPY
+[2025-06-13 18:42:00] [DEBUG] Calculated features for SPY
+[2025-06-13 18:42:00] [DEBUG] Calculated features for SPY
+[2025-06-13 18:42:00] [DEBUG] Calculated features for SPY
+[2025-06-13 18:42:00] [DEBUG] Calculated features for SPY
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:42:00] [INFO] SIGNAL: NVDA reversion direction=-1 confidence=0.706796
+[2025-06-13 18:42:00] [INFO] Placing bracket order for NVDA at $141.090000
+[2025-06-13 18:42:00] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:42:00] [DEBUG] Calculated features for SPY
+[2025-06-13 18:42:00] [DEBUG] Calculated features for SPY
+[2025-06-13 18:42:00] [DEBUG] Calculated features for SPY
+[2025-06-13 18:42:00] [DEBUG] Calculated features for TQQQ
+[2025-06-13 18:42:00] [DEBUG] Calculated features for TQQQ
+[2025-06-13 18:42:00] [DEBUG] Calculated features for TQQQ
+[2025-06-13 18:42:00] [DEBUG] Calculated features for TQQQ
+[2025-06-13 18:42:00] [INFO] SIGNAL: TQQQ reversion direction=-1 confidence=1.000000
+[2025-06-13 18:42:00] [INFO] Placing bracket order for TQQQ at $72.450000
+[2025-06-13 18:42:00] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:42:00] [DEBUG] Calculated features for AMD
+[2025-06-13 18:42:00] [DEBUG] Calculated features for SPY
+[2025-06-13 18:42:00] [DEBUG] Calculated features for SPY
+[2025-06-13 18:42:00] [DEBUG] Calculated features for SPY
+[2025-06-13 18:42:00] [DEBUG] Calculated features for SPY
+[2025-06-13 18:42:00] [DEBUG] Calculated features for SPY
+[2025-06-13 18:42:00] [INFO] SIGNAL: SPY reversion direction=-1 confidence=0.806564
+[2025-06-13 18:42:00] [INFO] Placing bracket order for SPY at $596.030000
+[2025-06-13 18:42:00] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:42:00] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:42:00] [INFO] SIGNAL: TSLA momentum direction=1 confidence=1.000000
+[2025-06-13 18:42:00] [INFO] Placing bracket order for TSLA at $324.230000
+[2025-06-13 18:42:00] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:42:00] [DEBUG] Calculated features for AMD
+[2025-06-13 18:42:00] [INFO] SIGNAL: AMD reversion direction=-1 confidence=0.753076
+[2025-06-13 18:42:00] [INFO] Placing bracket order for AMD at $115.230000
+[2025-06-13 18:42:00] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:42:00] [DEBUG] Calculated features for UNH
+[2025-06-13 18:42:00] [DEBUG] Calculated features for UNH
+[2025-06-13 18:42:00] [INFO] SIGNAL: UNH momentum direction=1 confidence=1.000000
+[2025-06-13 18:42:00] [INFO] Placing bracket order for UNH at $312.785000
+[2025-06-13 18:42:00] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:42:00] [DEBUG] Calculated features for IWM
+[2025-06-13 18:42:00] [DEBUG] Calculated features for IWM
+[2025-06-13 18:42:00] [DEBUG] Calculated features for IWM
+[2025-06-13 18:42:00] [DEBUG] Calculated features for IWM
+[2025-06-13 18:42:00] [DEBUG] Calculated features for IWM
+[2025-06-13 18:42:00] [DEBUG] Calculated features for IWM
+[2025-06-13 18:42:00] [DEBUG] Calculated features for IWM
+[2025-06-13 18:42:00] [DEBUG] Calculated features for IWM
+[2025-06-13 18:42:00] [INFO] SIGNAL: IWM momentum direction=1 confidence=0.865906
+[2025-06-13 18:42:00] [INFO] Placing bracket order for IWM at $208.770000
+[2025-06-13 18:42:00] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:42:00] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:42:00] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:42:00] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:42:00] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:42:00] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:42:00] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:42:00] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:42:00] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:42:00] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:42:00] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:42:01] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:42:01] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:42:01] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:42:01] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:42:01] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:42:01] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:42:01] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:42:01] [INFO] SIGNAL: GOOGL momentum direction=1 confidence=0.754825
+[2025-06-13 18:42:01] [INFO] Placing bracket order for GOOGL at $175.440000
+[2025-06-13 18:42:01] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:42:01] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:42:01] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:42:01] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:42:01] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:42:01] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:42:01] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:42:01] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:42:01] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:42:02] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:42:02] [INFO] SIGNAL: AAPL reversion direction=-1 confidence=0.882045
+[2025-06-13 18:42:02] [INFO] Placing bracket order for AAPL at $196.000000
+[2025-06-13 18:42:02] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:42:02] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:02] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:02] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:02] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:02] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:02] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:02] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:02] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:02] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:02] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:02] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:02] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:42:02] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:42:02] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:02] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:42:02] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:42:02] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:42:02] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:02] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:02] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:02] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:02] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:42:03] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:42:03] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:42:03] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:42:03] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:03] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:03] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:03] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:03] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:03] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:42:03] [INFO] SIGNAL: AMZN momentum direction=1 confidence=0.759829
+[2025-06-13 18:42:03] [INFO] Placing bracket order for AMZN at $212.010000
+[2025-06-13 18:42:03] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:42:03] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:42:03] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:42:03] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:42:03] [INFO] SIGNAL: MSFT reversion direction=-1 confidence=1.000000
+[2025-06-13 18:42:03] [INFO] Placing bracket order for MSFT at $473.230000
+[2025-06-13 18:42:03] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:42:03] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:42:03] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:42:03] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:42:03] [INFO] SIGNAL: SOXL reversion direction=-1 confidence=0.909072
+[2025-06-13 18:42:03] [INFO] Placing bracket order for SOXL at $19.983400
+[2025-06-13 18:42:03] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:42:03] [DEBUG] Calculated features for XOM
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for XOM
+[2025-06-13 18:42:03] [INFO] SIGNAL: XOM reversion direction=-1 confidence=1.000000
+[2025-06-13 18:42:03] [INFO] Placing bracket order for XOM at $111.960000
+[2025-06-13 18:42:03] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for META
+[2025-06-13 18:42:03] [DEBUG] Calculated features for BAC
+[2025-06-13 18:42:03] [DEBUG] Calculated features for META
+[2025-06-13 18:42:03] [DEBUG] Calculated features for META
+[2025-06-13 18:42:03] [DEBUG] Calculated features for COIN
+[2025-06-13 18:42:03] [DEBUG] Calculated features for COIN
+[2025-06-13 18:42:03] [DEBUG] Calculated features for META
+[2025-06-13 18:42:03] [INFO] SIGNAL: META momentum direction=1 confidence=0.674848
+[2025-06-13 18:42:03] [INFO] Placing bracket order for META at $684.710000
+[2025-06-13 18:42:03] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:42:03] [DEBUG] Calculated features for BAC
+[2025-06-13 18:42:03] [DEBUG] Calculated features for BAC
+[2025-06-13 18:42:03] [DEBUG] Calculated features for COIN
+[2025-06-13 18:42:03] [DEBUG] Calculated features for BAC
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for BAC
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:03] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:04] [DEBUG] Calculated features for V
+[2025-06-13 18:42:04] [DEBUG] Calculated features for COIN
+[2025-06-13 18:42:04] [DEBUG] Calculated features for COIN
+[2025-06-13 18:42:04] [DEBUG] Calculated features for COIN
+[2025-06-13 18:42:04] [DEBUG] Calculated features for COIN
+[2025-06-13 18:42:04] [DEBUG] Calculated features for COIN
+[2025-06-13 18:42:04] [DEBUG] Calculated features for V
+[2025-06-13 18:42:04] [DEBUG] Calculated features for V
+[2025-06-13 18:42:04] [DEBUG] Calculated features for V
+[2025-06-13 18:42:04] [DEBUG] Calculated features for V
+[2025-06-13 18:42:04] [DEBUG] Calculated features for V
+[2025-06-13 18:42:04] [DEBUG] Calculated features for V
+[2025-06-13 18:42:04] [DEBUG] Calculated features for V
+[2025-06-13 18:42:04] [DEBUG] Calculated features for V
+[2025-06-13 18:42:04] [DEBUG] Calculated features for V
+[2025-06-13 18:42:04] [DEBUG] Calculated features for V
+[2025-06-13 18:42:04] [DEBUG] Calculated features for V
+[2025-06-13 18:42:04] [DEBUG] Calculated features for V
+[2025-06-13 18:42:04] [DEBUG] Calculated features for V
+[2025-06-13 18:42:04] [DEBUG] Calculated features for V
+[2025-06-13 18:42:04] [DEBUG] Calculated features for V
+[2025-06-13 18:42:04] [INFO] SIGNAL: V momentum direction=1 confidence=1.000000
+[2025-06-13 18:42:04] [INFO] Placing bracket order for V at $350.000000
+[2025-06-13 18:42:04] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:42:04] [DEBUG] Calculated features for COIN
+[2025-06-13 18:42:04] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:04] [DEBUG] Calculated features for COIN
+[2025-06-13 18:42:04] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:04] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:04] [DEBUG] Calculated features for BAC
+[2025-06-13 18:42:04] [DEBUG] Calculated features for BAC
+[2025-06-13 18:42:04] [DEBUG] Calculated features for BAC
+[2025-06-13 18:42:04] [DEBUG] Calculated features for BAC
+[2025-06-13 18:42:05] [DEBUG] Calculated features for COIN
+[2025-06-13 18:42:05] [DEBUG] Calculated features for COIN
+[2025-06-13 18:42:05] [INFO] SIGNAL: COIN reversion direction=-1 confidence=1.000000
+[2025-06-13 18:42:05] [INFO] Placing bracket order for COIN at $237.980000
+[2025-06-13 18:42:05] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:42:05] [DEBUG] Calculated features for GLD
+[2025-06-13 18:42:05] [INFO] SIGNAL: GLD momentum direction=1 confidence=1.000000
+[2025-06-13 18:42:05] [INFO] Placing bracket order for GLD at $316.535000
+[2025-06-13 18:42:05] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:42:05] [DEBUG] Calculated features for WMT
+[2025-06-13 18:42:05] [DEBUG] Calculated features for WMT
+[2025-06-13 18:42:05] [INFO] SIGNAL: WMT momentum direction=1 confidence=0.839435
+[2025-06-13 18:42:05] [INFO] Placing bracket order for WMT at $94.380000
+[2025-06-13 18:42:05] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:42:05] [DEBUG] Calculated features for BAC
+[2025-06-13 18:42:06] [DEBUG] Calculated features for EEM
+[2025-06-13 18:42:06] [DEBUG] Calculated features for EEM
+[2025-06-13 18:42:06] [DEBUG] Calculated features for DIA
+[2025-06-13 18:42:06] [DEBUG] Calculated features for DIA
+[2025-06-13 18:42:07] [DEBUG] Calculated features for BAC
+[2025-06-13 18:42:07] [DEBUG] Calculated features for DIA
+[2025-06-13 18:42:07] [INFO] SIGNAL: DIA reversion direction=-1 confidence=0.753984
+[2025-06-13 18:42:07] [INFO] Placing bracket order for DIA at $421.830000
+[2025-06-13 18:42:07] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:42:07] [DEBUG] Calculated features for BAC
+[2025-06-13 18:42:08] [DEBUG] Calculated features for BAC
+[2025-06-13 18:42:08] [DEBUG] Calculated features for ARKK
+[2025-06-13 18:42:08] [DEBUG] Calculated features for ARKK
+[2025-06-13 18:42:09] [DEBUG] Calculated features for BAC
+[2025-06-13 18:42:10] [INFO] === CURRENT STATS ===
+[2025-06-13 18:42:10] [INFO] Messages processed: 20854
+[2025-06-13 18:42:10] [INFO] Signals generated: 20
+[2025-06-13 18:42:10] [INFO] Orders placed: 20
+[2025-06-13 18:42:10] [INFO] Orders successful: 0
+[2025-06-13 18:42:10] [INFO] Total errors: 0
+[2025-06-13 18:42:10] [INFO] Polygon connected: YES
+[2025-06-13 18:42:10] [INFO] Polygon authenticated: YES
+[2025-06-13 18:42:10] [INFO] ====================
+[2025-06-13 18:42:10] [INFO] Stopping SimpleHFTEngine...
+[2025-06-13 18:42:10] [INFO] === FINAL STATISTICS ===
+[2025-06-13 18:42:10] [INFO] Total messages processed: 20854
+[2025-06-13 18:42:10] [INFO] Total signals generated: 20
+[2025-06-13 18:42:10] [INFO] Total orders placed: 20
+[2025-06-13 18:42:10] [INFO] Total successful orders: 0
+[2025-06-13 18:42:10] [INFO] Total errors: 0
+[2025-06-13 18:42:10] [INFO] Order success rate: 0.000000%
+[2025-06-13 18:42:10] [INFO] Signal generation rate: 0.095905%
+[2025-06-13 18:42:10] [INFO] ========================
+[2025-06-13 18:42:10] [INFO] SimpleHFTEngine stopped
+[2025-06-13 18:46:27] [INFO] SimpleHFTEngine created
+[2025-06-13 18:46:27] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 18:46:27] [INFO] Testing Alpaca connection...
+[2025-06-13 18:46:27] [INFO] Alpaca connection successful
+[2025-06-13 18:46:27] [INFO] Loading portfolio data...
+[2025-06-13 18:46:27] [INFO] Account Info:
+[2025-06-13 18:46:27] [INFO]   Portfolio Value: $49823.440000
+[2025-06-13 18:46:27] [INFO]   Buying Power: $90900.940000
+[2025-06-13 18:46:27] [INFO]   Cash: $46538.230000
+[2025-06-13 18:46:27] [INFO] Current positions: 6
+[2025-06-13 18:46:27] [INFO] Existing positions will be tracked for risk management
+[2025-06-13 18:46:27] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 18:46:27] [INFO] Subscribing to market data...
+[2025-06-13 18:46:27] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 18:46:27] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 18:46:27] [INFO] Starting SimpleHFTEngine...
+[2025-06-13 18:46:27] [INFO] === SIMPLE HFT ENGINE STARTED ===
+[2025-06-13 18:46:27] [INFO] Symbols: 25
+[2025-06-13 18:46:27] [INFO] Confidence threshold: 0.650000
+[2025-06-13 18:46:27] [INFO] Position size: 10.000000%
+[2025-06-13 18:46:27] [INFO] Max positions: 5
+[2025-06-13 18:46:27] [INFO] =====================================
+[2025-06-13 18:46:27] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:27] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:27] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:27] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for V
+[2025-06-13 18:46:27] [DEBUG] Calculated features for V
+[2025-06-13 18:46:27] [DEBUG] Calculated features for V
+[2025-06-13 18:46:27] [DEBUG] Calculated features for V
+[2025-06-13 18:46:27] [DEBUG] Calculated features for V
+[2025-06-13 18:46:27] [DEBUG] Calculated features for V
+[2025-06-13 18:46:27] [DEBUG] Calculated features for V
+[2025-06-13 18:46:27] [INFO] SIGNAL: V momentum direction=1 confidence=0.687416
+[2025-06-13 18:46:27] [INFO] Placing bracket order for V at $350.640000
+[2025-06-13 18:46:27] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for NVDA
+[2025-06-13 18:46:27] [INFO] SIGNAL: NVDA momentum direction=1 confidence=0.741013
+[2025-06-13 18:46:27] [INFO] Placing bracket order for NVDA at $141.455000
+[2025-06-13 18:46:27] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:46:27] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:27] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:27] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:27] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:27] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:27] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:27] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:27] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:27] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:27] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:27] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:27] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:27] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:27] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:27] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:27] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:46:28] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TQQQ
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TQQQ
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:46:28] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TQQQ
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TQQQ
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TQQQ
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TQQQ
+[2025-06-13 18:46:28] [INFO] SIGNAL: TQQQ reversion direction=-1 confidence=0.899042
+[2025-06-13 18:46:28] [INFO] Placing bracket order for TQQQ at $72.780000
+[2025-06-13 18:46:28] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AMD
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AMD
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AMZN
+[2025-06-13 18:46:28] [INFO] SIGNAL: AMZN reversion direction=-1 confidence=1.000000
+[2025-06-13 18:46:28] [INFO] Placing bracket order for AMZN at $212.055600
+[2025-06-13 18:46:28] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AMD
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AMD
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AMD
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AMD
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AMD
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:28] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:46:28] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:28] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:46:28] [DEBUG] Calculated features for TSLA
+[2025-06-13 18:46:28] [INFO] SIGNAL: TSLA momentum direction=1 confidence=0.703967
+[2025-06-13 18:46:28] [INFO] Placing bracket order for TSLA at $324.920000
+[2025-06-13 18:46:29] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:46:29] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:46:29] [DEBUG] Calculated features for QQQ
+[2025-06-13 18:46:29] [INFO] SIGNAL: QQQ momentum direction=1 confidence=1.000000
+[2025-06-13 18:46:29] [INFO] Placing bracket order for QQQ at $526.900000
+[2025-06-13 18:46:29] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:46:29] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:29] [DEBUG] Calculated features for AMD
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:29] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:29] [DEBUG] Calculated features for AMD
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:29] [DEBUG] Calculated features for AMD
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for AAPL
+[2025-06-13 18:46:29] [INFO] SIGNAL: AAPL reversion direction=-1 confidence=0.775594
+[2025-06-13 18:46:29] [INFO] Placing bracket order for AAPL at $196.150000
+[2025-06-13 18:46:29] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:46:29] [DEBUG] Calculated features for AMD
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:29] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:29] [DEBUG] Calculated features for AMD
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for GOOGL
+[2025-06-13 18:46:29] [INFO] SIGNAL: GOOGL momentum direction=1 confidence=1.000000
+[2025-06-13 18:46:29] [INFO] Placing bracket order for GOOGL at $175.620000
+[2025-06-13 18:46:29] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:29] [DEBUG] Calculated features for AMD
+[2025-06-13 18:46:29] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for AMD
+[2025-06-13 18:46:29] [DEBUG] Calculated features for AMD
+[2025-06-13 18:46:29] [DEBUG] Calculated features for AMD
+[2025-06-13 18:46:29] [DEBUG] Calculated features for AMD
+[2025-06-13 18:46:29] [DEBUG] Calculated features for AMD
+[2025-06-13 18:46:29] [INFO] SIGNAL: AMD momentum direction=1 confidence=0.901302
+[2025-06-13 18:46:29] [INFO] Placing bracket order for AMD at $115.479500
+[2025-06-13 18:46:29] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:46:29] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:29] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:29] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:29] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:29] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:29] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:46:29] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:29] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:29] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:29] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:29] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:29] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:29] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:29] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:29] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:29] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:30] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:30] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:30] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:30] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:30] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:30] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:30] [DEBUG] Calculated features for META
+[2025-06-13 18:46:30] [DEBUG] Calculated features for META
+[2025-06-13 18:46:30] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:30] [DEBUG] Calculated features for MSFT
+[2025-06-13 18:46:30] [INFO] SIGNAL: MSFT reversion direction=-1 confidence=0.657187
+[2025-06-13 18:46:30] [INFO] Placing bracket order for MSFT at $473.760000
+[2025-06-13 18:46:30] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for META
+[2025-06-13 18:46:30] [DEBUG] Calculated features for META
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for META
+[2025-06-13 18:46:30] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:30] [DEBUG] Calculated features for META
+[2025-06-13 18:46:30] [DEBUG] Calculated features for META
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:30] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:31] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:31] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:31] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:31] [DEBUG] Calculated features for META
+[2025-06-13 18:46:31] [DEBUG] Calculated features for META
+[2025-06-13 18:46:31] [DEBUG] Calculated features for SPY
+[2025-06-13 18:46:31] [INFO] SIGNAL: SPY reversion direction=-1 confidence=0.966348
+[2025-06-13 18:46:31] [INFO] Placing bracket order for SPY at $596.750000
+[2025-06-13 18:46:31] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:46:31] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:31] [DEBUG] Calculated features for META
+[2025-06-13 18:46:31] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:31] [DEBUG] Calculated features for META
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for META
+[2025-06-13 18:46:31] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:31] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:31] [DEBUG] Calculated features for META
+[2025-06-13 18:46:31] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:31] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for BAC
+[2025-06-13 18:46:31] [DEBUG] Calculated features for BAC
+[2025-06-13 18:46:31] [DEBUG] Calculated features for BAC
+[2025-06-13 18:46:31] [DEBUG] Calculated features for BAC
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for BAC
+[2025-06-13 18:46:31] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:31] [DEBUG] Calculated features for BAC
+[2025-06-13 18:46:31] [DEBUG] Calculated features for META
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:31] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for META
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for META
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for META
+[2025-06-13 18:46:31] [DEBUG] Calculated features for META
+[2025-06-13 18:46:31] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:31] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:31] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:31] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:31] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:31] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for META
+[2025-06-13 18:46:31] [DEBUG] Calculated features for META
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:31] [DEBUG] Calculated features for IWM
+[2025-06-13 18:46:31] [INFO] SIGNAL: IWM reversion direction=-1 confidence=1.000000
+[2025-06-13 18:46:31] [INFO] Placing bracket order for IWM at $209.300000
+[2025-06-13 18:46:31] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:46:31] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:31] [DEBUG] Calculated features for META
+[2025-06-13 18:46:31] [DEBUG] Calculated features for BAC
+[2025-06-13 18:46:31] [DEBUG] Calculated features for BAC
+[2025-06-13 18:46:31] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:31] [DEBUG] Calculated features for BAC
+[2025-06-13 18:46:31] [DEBUG] Calculated features for BAC
+[2025-06-13 18:46:32] [DEBUG] Calculated features for BAC
+[2025-06-13 18:46:32] [INFO] SIGNAL: BAC momentum direction=1 confidence=1.000000
+[2025-06-13 18:46:32] [INFO] Placing bracket order for BAC at $44.118200
+[2025-06-13 18:46:32] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:46:32] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:32] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:32] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:32] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:32] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:32] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:32] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:32] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:32] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:32] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:32] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:32] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:32] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:32] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:32] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:32] [DEBUG] Calculated features for META
+[2025-06-13 18:46:32] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:32] [DEBUG] Calculated features for META
+[2025-06-13 18:46:32] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:32] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:32] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:32] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:32] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:32] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:32] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:32] [DEBUG] Calculated features for META
+[2025-06-13 18:46:32] [DEBUG] Calculated features for META
+[2025-06-13 18:46:32] [DEBUG] Calculated features for META
+[2025-06-13 18:46:32] [DEBUG] Calculated features for META
+[2025-06-13 18:46:32] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:32] [DEBUG] Calculated features for META
+[2025-06-13 18:46:32] [DEBUG] Calculated features for META
+[2025-06-13 18:46:32] [DEBUG] Calculated features for META
+[2025-06-13 18:46:32] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:32] [DEBUG] Calculated features for META
+[2025-06-13 18:46:32] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:32] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:32] [DEBUG] Calculated features for META
+[2025-06-13 18:46:32] [DEBUG] Calculated features for WMT
+[2025-06-13 18:46:32] [INFO] SIGNAL: WMT momentum direction=1 confidence=1.000000
+[2025-06-13 18:46:32] [INFO] Placing bracket order for WMT at $94.465000
+[2025-06-13 18:46:32] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:46:32] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:32] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:32] [DEBUG] Calculated features for META
+[2025-06-13 18:46:32] [INFO] SIGNAL: META momentum direction=1 confidence=1.000000
+[2025-06-13 18:46:32] [INFO] Placing bracket order for META at $685.558000
+[2025-06-13 18:46:32] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:46:32] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:33] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:33] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:33] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:33] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:33] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:33] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:33] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:33] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:33] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:33] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:33] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:33] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:33] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:33] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:33] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:33] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:33] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:33] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:33] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:33] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:33] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:33] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:33] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:33] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:33] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:33] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:33] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:33] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:33] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:33] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:33] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:33] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:34] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:34] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:34] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:35] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:35] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:35] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:35] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:35] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:35] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:35] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:35] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:35] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:35] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:35] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:35] [DEBUG] Calculated features for VXX
+[2025-06-13 18:46:35] [INFO] SIGNAL: VXX reversion direction=-1 confidence=1.000000
+[2025-06-13 18:46:35] [INFO] Placing bracket order for VXX at $55.400000
+[2025-06-13 18:46:35] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:46:35] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:36] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:36] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:36] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:36] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:36] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:36] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:36] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:36] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:36] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:36] [DEBUG] Calculated features for DIA
+[2025-06-13 18:46:36] [DEBUG] Calculated features for DIA
+[2025-06-13 18:46:36] [INFO] SIGNAL: DIA momentum direction=1 confidence=1.000000
+[2025-06-13 18:46:36] [INFO] Placing bracket order for DIA at $422.335000
+[2025-06-13 18:46:36] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:46:36] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:36] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:36] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:36] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:36] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:36] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:36] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:36] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:37] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:37] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:37] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:37] [DEBUG] Calculated features for GLD
+[2025-06-13 18:46:37] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:37] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:37] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:37] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:37] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:37] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:37] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:37] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:37] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:37] [DEBUG] Calculated features for SOXL
+[2025-06-13 18:46:37] [DEBUG] Calculated features for XOM
+[2025-06-13 18:46:37] [DEBUG] Calculated features for UNH
+[2025-06-13 18:46:37] [INFO] === CURRENT STATS ===
+[2025-06-13 18:46:37] [INFO] Messages processed: 19177
+[2025-06-13 18:46:37] [INFO] Signals generated: 17
+[2025-06-13 18:46:37] [INFO] Orders placed: 17
+[2025-06-13 18:46:37] [INFO] Orders successful: 0
+[2025-06-13 18:46:37] [INFO] Total errors: 0
+[2025-06-13 18:46:37] [INFO] Polygon connected: YES
+[2025-06-13 18:46:37] [INFO] Polygon authenticated: YES
+[2025-06-13 18:46:37] [INFO] ====================
+[2025-06-13 18:46:37] [INFO] Stopping SimpleHFTEngine...
+[2025-06-13 18:46:37] [INFO] === FINAL STATISTICS ===
+[2025-06-13 18:46:37] [INFO] Total messages processed: 19177
+[2025-06-13 18:46:37] [INFO] Total signals generated: 17
+[2025-06-13 18:46:37] [INFO] Total orders placed: 17
+[2025-06-13 18:46:37] [INFO] Total successful orders: 0
+[2025-06-13 18:46:37] [INFO] Total errors: 0
+[2025-06-13 18:46:37] [INFO] Order success rate: 0.000000%
+[2025-06-13 18:46:37] [INFO] Signal generation rate: 0.088648%
+[2025-06-13 18:46:37] [INFO] ========================
+[2025-06-13 18:46:37] [INFO] SimpleHFTEngine stopped
+[2025-06-13 18:51:13] [INFO] SimpleHFTEngine created
+[2025-06-13 18:51:13] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 18:51:13] [INFO] Testing Alpaca connection...
+[2025-06-13 18:51:13] [INFO] Alpaca connection successful
+[2025-06-13 18:51:13] [INFO] Loading portfolio data...
+[2025-06-13 18:51:13] [INFO] Account Info:
+[2025-06-13 18:51:13] [INFO]   Portfolio Value: $49817.220000
+[2025-06-13 18:51:13] [INFO]   Buying Power: $90905.290000
+[2025-06-13 18:51:13] [INFO]   Cash: $46538.230000
+[2025-06-13 18:51:13] [INFO] Current positions: 6
+[2025-06-13 18:51:13] [INFO] Existing positions will be tracked for risk management
+[2025-06-13 18:51:13] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 18:51:13] [INFO] Subscribing to market data...
+[2025-06-13 18:51:13] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 18:51:13] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 18:51:13] [INFO] Starting SimpleHFTEngine...
+[2025-06-13 18:51:13] [INFO] === SIMPLE HFT ENGINE STARTED ===
+[2025-06-13 18:51:13] [INFO] Symbols: 25
+[2025-06-13 18:51:13] [INFO] Confidence threshold: 0.650000
+[2025-06-13 18:51:13] [INFO] Position size: 4.000000%
+[2025-06-13 18:51:13] [INFO] Max positions: 24
+[2025-06-13 18:51:13] [INFO] =====================================
+[2025-06-13 18:51:14] [INFO] SIGNAL: QQQ momentum direction=1 confidence=1.000000
+[2025-06-13 18:51:14] [INFO] Placing bracket order for QQQ at $526.200000
+[2025-06-13 18:51:14] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:51:14] [INFO] SIGNAL: AMD momentum direction=1 confidence=0.864310
+[2025-06-13 18:51:14] [INFO] Placing bracket order for AMD at $115.400000
+[2025-06-13 18:51:14] [INFO] ✅ Order successful: ebc05644-59a3-4945-96bf-8de8123a52ae
+[2025-06-13 18:51:14] [INFO] SIGNAL: NVDA reversion direction=-1 confidence=0.943495
+[2025-06-13 18:51:14] [INFO] Placing bracket order for NVDA at $141.180100
+[2025-06-13 18:51:14] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:51:17] [INFO] SIGNAL: WMT momentum direction=1 confidence=1.000000
+[2025-06-13 18:51:17] [INFO] Placing bracket order for WMT at $94.320000
+[2025-06-13 18:51:17] [INFO] ✅ Order successful: 21811bd9-222a-47b2-baa1-2a6511315cc4
+[2025-06-13 18:51:18] [INFO] SIGNAL: AAPL momentum direction=1 confidence=0.707610
+[2025-06-13 18:51:18] [INFO] Placing bracket order for AAPL at $196.040000
+[2025-06-13 18:51:18] [INFO] ✅ Order successful: 685f14e0-d7e7-4222-ac3a-0956a4ecd48d
+[2025-06-13 18:51:18] [INFO] SIGNAL: AMZN momentum direction=1 confidence=0.838968
+[2025-06-13 18:51:18] [INFO] Placing bracket order for AMZN at $211.750100
+[2025-06-13 18:51:18] [INFO] ✅ Order successful: b82897d4-fdd1-4245-81f8-64daec2a7295
+[2025-06-13 18:51:18] [INFO] SIGNAL: TQQQ momentum direction=1 confidence=0.692289
+[2025-06-13 18:51:18] [INFO] Placing bracket order for TQQQ at $72.520000
+[2025-06-13 18:51:18] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:51:20] [INFO] Stopping SimpleHFTEngine...
+[2025-06-13 18:51:20] [INFO] === FINAL STATISTICS ===
+[2025-06-13 18:51:20] [INFO] Total messages processed: 16152
+[2025-06-13 18:51:20] [INFO] Total signals generated: 7
+[2025-06-13 18:51:20] [INFO] Total orders placed: 7
+[2025-06-13 18:51:20] [INFO] Total successful orders: 4
+[2025-06-13 18:51:20] [INFO] Total errors: 0
+[2025-06-13 18:51:20] [INFO] Order success rate: 57.142857%
+[2025-06-13 18:51:20] [INFO] Signal generation rate: 0.043338%
+[2025-06-13 18:51:20] [INFO] ========================
+[2025-06-13 18:51:20] [INFO] SimpleHFTEngine stopped
+[2025-06-13 18:55:58] [INFO] SimpleHFTEngine created
+[2025-06-13 18:55:58] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 18:55:58] [INFO] Testing Alpaca connection...
+[2025-06-13 18:55:58] [INFO] Alpaca connection successful
+[2025-06-13 18:55:58] [INFO] Loading portfolio data...
+[2025-06-13 18:55:58] [INFO] Account Info:
+[2025-06-13 18:55:58] [INFO]   Portfolio Value: $49831.340000
+[2025-06-13 18:55:58] [INFO]   Buying Power: $84449.320000
+[2025-06-13 18:55:58] [INFO]   Cash: $46538.230000
+[2025-06-13 18:55:58] [INFO] Current positions: 6
+[2025-06-13 18:55:58] [INFO] Existing positions will be tracked for risk management
+[2025-06-13 18:55:58] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 18:55:59] [INFO] Subscribing to market data...
+[2025-06-13 18:55:59] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 18:55:59] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 18:55:59] [INFO] Starting SimpleHFTEngine...
+[2025-06-13 18:55:59] [INFO] === SIMPLE HFT ENGINE STARTED ===
+[2025-06-13 18:55:59] [INFO] Symbols: 25
+[2025-06-13 18:55:59] [INFO] Confidence threshold: 0.750000
+[2025-06-13 18:55:59] [INFO] Position size: $2000.000000
+[2025-06-13 18:55:59] [INFO] Max positions: 24
+[2025-06-13 18:55:59] [INFO] =====================================
+[2025-06-13 18:56:04] [INFO] SIGNAL: XOM momentum direction=1 confidence=0.770848
+[2025-06-13 18:56:04] [INFO] Placing bracket order for XOM at $112.110000
+[2025-06-13 18:56:04] [INFO] ✅ Order successful: e7c42ec7-b35b-4ab0-8d36-5a37cb114a95
+[2025-06-13 18:56:04] [INFO] SIGNAL: NVDA reversion direction=-1 confidence=1.000000
+[2025-06-13 18:56:04] [INFO] Placing bracket order for NVDA at $141.520100
+[2025-06-13 18:56:04] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:56:05] [INFO] SIGNAL: SPY reversion direction=-1 confidence=0.795761
+[2025-06-13 18:56:05] [INFO] Placing bracket order for SPY at $596.750000
+[2025-06-13 18:56:05] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:56:05] [INFO] SIGNAL: AAPL momentum direction=1 confidence=0.778476
+[2025-06-13 18:56:05] [INFO] Placing bracket order for AAPL at $196.300000
+[2025-06-13 18:56:05] [INFO] ✅ Order successful: 7bb7a62f-0c74-4caa-ae57-8345c3d3c1f2
+[2025-06-13 18:56:06] [INFO] SIGNAL: SOXL reversion direction=-1 confidence=1.000000
+[2025-06-13 18:56:06] [INFO] Placing bracket order for SOXL at $20.110400
+[2025-06-13 18:56:06] [INFO] ✅ Order successful: 2ca7b511-1a76-45d3-857b-786424983823
+[2025-06-13 18:56:11] [INFO] SIGNAL: TQQQ reversion direction=-1 confidence=0.882235
+[2025-06-13 18:56:11] [INFO] Placing bracket order for TQQQ at $72.830000
+[2025-06-13 18:56:11] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:56:11] [INFO] SIGNAL: META momentum direction=1 confidence=1.000000
+[2025-06-13 18:56:11] [INFO] Placing bracket order for META at $684.381800
+[2025-06-13 18:56:11] [INFO] ✅ Order successful: 42987488-4415-49f0-8a1c-4fca7b553957
+[2025-06-13 18:56:12] [INFO] SIGNAL: TSLA reversion direction=-1 confidence=0.787617
+[2025-06-13 18:56:12] [INFO] Placing bracket order for TSLA at $325.800000
+[2025-06-13 18:56:12] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 18:56:16] [INFO] Stopping SimpleHFTEngine...
+[2025-06-13 18:56:16] [INFO] === FINAL STATISTICS ===
+[2025-06-13 18:56:16] [INFO] Total messages processed: 40792
+[2025-06-13 18:56:16] [INFO] Total signals generated: 8
+[2025-06-13 18:56:16] [INFO] Total orders placed: 8
+[2025-06-13 18:56:16] [INFO] Total successful orders: 4
+[2025-06-13 18:56:16] [INFO] Total errors: 0
+[2025-06-13 18:56:16] [INFO] Order success rate: 50.000000%
+[2025-06-13 18:56:16] [INFO] Signal generation rate: 0.019612%
+[2025-06-13 18:56:16] [INFO] ========================
+[2025-06-13 18:56:16] [INFO] SimpleHFTEngine stopped
+[2025-06-13 18:58:40] [INFO] SimpleHFTEngine created
+[2025-06-13 18:58:40] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 18:58:40] [INFO] Testing Alpaca connection...
+[2025-06-13 18:58:40] [INFO] Alpaca connection successful
+[2025-06-13 18:58:40] [INFO] Loading portfolio data...
+[2025-06-13 18:58:40] [INFO] Account Info:
+[2025-06-13 18:58:40] [INFO]   Portfolio Value: $49833.180000
+[2025-06-13 18:58:40] [INFO]   Buying Power: $75241.230000
+[2025-06-13 18:58:40] [INFO]   Cash: $41809.570000
+[2025-06-13 18:58:40] [INFO] Current positions: 11
+[2025-06-13 18:58:40] [INFO] Existing positions will be tracked for risk management
+[2025-06-13 18:58:40] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 18:58:40] [INFO] Subscribing to market data...
+[2025-06-13 18:58:40] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 18:58:40] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 18:58:40] [INFO] Starting SimpleHFTEngine...
+[2025-06-13 18:58:40] [INFO] === SIMPLE HFT ENGINE STARTED ===
+[2025-06-13 18:58:40] [INFO] Symbols: 25
+[2025-06-13 18:58:40] [INFO] Confidence threshold: 0.800000
+[2025-06-13 18:58:40] [INFO] Position size: $2000.000000
+[2025-06-13 18:58:40] [INFO] Max positions: 24
+[2025-06-13 18:58:40] [INFO] =====================================
+[2025-06-13 18:59:00] [INFO] Stopping SimpleHFTEngine...
+[2025-06-13 18:59:00] [INFO] === FINAL STATISTICS ===
+[2025-06-13 18:59:00] [INFO] Total messages processed: 21075
+[2025-06-13 18:59:00] [INFO] Total signals generated: 0
+[2025-06-13 18:59:00] [INFO] Total orders placed: 0
+[2025-06-13 18:59:00] [INFO] Total successful orders: 0
+[2025-06-13 18:59:00] [INFO] Total errors: 0
+[2025-06-13 18:59:00] [INFO] Signal generation rate: 0.000000%
+[2025-06-13 18:59:00] [INFO] ========================
+[2025-06-13 18:59:00] [INFO] SimpleHFTEngine stopped
+[2025-06-13 18:59:36] [INFO] SimpleHFTEngine created
+[2025-06-13 18:59:36] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 18:59:36] [INFO] Testing Alpaca connection...
+[2025-06-13 18:59:36] [INFO] Alpaca connection successful
+[2025-06-13 18:59:36] [INFO] Loading portfolio data...
+[2025-06-13 18:59:36] [INFO] Account Info:
+[2025-06-13 18:59:36] [INFO]   Portfolio Value: $49833.370000
+[2025-06-13 18:59:36] [INFO]   Buying Power: $75229.930000
+[2025-06-13 18:59:36] [INFO]   Cash: $41809.570000
+[2025-06-13 18:59:36] [INFO] Current positions: 11
+[2025-06-13 18:59:36] [INFO] Existing positions will be tracked for risk management
+[2025-06-13 18:59:36] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 18:59:37] [INFO] Subscribing to market data...
+[2025-06-13 18:59:37] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 18:59:37] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 18:59:37] [INFO] Starting SimpleHFTEngine...
+[2025-06-13 18:59:37] [INFO] === SIMPLE HFT ENGINE STARTED ===
+[2025-06-13 18:59:37] [INFO] Symbols: 25
+[2025-06-13 18:59:37] [INFO] Confidence threshold: 0.800000
+[2025-06-13 18:59:37] [INFO] Position size: $2000.000000
+[2025-06-13 18:59:37] [INFO] Max positions: 24
+[2025-06-13 18:59:37] [INFO] =====================================
+[2025-06-13 19:00:11] [INFO] Stopping SimpleHFTEngine...
+[2025-06-13 19:00:11] [INFO] === FINAL STATISTICS ===
+[2025-06-13 19:00:11] [INFO] Total messages processed: 69894
+[2025-06-13 19:00:11] [INFO] Total signals generated: 0
+[2025-06-13 19:00:11] [INFO] Total orders placed: 0
+[2025-06-13 19:00:11] [INFO] Total successful orders: 0
+[2025-06-13 19:00:11] [INFO] Total errors: 0
+[2025-06-13 19:00:11] [INFO] Signal generation rate: 0.000000%
+[2025-06-13 19:00:11] [INFO] ========================
+[2025-06-13 19:00:11] [INFO] SimpleHFTEngine stopped
+[2025-06-13 19:03:20] [INFO] SimpleHFTEngine created
+[2025-06-13 19:03:20] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 19:03:20] [INFO] Testing Alpaca connection...
+[2025-06-13 19:03:20] [INFO] Alpaca connection successful
+[2025-06-13 19:03:20] [INFO] Loading portfolio data...
+[2025-06-13 19:03:20] [INFO] Account Info:
+[2025-06-13 19:03:20] [INFO]   Portfolio Value: $49829.420000
+[2025-06-13 19:03:20] [INFO]   Buying Power: $75214.020000
+[2025-06-13 19:03:20] [INFO]   Cash: $41809.570000
+[2025-06-13 19:03:20] [INFO] Current positions: 11
+[2025-06-13 19:03:20] [INFO] Existing positions will be tracked for risk management
+[2025-06-13 19:03:20] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 19:03:20] [INFO] Subscribing to market data...
+[2025-06-13 19:03:20] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 19:03:20] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 19:03:20] [INFO] Starting SimpleHFTEngine...
+[2025-06-13 19:03:20] [INFO] === SIMPLE HFT ENGINE STARTED ===
+[2025-06-13 19:03:20] [INFO] Symbols: 25
+[2025-06-13 19:03:20] [INFO] Confidence threshold: 0.800000
+[2025-06-13 19:03:20] [INFO] Position size: $2000.000000
+[2025-06-13 19:03:20] [INFO] Max positions: 24
+[2025-06-13 19:03:20] [INFO] =====================================
+[2025-06-13 19:03:50] [INFO] SIGNAL: IWM momentum direction=1 confidence=1.000000
+[2025-06-13 19:03:50] [INFO] Placing bracket order for IWM at $209.229300
+[2025-06-13 19:03:50] [INFO] ✅ Order successful: f1f79eac-f0c8-46dd-8b0b-6631c25144c8
+[2025-06-13 19:05:40] [INFO] SIGNAL: TSLA momentum direction=1 confidence=0.876407
+[2025-06-13 19:05:40] [INFO] Placing bracket order for TSLA at $325.739000
+[2025-06-13 19:05:40] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:05:50] [INFO] Stopping SimpleHFTEngine...
+[2025-06-13 19:05:50] [INFO] === FINAL STATISTICS ===
+[2025-06-13 19:05:50] [INFO] Total messages processed: 242823
+[2025-06-13 19:05:50] [INFO] Total signals generated: 2
+[2025-06-13 19:05:50] [INFO] Total orders placed: 2
+[2025-06-13 19:05:50] [INFO] Total successful orders: 1
+[2025-06-13 19:05:50] [INFO] Total errors: 0
+[2025-06-13 19:05:50] [INFO] Order success rate: 50.000000%
+[2025-06-13 19:05:50] [INFO] Signal generation rate: 0.000824%
+[2025-06-13 19:05:50] [INFO] ========================
+[2025-06-13 19:05:50] [INFO] SimpleHFTEngine stopped
+[2025-06-13 19:06:20] [INFO] SimpleHFTEngine created
+[2025-06-13 19:06:20] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 19:06:20] [INFO] Testing Alpaca connection...
+[2025-06-13 19:06:20] [INFO] Alpaca connection successful
+[2025-06-13 19:06:20] [INFO] Loading portfolio data...
+[2025-06-13 19:06:20] [INFO] Account Info:
+[2025-06-13 19:06:20] [INFO]   Portfolio Value: $49828.640000
+[2025-06-13 19:06:20] [INFO]   Buying Power: $73327.320000
+[2025-06-13 19:06:20] [INFO]   Cash: $39925.690000
+[2025-06-13 19:06:20] [INFO] Current positions: 12
+[2025-06-13 19:06:20] [INFO] Existing positions will be tracked for risk management
+[2025-06-13 19:06:20] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 19:06:21] [INFO] Subscribing to market data...
+[2025-06-13 19:06:21] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 19:06:21] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 19:06:21] [INFO] 🚨 EMERGENCY LIQUIDATION INITIATED 🚨
+[2025-06-13 19:06:21] [INFO] ✅ Complete liquidation successful - portfolio reset to cash
+[2025-06-13 19:06:43] [INFO] SimpleHFTEngine created
+[2025-06-13 19:06:43] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 19:06:43] [INFO] Testing Alpaca connection...
+[2025-06-13 19:06:43] [INFO] Alpaca connection successful
+[2025-06-13 19:06:43] [INFO] Loading portfolio data...
+[2025-06-13 19:06:43] [INFO] Account Info:
+[2025-06-13 19:06:43] [INFO]   Portfolio Value: $49827.060000
+[2025-06-13 19:06:43] [INFO]   Buying Power: $99654.120000
+[2025-06-13 19:06:43] [INFO]   Cash: $49827.060000
+[2025-06-13 19:06:43] [INFO] Current positions: 0
+[2025-06-13 19:06:43] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 19:06:43] [INFO] Subscribing to market data...
+[2025-06-13 19:06:43] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 19:06:43] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 19:06:43] [INFO] Starting SimpleHFTEngine...
+[2025-06-13 19:06:43] [INFO] === SIMPLE HFT ENGINE STARTED ===
+[2025-06-13 19:06:43] [INFO] Symbols: 25
+[2025-06-13 19:06:43] [INFO] Confidence threshold: 0.800000
+[2025-06-13 19:06:43] [INFO] Position size: $2000.000000
+[2025-06-13 19:06:43] [INFO] Max positions: 24
+[2025-06-13 19:06:43] [INFO] =====================================
+[2025-06-13 19:06:45] [INFO] SIGNAL: SPY momentum direction=1 confidence=0.924449
+[2025-06-13 19:06:45] [INFO] Placing bracket order for SPY at $596.810000
+[2025-06-13 19:06:45] [INFO] ✅ Order successful: d452acee-de93-4b22-a2db-8f48ac348ad1
+[2025-06-13 19:06:45] [INFO] SIGNAL: AMZN momentum direction=1 confidence=0.950000
+[2025-06-13 19:06:45] [INFO] Placing bracket order for AMZN at $211.720000
+[2025-06-13 19:06:45] [INFO] ✅ Order successful: a524cc7a-0c36-45ed-bc3e-1a60f85860fc
+[2025-06-13 19:06:46] [INFO] SIGNAL: TSLA reversion direction=-1 confidence=0.950000
+[2025-06-13 19:06:46] [INFO] Placing bracket order for TSLA at $326.580000
+[2025-06-13 19:06:46] [INFO] ✅ Order successful: a7c11911-26c4-4d72-ba86-63657b8d34ea
+[2025-06-13 19:06:46] [INFO] SIGNAL: NVDA momentum direction=1 confidence=0.950000
+[2025-06-13 19:06:46] [INFO] Placing bracket order for NVDA at $141.780100
+[2025-06-13 19:06:46] [INFO] ✅ Order successful: f7ea87a6-1b39-48df-a015-bb55c34e547c
+[2025-06-13 19:06:46] [INFO] SIGNAL: AAPL reversion direction=-1 confidence=0.922108
+[2025-06-13 19:06:46] [INFO] Placing bracket order for AAPL at $196.280000
+[2025-06-13 19:06:46] [INFO] ✅ Order successful: 3dbe15d3-e5a4-4342-bfa6-2ac5115748a8
+[2025-06-13 19:06:47] [INFO] SIGNAL: META reversion direction=-1 confidence=0.950000
+[2025-06-13 19:06:47] [INFO] Placing bracket order for META at $683.040000
+[2025-06-13 19:06:47] [INFO] ✅ Order successful: ccc9892e-8820-46b5-b2b7-3dea6ab82799
+[2025-06-13 19:06:47] [INFO] SIGNAL: GOOGL momentum direction=1 confidence=0.950000
+[2025-06-13 19:06:47] [INFO] Placing bracket order for GOOGL at $175.360000
+[2025-06-13 19:06:47] [INFO] ✅ Order successful: 5872a7a7-e29b-42d7-948f-b88118f130f8
+[2025-06-13 19:06:48] [INFO] SIGNAL: UNH reversion direction=-1 confidence=0.950000
+[2025-06-13 19:06:48] [INFO] Placing bracket order for UNH at $313.040000
+[2025-06-13 19:06:48] [INFO] ✅ Order successful: c9f2e28b-34fd-4ddc-a1c5-b8f0c7674e0e
+[2025-06-13 19:06:49] [INFO] SIGNAL: WMT momentum direction=1 confidence=0.900389
+[2025-06-13 19:06:49] [INFO] Placing bracket order for WMT at $94.375800
+[2025-06-13 19:06:49] [INFO] ✅ Order successful: 53d9a470-0944-4109-b0f2-03b01d8a23da
+[2025-06-13 19:06:50] [INFO] SIGNAL: QQQ momentum direction=1 confidence=0.944646
+[2025-06-13 19:06:50] [INFO] Placing bracket order for QQQ at $527.020000
+[2025-06-13 19:06:50] [INFO] ✅ Order successful: c7720359-3002-47e6-bfeb-eb64e120067b
+[2025-06-13 19:06:50] [INFO] SIGNAL: V reversion direction=-1 confidence=0.950000
+[2025-06-13 19:06:50] [INFO] Placing bracket order for V at $351.225000
+[2025-06-13 19:06:50] [INFO] ✅ Order successful: 6af4c02f-1a36-4484-900d-7a4ec2e4a2a5
+[2025-06-13 19:06:53] [INFO] Stopping SimpleHFTEngine...
+[2025-06-13 19:06:53] [INFO] === FINAL STATISTICS ===
+[2025-06-13 19:06:53] [INFO] Total messages processed: 11317
+[2025-06-13 19:06:53] [INFO] Total signals generated: 11
+[2025-06-13 19:06:53] [INFO] Total orders placed: 11
+[2025-06-13 19:06:53] [INFO] Total successful orders: 11
+[2025-06-13 19:06:53] [INFO] Total errors: 0
+[2025-06-13 19:06:53] [INFO] Order success rate: 100.000000%
+[2025-06-13 19:06:53] [INFO] Signal generation rate: 0.097199%
+[2025-06-13 19:06:53] [INFO] ========================
+[2025-06-13 19:06:53] [INFO] SimpleHFTEngine stopped
+[2025-06-13 19:10:02] [INFO] SimpleHFTEngine created
+[2025-06-13 19:10:02] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 19:10:02] [INFO] Testing Alpaca connection...
+[2025-06-13 19:10:02] [INFO] Alpaca connection successful
+[2025-06-13 19:10:02] [INFO] Loading portfolio data...
+[2025-06-13 19:10:02] [INFO] Account Info:
+[2025-06-13 19:10:02] [INFO]   Portfolio Value: $49821.060000
+[2025-06-13 19:10:02] [INFO]   Buying Power: $79513.750000
+[2025-06-13 19:10:02] [INFO]   Cash: $47575.330000
+[2025-06-13 19:10:02] [INFO] Current positions: 11
+[2025-06-13 19:10:02] [INFO] Existing positions will be tracked for risk management
+[2025-06-13 19:10:02] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 19:10:02] [INFO] Subscribing to market data...
+[2025-06-13 19:10:02] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 19:10:02] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 19:10:02] [INFO] 🚨 EMERGENCY LIQUIDATION INITIATED 🚨
+[2025-06-13 19:10:02] [INFO] ✅ Complete liquidation successful - portfolio reset to cash
+[2025-06-13 19:10:05] [INFO] SimpleHFTEngine created
+[2025-06-13 19:10:05] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 19:10:05] [INFO] Testing Alpaca connection...
+[2025-06-13 19:10:06] [INFO] Alpaca connection successful
+[2025-06-13 19:10:06] [INFO] Loading portfolio data...
+[2025-06-13 19:10:06] [INFO] Account Info:
+[2025-06-13 19:10:06] [INFO]   Portfolio Value: $49819.150000
+[2025-06-13 19:10:06] [INFO]   Buying Power: $99638.300000
+[2025-06-13 19:10:06] [INFO]   Cash: $49819.150000
+[2025-06-13 19:10:06] [INFO] Current positions: 0
+[2025-06-13 19:10:06] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 19:10:06] [INFO] Subscribing to market data...
+[2025-06-13 19:10:06] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 19:10:06] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 19:10:06] [INFO] Starting SimpleHFTEngine...
+[2025-06-13 19:10:06] [INFO] === SIMPLE HFT ENGINE STARTED ===
+[2025-06-13 19:10:06] [INFO] Symbols: 25
+[2025-06-13 19:10:06] [INFO] Confidence threshold: 0.800000
+[2025-06-13 19:10:06] [INFO] Position size: $2000.000000
+[2025-06-13 19:10:06] [INFO] Max positions: 24
+[2025-06-13 19:10:06] [INFO] =====================================
+[2025-06-13 19:10:06] [INFO] SIGNAL: NVDA momentum direction=1 confidence=0.850000
+[2025-06-13 19:10:06] [INFO] Placing bracket order for NVDA at $141.919700
+[2025-06-13 19:10:06] [INFO] ✅ Order successful: 6da98942-f345-4750-b38e-e2659b490fd8
+[2025-06-13 19:10:07] [INFO] SIGNAL: SPY reversion direction=-1 confidence=0.850000
+[2025-06-13 19:10:07] [INFO] Placing bracket order for SPY at $597.373100
+[2025-06-13 19:10:07] [INFO] ✅ Order successful: b956e857-d830-415c-8e9f-2abf38698b58
+[2025-06-13 19:10:08] [INFO] SIGNAL: XOM momentum direction=1 confidence=0.850000
+[2025-06-13 19:10:08] [INFO] Placing bracket order for XOM at $112.440000
+[2025-06-13 19:10:08] [INFO] ✅ Order successful: cb654ef5-0d7f-498a-b84f-b776e6ac5df9
+[2025-06-13 19:10:08] [INFO] SIGNAL: TQQQ momentum direction=1 confidence=0.850000
+[2025-06-13 19:10:08] [INFO] Placing bracket order for TQQQ at $73.069900
+[2025-06-13 19:10:08] [INFO] ✅ Order successful: 2659866c-bfe2-455b-b30b-96f355609379
+[2025-06-13 19:10:11] [INFO] SIGNAL: AAPL momentum direction=1 confidence=0.850000
+[2025-06-13 19:10:11] [INFO] Placing bracket order for AAPL at $196.565000
+[2025-06-13 19:10:11] [INFO] ✅ Order successful: 71247eb7-eeb5-4782-b4a1-1b34f0c4638f
+[2025-06-13 19:10:11] [INFO] SIGNAL: TSLA momentum direction=1 confidence=0.850000
+[2025-06-13 19:10:11] [INFO] Placing bracket order for TSLA at $327.990000
+[2025-06-13 19:10:11] [INFO] ✅ Order successful: 527328fc-5b78-4e93-93ae-6f1373999dae
+[2025-06-13 19:10:11] [INFO] SIGNAL: QQQ momentum direction=1 confidence=0.850000
+[2025-06-13 19:10:11] [INFO] Placing bracket order for QQQ at $527.549000
+[2025-06-13 19:10:11] [INFO] ✅ Order successful: 6c19720f-d26b-4903-94e7-46b24e25eea6
+[2025-06-13 19:10:12] [INFO] Stopping SimpleHFTEngine...
+[2025-06-13 19:10:12] [INFO] === FINAL STATISTICS ===
+[2025-06-13 19:10:12] [INFO] Total messages processed: 9206
+[2025-06-13 19:10:12] [INFO] Total signals generated: 7
+[2025-06-13 19:10:12] [INFO] Total orders placed: 7
+[2025-06-13 19:10:12] [INFO] Total successful orders: 7
+[2025-06-13 19:10:12] [INFO] Total errors: 0
+[2025-06-13 19:10:12] [INFO] Order success rate: 100.000000%
+[2025-06-13 19:10:12] [INFO] Signal generation rate: 0.076037%
+[2025-06-13 19:10:12] [INFO] ========================
+[2025-06-13 19:10:12] [INFO] SimpleHFTEngine stopped
+[2025-06-13 19:12:09] [INFO] SimpleHFTEngine created
+[2025-06-13 19:12:09] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 19:12:09] [INFO] Testing Alpaca connection...
+[2025-06-13 19:12:09] [INFO] Alpaca connection successful
+[2025-06-13 19:12:09] [INFO] Loading portfolio data...
+[2025-06-13 19:12:09] [INFO] Account Info:
+[2025-06-13 19:12:09] [INFO]   Portfolio Value: $49810.210000
+[2025-06-13 19:12:09] [INFO]   Buying Power: $84483.430000
+[2025-06-13 19:12:09] [INFO]   Cash: $40223.880000
+[2025-06-13 19:12:09] [INFO] Current positions: 7
+[2025-06-13 19:12:09] [INFO] Existing positions will be tracked for risk management
+[2025-06-13 19:12:09] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 19:12:10] [INFO] Subscribing to market data...
+[2025-06-13 19:12:10] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 19:12:10] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 19:12:10] [INFO] 🚨 EMERGENCY LIQUIDATION INITIATED 🚨
+[2025-06-13 19:12:10] [INFO] SIGNAL: QQQ momentum direction=1 confidence=0.850000
+[2025-06-13 19:12:10] [INFO] Placing bracket order for QQQ at $527.195000
+[2025-06-13 19:12:10] [WARN] ❌ Order failed: Failed to get account information
+[2025-06-13 19:12:10] [INFO] SIGNAL: COIN reversion direction=-1 confidence=0.850000
+[2025-06-13 19:12:10] [INFO] Placing bracket order for COIN at $241.800000
+[2025-06-13 19:12:10] [WARN] ❌ Order failed: Failed to get account information
+[2025-06-13 19:13:41] [INFO] SimpleHFTEngine created
+[2025-06-13 19:13:41] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 19:13:41] [INFO] Testing Alpaca connection...
+[2025-06-13 19:13:41] [INFO] Alpaca connection successful
+[2025-06-13 19:13:41] [INFO] Loading portfolio data...
+[2025-06-13 19:13:41] [INFO] Account Info:
+[2025-06-13 19:13:41] [INFO]   Portfolio Value: $49810.790000
+[2025-06-13 19:13:41] [INFO]   Buying Power: $99621.580000
+[2025-06-13 19:13:41] [INFO]   Cash: $49810.790000
+[2025-06-13 19:13:41] [INFO] Current positions: 0
+[2025-06-13 19:13:41] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 19:13:41] [INFO] Subscribing to market data...
+[2025-06-13 19:13:41] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 19:13:41] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 19:13:41] [INFO] 🚨 EMERGENCY LIQUIDATION INITIATED 🚨
+[2025-06-13 19:13:41] [INFO] ✅ Complete liquidation successful - portfolio reset to cash
+[2025-06-13 19:13:49] [INFO] SimpleHFTEngine created
+[2025-06-13 19:13:49] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 19:13:49] [INFO] Testing Alpaca connection...
+[2025-06-13 19:13:49] [INFO] Alpaca connection successful
+[2025-06-13 19:13:49] [INFO] Loading portfolio data...
+[2025-06-13 19:13:49] [INFO] Account Info:
+[2025-06-13 19:13:49] [INFO]   Portfolio Value: $49810.790000
+[2025-06-13 19:13:49] [INFO]   Buying Power: $99621.580000
+[2025-06-13 19:13:49] [INFO]   Cash: $49810.790000
+[2025-06-13 19:13:49] [INFO] Current positions: 0
+[2025-06-13 19:13:49] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 19:13:49] [INFO] Subscribing to market data...
+[2025-06-13 19:13:49] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 19:13:49] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 19:13:49] [INFO] Starting SimpleHFTEngine...
+[2025-06-13 19:13:49] [INFO] === SIMPLE HFT ENGINE STARTED ===
+[2025-06-13 19:13:49] [INFO] Symbols: 25
+[2025-06-13 19:13:49] [INFO] Confidence threshold: 0.800000
+[2025-06-13 19:13:49] [INFO] Position size: $2000.000000
+[2025-06-13 19:13:49] [INFO] Max positions: 24
+[2025-06-13 19:13:49] [INFO] =====================================
+[2025-06-13 19:13:49] [INFO] SIGNAL: AMZN momentum direction=1 confidence=0.820998
+[2025-06-13 19:13:49] [INFO] Placing bracket order for AMZN at $211.990000
+[2025-06-13 19:13:49] [INFO] ✅ Order successful: 348eda03-1c87-45ba-a6d6-e49f2fcd2023
+[2025-06-13 19:13:51] [INFO] SIGNAL: NVDA momentum direction=1 confidence=0.850000
+[2025-06-13 19:13:51] [INFO] Placing bracket order for NVDA at $141.875000
+[2025-06-13 19:13:51] [INFO] ✅ Order successful: 675fb5cb-f766-4c41-b081-9231965adfc8
+[2025-06-13 19:13:52] [INFO] SIGNAL: SPY reversion direction=-1 confidence=0.850000
+[2025-06-13 19:13:52] [INFO] Placing bracket order for SPY at $597.285000
+[2025-06-13 19:13:52] [INFO] ✅ Order successful: a9d68e49-e870-4ae5-bf7a-43e5d650604a
+[2025-06-13 19:13:54] [INFO] SIGNAL: TQQQ momentum direction=1 confidence=0.850000
+[2025-06-13 19:13:54] [INFO] Placing bracket order for TQQQ at $73.030100
+[2025-06-13 19:13:54] [INFO] ✅ Order successful: fb5dbd24-d654-4a3e-a436-400b2b8ec79d
+[2025-06-13 19:13:55] [INFO] SIGNAL: TSLA momentum direction=1 confidence=0.850000
+[2025-06-13 19:13:55] [INFO] Placing bracket order for TSLA at $328.240000
+[2025-06-13 19:13:55] [INFO] ✅ Order successful: ad15d690-37b6-4fa4-a559-4159f7203845
+[2025-06-13 19:13:55] [INFO] SIGNAL: AAPL reversion direction=-1 confidence=0.850000
+[2025-06-13 19:13:55] [INFO] Placing bracket order for AAPL at $196.350000
+[2025-06-13 19:13:55] [INFO] ✅ Order successful: 8344d766-7dc4-49b4-b993-baf60e4689cd
+[2025-06-13 19:13:58] [INFO] SIGNAL: UNH momentum direction=1 confidence=0.818285
+[2025-06-13 19:13:58] [INFO] Placing bracket order for UNH at $313.370000
+[2025-06-13 19:13:58] [INFO] ✅ Order successful: 5aa79798-e2de-41a0-9240-196a6d9203e6
+[2025-06-13 19:14:01] [INFO] SIGNAL: SOXL reversion direction=-1 confidence=0.850000
+[2025-06-13 19:14:01] [INFO] Placing bracket order for SOXL at $20.210000
+[2025-06-13 19:14:01] [INFO] ✅ Order successful: 3e3e95ba-7e2e-4e58-8d4a-6ae787666642
+[2025-06-13 19:14:02] [INFO] SIGNAL: GLD reversion direction=-1 confidence=0.850000
+[2025-06-13 19:14:02] [INFO] Placing bracket order for GLD at $316.660000
+[2025-06-13 19:14:02] [INFO] ✅ Order successful: 518ec771-4636-42d0-8455-341f5bc140b1
+[2025-06-13 19:14:03] [INFO] SIGNAL: BAC reversion direction=-1 confidence=0.850000
+[2025-06-13 19:14:03] [INFO] Placing bracket order for BAC at $44.100000
+[2025-06-13 19:14:03] [INFO] ✅ Order successful: 825dfec5-e0b3-40b4-8d11-2d1a860e37de
+[2025-06-13 19:14:03] [INFO] SIGNAL: WMT reversion direction=-1 confidence=0.850000
+[2025-06-13 19:14:03] [INFO] Placing bracket order for WMT at $94.510000
+[2025-06-13 19:14:03] [INFO] ✅ Order successful: 26faffb7-df80-480a-aa4b-bc8a579e79db
+[2025-06-13 19:14:05] [INFO] SIGNAL: AMD momentum direction=1 confidence=0.850000
+[2025-06-13 19:14:05] [INFO] Placing bracket order for AMD at $116.120000
+[2025-06-13 19:14:05] [INFO] ✅ Order successful: ef55d84d-bb41-438a-9d97-ea8aecd943b4
+[2025-06-13 19:14:05] [INFO] SIGNAL: XOM reversion direction=-1 confidence=0.850000
+[2025-06-13 19:14:05] [INFO] Placing bracket order for XOM at $112.310000
+[2025-06-13 19:14:05] [INFO] ✅ Order successful: c46174a0-9abe-4751-bf0b-dee9f05685d0
+[2025-06-13 19:14:09] [INFO] SIGNAL: GOOGL reversion direction=-1 confidence=0.850000
+[2025-06-13 19:14:09] [INFO] Placing bracket order for GOOGL at $175.540000
+[2025-06-13 19:14:09] [INFO] ✅ Order successful: 62f3aff7-256d-468b-9335-2974c3580fbd
+[2025-06-13 19:14:09] [INFO] SIGNAL: MSFT reversion direction=-1 confidence=0.850000
+[2025-06-13 19:14:09] [INFO] Placing bracket order for MSFT at $474.430000
+[2025-06-13 19:14:09] [INFO] ✅ Order successful: 167d84eb-0695-4559-ae99-7629a3e3fa51
+[2025-06-13 19:14:11] [INFO] SIGNAL: META reversion direction=-1 confidence=0.850000
+[2025-06-13 19:14:11] [INFO] Placing bracket order for META at $683.180000
+[2025-06-13 19:14:11] [INFO] ✅ Order successful: 2b1733d8-d3a9-4309-9657-fd42d29b9181
+[2025-06-13 19:14:13] [INFO] SIGNAL: QQQ momentum direction=1 confidence=0.850000
+[2025-06-13 19:14:13] [INFO] Placing bracket order for QQQ at $527.600000
+[2025-06-13 19:14:13] [INFO] ✅ Order successful: e0c40b38-cfd2-4faf-8046-7bbd1afa6d2c
+[2025-06-13 19:14:22] [INFO] SIGNAL: SPY reversion direction=-1 confidence=0.850000
+[2025-06-13 19:14:22] [INFO] Placing bracket order for SPY at $597.260000
+[2025-06-13 19:14:22] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:14:25] [INFO] SIGNAL: TSLA momentum direction=1 confidence=0.850000
+[2025-06-13 19:14:25] [INFO] Placing bracket order for TSLA at $328.790000
+[2025-06-13 19:14:25] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:14:28] [INFO] SIGNAL: NVDA momentum direction=1 confidence=0.850000
+[2025-06-13 19:14:28] [INFO] Placing bracket order for NVDA at $141.910100
+[2025-06-13 19:14:28] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:14:31] [INFO] SIGNAL: TLT momentum direction=1 confidence=0.850000
+[2025-06-13 19:14:31] [INFO] Placing bracket order for TLT at $86.140000
+[2025-06-13 19:14:31] [INFO] ✅ Order successful: 5b8ed380-1ed1-47f3-a802-72baba429e02
+[2025-06-13 19:14:32] [INFO] SIGNAL: AAPL momentum direction=1 confidence=0.850000
+[2025-06-13 19:14:32] [INFO] Placing bracket order for AAPL at $196.470000
+[2025-06-13 19:14:32] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:14:33] [INFO] SIGNAL: AMZN reversion direction=-1 confidence=0.850000
+[2025-06-13 19:14:33] [INFO] Placing bracket order for AMZN at $212.032400
+[2025-06-13 19:14:33] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:14:36] [INFO] SIGNAL: COIN reversion direction=-1 confidence=0.850000
+[2025-06-13 19:14:36] [INFO] Placing bracket order for COIN at $242.480000
+[2025-06-13 19:14:36] [INFO] ✅ Order successful: 6267348e-1ce4-47a6-a044-f3cc2fc109e3
+[2025-06-13 19:14:36] [INFO] SIGNAL: UNH reversion direction=-1 confidence=0.850000
+[2025-06-13 19:14:36] [INFO] Placing bracket order for UNH at $313.285500
+[2025-06-13 19:14:36] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:14:38] [INFO] SIGNAL: SOXL reversion direction=-1 confidence=0.850000
+[2025-06-13 19:14:38] [INFO] Placing bracket order for SOXL at $20.230000
+[2025-06-13 19:14:38] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:14:38] [INFO] SIGNAL: TQQQ reversion direction=-1 confidence=0.850000
+[2025-06-13 19:14:38] [INFO] Placing bracket order for TQQQ at $73.100000
+[2025-06-13 19:14:38] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:14:39] [INFO] SIGNAL: AMD momentum direction=1 confidence=0.840251
+[2025-06-13 19:14:39] [INFO] Placing bracket order for AMD at $116.239700
+[2025-06-13 19:14:39] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:14:41] [INFO] SIGNAL: BAC momentum direction=1 confidence=0.850000
+[2025-06-13 19:14:41] [INFO] Placing bracket order for BAC at $44.110000
+[2025-06-13 19:14:41] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:14:41] [INFO] SIGNAL: MSFT reversion direction=-1 confidence=0.850000
+[2025-06-13 19:14:41] [INFO] Placing bracket order for MSFT at $474.278200
+[2025-06-13 19:14:41] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:14:44] [INFO] SIGNAL: META reversion direction=-1 confidence=0.850000
+[2025-06-13 19:14:44] [INFO] Placing bracket order for META at $683.500000
+[2025-06-13 19:14:44] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:14:44] [INFO] SIGNAL: EEM momentum direction=1 confidence=0.850000
+[2025-06-13 19:14:44] [INFO] Placing bracket order for EEM at $47.070000
+[2025-06-13 19:14:44] [INFO] ✅ Order successful: 61a264f1-0aa2-405f-aa78-1abfe858aa4e
+[2025-06-13 19:14:45] [INFO] SIGNAL: GLD momentum direction=1 confidence=0.830019
+[2025-06-13 19:14:45] [INFO] Placing bracket order for GLD at $316.555000
+[2025-06-13 19:14:45] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:14:51] [INFO] SIGNAL: XOM reversion direction=-1 confidence=0.850000
+[2025-06-13 19:14:51] [INFO] Placing bracket order for XOM at $112.346400
+[2025-06-13 19:14:51] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:14:57] [INFO] SIGNAL: WMT momentum direction=1 confidence=0.826675
+[2025-06-13 19:14:57] [INFO] Placing bracket order for WMT at $94.520000
+[2025-06-13 19:14:57] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:14:58] [INFO] SIGNAL: DIA reversion direction=-1 confidence=0.850000
+[2025-06-13 19:14:58] [INFO] Placing bracket order for DIA at $422.650000
+[2025-06-13 19:14:58] [INFO] ✅ Order successful: 8fd8e9ee-47ad-487a-9935-95650d915bc2
+[2025-06-13 19:14:58] [INFO] SIGNAL: TSLA reversion direction=-1 confidence=0.831088
+[2025-06-13 19:14:58] [INFO] Placing bracket order for TSLA at $328.920000
+[2025-06-13 19:14:58] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:00] [INFO] SIGNAL: SPY reversion direction=-1 confidence=0.803174
+[2025-06-13 19:15:00] [INFO] Placing bracket order for SPY at $597.490000
+[2025-06-13 19:15:00] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:00] [INFO] SIGNAL: NVDA momentum direction=1 confidence=0.850000
+[2025-06-13 19:15:00] [INFO] Placing bracket order for NVDA at $141.969900
+[2025-06-13 19:15:00] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:02] [INFO] SIGNAL: GOOGL momentum direction=1 confidence=0.850000
+[2025-06-13 19:15:02] [INFO] Placing bracket order for GOOGL at $175.650000
+[2025-06-13 19:15:02] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:03] [INFO] SIGNAL: QQQ momentum direction=1 confidence=0.850000
+[2025-06-13 19:15:03] [INFO] Placing bracket order for QQQ at $527.620000
+[2025-06-13 19:15:03] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:07] [INFO] SIGNAL: UNH reversion direction=-1 confidence=0.807865
+[2025-06-13 19:15:07] [INFO] Placing bracket order for UNH at $313.140000
+[2025-06-13 19:15:07] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:10] [INFO] SIGNAL: TLT reversion direction=-1 confidence=0.850000
+[2025-06-13 19:15:10] [INFO] Placing bracket order for TLT at $86.160000
+[2025-06-13 19:15:10] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:11] [INFO] SIGNAL: AMZN reversion direction=-1 confidence=0.832871
+[2025-06-13 19:15:11] [INFO] Placing bracket order for AMZN at $212.020100
+[2025-06-13 19:15:11] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:12] [INFO] SIGNAL: BAC momentum direction=1 confidence=0.850000
+[2025-06-13 19:15:12] [INFO] Placing bracket order for BAC at $44.110000
+[2025-06-13 19:15:12] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:12] [INFO] SIGNAL: TQQQ momentum direction=1 confidence=0.850000
+[2025-06-13 19:15:12] [INFO] Placing bracket order for TQQQ at $73.140000
+[2025-06-13 19:15:12] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:13] [INFO] SIGNAL: COIN momentum direction=1 confidence=0.846750
+[2025-06-13 19:15:13] [INFO] Placing bracket order for COIN at $242.580000
+[2025-06-13 19:15:13] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:15] [INFO] SIGNAL: AMD momentum direction=1 confidence=0.831697
+[2025-06-13 19:15:15] [INFO] Placing bracket order for AMD at $116.229200
+[2025-06-13 19:15:15] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:18] [INFO] SIGNAL: SOXL reversion direction=-1 confidence=0.850000
+[2025-06-13 19:15:18] [INFO] Placing bracket order for SOXL at $20.239900
+[2025-06-13 19:15:18] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:20] [INFO] SIGNAL: V reversion direction=-1 confidence=0.850000
+[2025-06-13 19:15:20] [INFO] Placing bracket order for V at $351.907400
+[2025-06-13 19:15:20] [INFO] ✅ Order successful: bf2a9ba6-d657-4a3e-847b-2a73b63765f1
+[2025-06-13 19:15:21] [INFO] SIGNAL: META reversion direction=-1 confidence=0.850000
+[2025-06-13 19:15:21] [INFO] Placing bracket order for META at $683.650000
+[2025-06-13 19:15:21] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:22] [INFO] SIGNAL: MSFT reversion direction=-1 confidence=0.850000
+[2025-06-13 19:15:22] [INFO] Placing bracket order for MSFT at $474.530000
+[2025-06-13 19:15:22] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:25] [INFO] SIGNAL: GLD momentum direction=1 confidence=0.850000
+[2025-06-13 19:15:25] [INFO] Placing bracket order for GLD at $316.580000
+[2025-06-13 19:15:25] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:27] [INFO] SIGNAL: XOM momentum direction=1 confidence=0.850000
+[2025-06-13 19:15:27] [INFO] Placing bracket order for XOM at $112.415600
+[2025-06-13 19:15:27] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:28] [INFO] SIGNAL: AAPL momentum direction=1 confidence=0.846628
+[2025-06-13 19:15:28] [INFO] Placing bracket order for AAPL at $196.440000
+[2025-06-13 19:15:28] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:30] [INFO] SIGNAL: SPY momentum direction=1 confidence=0.850000
+[2025-06-13 19:15:30] [INFO] Placing bracket order for SPY at $597.440000
+[2025-06-13 19:15:30] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:31] [INFO] SIGNAL: TSLA momentum direction=1 confidence=0.850000
+[2025-06-13 19:15:31] [INFO] Placing bracket order for TSLA at $329.000000
+[2025-06-13 19:15:31] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:32] [INFO] SIGNAL: NVDA reversion direction=-1 confidence=0.850000
+[2025-06-13 19:15:32] [INFO] Placing bracket order for NVDA at $141.975000
+[2025-06-13 19:15:32] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:34] [INFO] SIGNAL: QQQ reversion direction=-1 confidence=0.850000
+[2025-06-13 19:15:34] [INFO] Placing bracket order for QQQ at $527.680000
+[2025-06-13 19:15:34] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:37] [INFO] SIGNAL: WMT reversion direction=-1 confidence=0.850000
+[2025-06-13 19:15:37] [INFO] Placing bracket order for WMT at $94.490000
+[2025-06-13 19:15:37] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:40] [INFO] SIGNAL: IWM reversion direction=-1 confidence=0.850000
+[2025-06-13 19:15:40] [INFO] Placing bracket order for IWM at $209.290700
+[2025-06-13 19:15:40] [INFO] ✅ Order successful: 86d81d7a-c707-41fa-8695-0b810d8842fe
+[2025-06-13 19:15:43] [INFO] SIGNAL: UNH momentum direction=1 confidence=0.850000
+[2025-06-13 19:15:43] [INFO] Placing bracket order for UNH at $313.240000
+[2025-06-13 19:15:43] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:45] [INFO] SIGNAL: COIN momentum direction=1 confidence=0.850000
+[2025-06-13 19:15:45] [INFO] Placing bracket order for COIN at $242.360500
+[2025-06-13 19:15:45] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:47] [INFO] SIGNAL: AMD momentum direction=1 confidence=0.850000
+[2025-06-13 19:15:47] [INFO] Placing bracket order for AMD at $116.200000
+[2025-06-13 19:15:47] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:48] [INFO] SIGNAL: BAC momentum direction=1 confidence=0.850000
+[2025-06-13 19:15:48] [INFO] Placing bracket order for BAC at $44.100000
+[2025-06-13 19:15:48] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:49] [INFO] SIGNAL: SOXL reversion direction=-1 confidence=0.823405
+[2025-06-13 19:15:49] [INFO] Placing bracket order for SOXL at $20.225000
+[2025-06-13 19:15:49] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:52] [INFO] SIGNAL: MSFT momentum direction=1 confidence=0.850000
+[2025-06-13 19:15:52] [INFO] Placing bracket order for MSFT at $474.358000
+[2025-06-13 19:15:52] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:54] [INFO] SIGNAL: V momentum direction=1 confidence=0.850000
+[2025-06-13 19:15:54] [INFO] Placing bracket order for V at $351.938300
+[2025-06-13 19:15:54] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:15:57] [INFO] SIGNAL: GOOGL momentum direction=1 confidence=0.850000
+[2025-06-13 19:15:57] [INFO] Placing bracket order for GOOGL at $175.592000
+[2025-06-13 19:15:57] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:16:01] [INFO] SIGNAL: TQQQ momentum direction=1 confidence=0.850000
+[2025-06-13 19:16:01] [INFO] Placing bracket order for TQQQ at $73.120000
+[2025-06-13 19:16:01] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:16:02] [INFO] SIGNAL: SPY reversion direction=-1 confidence=0.850000
+[2025-06-13 19:16:02] [INFO] Placing bracket order for SPY at $597.370000
+[2025-06-13 19:16:02] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:16:02] [INFO] SIGNAL: AAPL reversion direction=-1 confidence=0.850000
+[2025-06-13 19:16:02] [INFO] Placing bracket order for AAPL at $196.440000
+[2025-06-13 19:16:02] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:16:03] [INFO] SIGNAL: META reversion direction=-1 confidence=0.850000
+[2025-06-13 19:16:03] [INFO] Placing bracket order for META at $683.965100
+[2025-06-13 19:16:03] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:16:03] [INFO] SIGNAL: NVDA momentum direction=1 confidence=0.850000
+[2025-06-13 19:16:03] [INFO] Placing bracket order for NVDA at $141.990100
+[2025-06-13 19:16:03] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:16:06] [INFO] SIGNAL: TSLA reversion direction=-1 confidence=0.850000
+[2025-06-13 19:16:06] [INFO] Placing bracket order for TSLA at $328.841800
+[2025-06-13 19:16:06] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:16:08] [INFO] SIGNAL: AMZN reversion direction=-1 confidence=0.850000
+[2025-06-13 19:16:08] [INFO] Placing bracket order for AMZN at $212.030000
+[2025-06-13 19:16:08] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:16:08] [INFO] SIGNAL: QQQ momentum direction=1 confidence=0.850000
+[2025-06-13 19:16:08] [INFO] Placing bracket order for QQQ at $527.560000
+[2025-06-13 19:16:09] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:16:11] [INFO] SIGNAL: IWM reversion direction=-1 confidence=0.850000
+[2025-06-13 19:16:11] [INFO] Placing bracket order for IWM at $209.310000
+[2025-06-13 19:16:11] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:16:15] [INFO] SIGNAL: VXX reversion direction=-1 confidence=0.850000
+[2025-06-13 19:16:15] [INFO] Placing bracket order for VXX at $54.840000
+[2025-06-13 19:16:15] [WARN] ❌ Order failed: Order rejected: asset "VXX" cannot be sold short
+[2025-06-13 19:16:16] [INFO] SIGNAL: UNH momentum direction=1 confidence=0.807548
+[2025-06-13 19:16:16] [INFO] Placing bracket order for UNH at $313.240000
+[2025-06-13 19:16:16] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:16:18] [INFO] SIGNAL: XOM momentum direction=1 confidence=0.850000
+[2025-06-13 19:16:18] [INFO] Placing bracket order for XOM at $112.380000
+[2025-06-13 19:16:18] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:16:20] [INFO] SIGNAL: EEM reversion direction=-1 confidence=0.850000
+[2025-06-13 19:16:20] [INFO] Placing bracket order for EEM at $47.065000
+[2025-06-13 19:16:20] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:16:20] [INFO] SIGNAL: COIN momentum direction=1 confidence=0.850000
+[2025-06-13 19:16:20] [INFO] Placing bracket order for COIN at $242.520000
+[2025-06-13 19:16:20] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:16:20] [INFO] SIGNAL: TLT reversion direction=-1 confidence=0.850000
+[2025-06-13 19:16:20] [INFO] Placing bracket order for TLT at $86.170000
+[2025-06-13 19:16:20] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:16:25] [INFO] SIGNAL: MSFT momentum direction=1 confidence=0.850000
+[2025-06-13 19:16:25] [INFO] Placing bracket order for MSFT at $474.350600
+[2025-06-13 19:16:25] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:16:28] [INFO] SIGNAL: WMT momentum direction=1 confidence=0.850000
+[2025-06-13 19:16:28] [INFO] Placing bracket order for WMT at $94.460000
+[2025-06-13 19:16:28] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:16:28] [INFO] SIGNAL: SOXL reversion direction=-1 confidence=0.850000
+[2025-06-13 19:16:28] [INFO] Placing bracket order for SOXL at $20.230000
+[2025-06-13 19:16:28] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:16:32] [INFO] SIGNAL: TQQQ momentum direction=1 confidence=0.850000
+[2025-06-13 19:16:32] [INFO] Placing bracket order for TQQQ at $73.100500
+[2025-06-13 19:16:32] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:16:34] [INFO] SIGNAL: NVDA reversion direction=-1 confidence=0.850000
+[2025-06-13 19:16:34] [INFO] Placing bracket order for NVDA at $142.059900
+[2025-06-13 19:16:34] [WARN] ❌ Order failed: Order rejected by risk checks
+[2025-06-13 19:16:35] [INFO] Stopping SimpleHFTEngine...
+[2025-06-13 19:16:35] [INFO] === FINAL STATISTICS ===
+[2025-06-13 19:16:35] [INFO] Total messages processed: 299153
+[2025-06-13 19:16:35] [INFO] Total signals generated: 89
+[2025-06-13 19:16:35] [INFO] Total orders placed: 89
+[2025-06-13 19:16:35] [INFO] Total successful orders: 23
+[2025-06-13 19:16:35] [INFO] Total errors: 0
+[2025-06-13 19:16:35] [INFO] Order success rate: 25.842697%
+[2025-06-13 19:16:35] [INFO] Signal generation rate: 0.029751%
+[2025-06-13 19:16:35] [INFO] ========================
+[2025-06-13 19:16:35] [INFO] SimpleHFTEngine stopped
+[2025-06-13 19:17:26] [INFO] SimpleHFTEngine created
+[2025-06-13 19:17:26] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 19:17:26] [INFO] Testing Alpaca connection...
+[2025-06-13 19:17:26] [INFO] Alpaca connection successful
+[2025-06-13 19:17:26] [INFO] Loading portfolio data...
+[2025-06-13 19:17:26] [INFO] Account Info:
+[2025-06-13 19:17:26] [INFO]   Portfolio Value: $49818.120000
+[2025-06-13 19:17:26] [INFO]   Buying Power: $58382.280000
+[2025-06-13 19:17:26] [INFO]   Cash: $62507.730000
+[2025-06-13 19:17:26] [INFO] Current positions: 21
+[2025-06-13 19:17:26] [INFO] Existing positions will be tracked for risk management
+[2025-06-13 19:17:26] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 19:17:26] [INFO] Subscribing to market data...
+[2025-06-13 19:17:26] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 19:17:26] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 19:17:26] [INFO] 🚨 EMERGENCY LIQUIDATION INITIATED 🚨
+[2025-06-13 19:17:28] [INFO] ✅ Complete liquidation successful - portfolio reset to cash
+[2025-06-13 19:17:34] [INFO] SimpleHFTEngine created
+[2025-06-13 19:17:34] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 19:17:34] [INFO] Testing Alpaca connection...
+[2025-06-13 19:17:34] [INFO] Alpaca connection successful
+[2025-06-13 19:17:34] [INFO] Loading portfolio data...
+[2025-06-13 19:17:34] [INFO] Account Info:
+[2025-06-13 19:17:34] [INFO]   Portfolio Value: $49815.540000
+[2025-06-13 19:17:34] [INFO]   Buying Power: $99631.080000
+[2025-06-13 19:17:34] [INFO]   Cash: $49815.540000
+[2025-06-13 19:17:34] [INFO] Current positions: 0
+[2025-06-13 19:17:34] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 19:17:34] [INFO] Subscribing to market data...
+[2025-06-13 19:17:34] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 19:17:34] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 19:17:34] [INFO] Starting SimpleHFTEngine...
+[2025-06-13 19:17:34] [INFO] === SIMPLE HFT ENGINE STARTED ===
+[2025-06-13 19:17:34] [INFO] Symbols: 25
+[2025-06-13 19:17:34] [INFO] Confidence threshold: 0.800000
+[2025-06-13 19:17:34] [INFO] Position size: $2000.000000
+[2025-06-13 19:17:34] [INFO] Max positions: 24
+[2025-06-13 19:17:34] [INFO] =====================================
+[2025-06-13 19:17:35] [INFO] SIGNAL: TSLA momentum direction=1 confidence=0.850000
+[2025-06-13 19:17:35] [INFO] Placing bracket order for TSLA at $329.010000
+[2025-06-13 19:17:35] [INFO] ✅ Order successful: 86c2c6a9-cc0d-42fe-a756-ff9df76350df
+[2025-06-13 19:17:36] [INFO] SIGNAL: NVDA reversion direction=-1 confidence=0.837531
+[2025-06-13 19:17:36] [INFO] Placing bracket order for NVDA at $141.880000
+[2025-06-13 19:17:36] [INFO] ✅ Order successful: fab2c011-38ad-4484-96b2-c7b9ef21e183
+[2025-06-13 19:17:36] [INFO] SIGNAL: UNH reversion direction=-1 confidence=0.850000
+[2025-06-13 19:17:36] [INFO] Placing bracket order for UNH at $313.090000
+[2025-06-13 19:17:36] [INFO] ✅ Order successful: 9f44f447-87c0-48f8-beec-e6dbafd95072
+[2025-06-13 19:17:37] [INFO] SIGNAL: SOXL reversion direction=-1 confidence=0.850000
+[2025-06-13 19:17:37] [INFO] Placing bracket order for SOXL at $20.170000
+[2025-06-13 19:17:37] [INFO] ✅ Order successful: 559de6f7-f50e-4ba9-b8d8-bfc0fff05b70
+[2025-06-13 19:17:37] [INFO] SIGNAL: AMD momentum direction=1 confidence=0.850000
+[2025-06-13 19:17:37] [INFO] Placing bracket order for AMD at $116.160000
+[2025-06-13 19:17:37] [INFO] ✅ Order successful: f9deecd5-0d52-446b-a8a9-df3a756a9e92
+[2025-06-13 19:17:41] [INFO] Stopping SimpleHFTEngine...
+[2025-06-13 19:17:41] [INFO] === FINAL STATISTICS ===
+[2025-06-13 19:17:41] [INFO] Total messages processed: 12723
+[2025-06-13 19:17:41] [INFO] Total signals generated: 5
+[2025-06-13 19:17:41] [INFO] Total orders placed: 5
+[2025-06-13 19:17:41] [INFO] Total successful orders: 5
+[2025-06-13 19:17:41] [INFO] Total errors: 0
+[2025-06-13 19:17:41] [INFO] Order success rate: 100.000000%
+[2025-06-13 19:17:41] [INFO] Signal generation rate: 0.039299%
+[2025-06-13 19:17:41] [INFO] ========================
+[2025-06-13 19:17:41] [INFO] SimpleHFTEngine stopped
+[2025-06-13 19:20:58] [INFO] SimpleHFTEngine created
+[2025-06-13 19:20:58] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 19:20:58] [INFO] Testing Alpaca connection...
+[2025-06-13 19:20:58] [INFO] Alpaca connection successful
+[2025-06-13 19:20:58] [INFO] Loading portfolio data...
+[2025-06-13 19:20:58] [INFO] Account Info:
+[2025-06-13 19:20:58] [INFO]   Portfolio Value: $49813.430000
+[2025-06-13 19:20:58] [INFO]   Buying Power: $91816.330000
+[2025-06-13 19:20:58] [INFO]   Cash: $49734.040000
+[2025-06-13 19:20:58] [INFO] Current positions: 4
+[2025-06-13 19:20:58] [INFO] Existing positions will be tracked for risk management
+[2025-06-13 19:20:58] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 19:20:59] [INFO] Subscribing to market data...
+[2025-06-13 19:20:59] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 19:20:59] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 19:20:59] [INFO] 🚨 EMERGENCY LIQUIDATION INITIATED 🚨
+[2025-06-13 19:21:00] [INFO] ✅ Complete liquidation successful - portfolio reset to cash
+[2025-06-13 19:21:04] [INFO] SimpleHFTEngine created
+[2025-06-13 19:21:04] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 19:21:04] [INFO] Testing Alpaca connection...
+[2025-06-13 19:21:04] [INFO] Alpaca connection successful
+[2025-06-13 19:21:04] [INFO] Loading portfolio data...
+[2025-06-13 19:21:04] [INFO] Account Info:
+[2025-06-13 19:21:04] [INFO]   Portfolio Value: $49812.670000
+[2025-06-13 19:21:04] [INFO]   Buying Power: $99625.340000
+[2025-06-13 19:21:04] [INFO]   Cash: $49812.670000
+[2025-06-13 19:21:04] [INFO] Current positions: 0
+[2025-06-13 19:21:04] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 19:21:05] [INFO] Subscribing to market data...
+[2025-06-13 19:21:05] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 19:21:05] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 19:21:05] [INFO] Starting SimpleHFTEngine...
+[2025-06-13 19:21:05] [INFO] === SIMPLE HFT ENGINE STARTED ===
+[2025-06-13 19:21:05] [INFO] Symbols: 25
+[2025-06-13 19:21:05] [INFO] Confidence threshold: 0.800000
+[2025-06-13 19:21:05] [INFO] Position size: $2000.000000
+[2025-06-13 19:21:05] [INFO] Max positions: 24
+[2025-06-13 19:21:05] [INFO] =====================================
+[2025-06-13 19:22:30] [INFO] Stopping SimpleHFTEngine...
+[2025-06-13 19:22:30] [INFO] === FINAL STATISTICS ===
+[2025-06-13 19:22:30] [INFO] Total messages processed: 136258
+[2025-06-13 19:22:30] [INFO] Total signals generated: 0
+[2025-06-13 19:22:30] [INFO] Total orders placed: 0
+[2025-06-13 19:22:30] [INFO] Total successful orders: 0
+[2025-06-13 19:22:30] [INFO] Total errors: 0
+[2025-06-13 19:22:30] [INFO] Signal generation rate: 0.000000%
+[2025-06-13 19:22:30] [INFO] ========================
+[2025-06-13 19:22:30] [INFO] SimpleHFTEngine stopped
+[2025-06-13 19:23:03] [INFO] SimpleHFTEngine created
+[2025-06-13 19:23:03] [INFO] Initializing SimpleHFTEngine...
+[2025-06-13 19:23:03] [INFO] Testing Alpaca connection...
+[2025-06-13 19:23:03] [INFO] Alpaca connection successful
+[2025-06-13 19:23:03] [INFO] Loading portfolio data...
+[2025-06-13 19:23:03] [INFO] Account Info:
+[2025-06-13 19:23:03] [INFO]   Portfolio Value: $49812.670000
+[2025-06-13 19:23:03] [INFO]   Buying Power: $99625.340000
+[2025-06-13 19:23:03] [INFO]   Cash: $49812.670000
+[2025-06-13 19:23:03] [INFO] Current positions: 0
+[2025-06-13 19:23:03] [INFO] Connecting to Polygon WebSocket...
+[2025-06-13 19:23:03] [INFO] Subscribing to market data...
+[2025-06-13 19:23:03] [INFO] Model info: SimpleLinearModel with fixed weights
+[2025-06-13 19:23:03] [INFO] SimpleHFTEngine initialized successfully
+[2025-06-13 19:23:03] [INFO] Starting SimpleHFTEngine...
+[2025-06-13 19:23:03] [INFO] === SIMPLE HFT ENGINE STARTED ===
+[2025-06-13 19:23:03] [INFO] Symbols: 25
+[2025-06-13 19:23:03] [INFO] Confidence threshold: 0.800000
+[2025-06-13 19:23:03] [INFO] Position size: $2000.000000
+[2025-06-13 19:23:03] [INFO] Max positions: 24
+[2025-06-13 19:23:03] [INFO] =====================================
+[2025-06-13 19:23:35] [INFO] Stopping SimpleHFTEngine...
+[2025-06-13 19:23:35] [INFO] === FINAL STATISTICS ===
+[2025-06-13 19:23:35] [INFO] Total messages processed: 46613
+[2025-06-13 19:23:35] [INFO] Total signals generated: 0
+[2025-06-13 19:23:35] [INFO] Total orders placed: 0
+[2025-06-13 19:23:35] [INFO] Total successful orders: 0
+[2025-06-13 19:23:35] [INFO] Total errors: 0
+[2025-06-13 19:23:35] [INFO] Signal generation rate: 0.000000%
+[2025-06-13 19:23:35] [INFO] ========================
+[2025-06-13 19:23:35] [INFO] SimpleHFTEngine stopped
