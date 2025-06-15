@@ -1,12 +1,8 @@
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-
-# C extensions
 *.so
-
-# Distribution / packaging
 .Python
 build/
 develop-eggs/
@@ -28,8 +24,6 @@ share/python-wheels/
 MANIFEST
 
 # PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
 
@@ -85,13 +79,9 @@ ipython_config.py
 .python-version
 
 # pipenv
-#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
-#   However, in case of collaboration, if having platform-specific dependencies or dependencies
-#   having no cross-platform support, pipenv may install dependencies that don't work, or not
-#   install all needed dependencies.
-#Pipfile.lock
+Pipfile.lock
 
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+# PEP 582
 __pypackages__/
 
 # Celery stuff
@@ -128,63 +118,14 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# C++ build artifacts
-*.o
-*.obj
-*.exe
-*.dll
-*.dylib
-*.a
-*.lib
-*.exp
-*.pdb
-*.ilk
-*.map
-*.manifest
-*.tlog
-*.lastbuildstate
-*.idb
-*.ipdb
-*.pgc
-*.pgd
-*.rsp
-*.sbr
-*.tlb
-*.tli
-*.tlh
-*.tmp
-*.tmp_proj
-*.vspscc
-*.vssscc
-.builds
-*.pidb
-*.svclog
-*.scc
-
-# CMake
-CMakeCache.txt
-CMakeFiles/
-CMakeScripts/
-cmake_install.cmake
-install_manifest.txt
-compile_commands.json
-CTestTestfile.cmake
-_deps/
-
-# Build directories
-build/
-Build/
-BUILD/
-out/
-target/
-
-# IDE and editor files
+# IDE
 .vscode/
-.vs/
 .idea/
 *.swp
 *.swo
 *~
+
+# OS
 .DS_Store
 .DS_Store?
 ._*
@@ -193,80 +134,11 @@ target/
 ehthumbs.db
 Thumbs.db
 
-# Log files
+# Project specific
+lag-llama/
+models/cache/
 *.log
-logs/
-*.log.*
-
-# Model files and checkpoints
-*.pkl
-*.pth
-*.pt
-*.h5
-*.hdf5
-*.ckpt
-*.pb
-*.tflite
-*.onnx
-checkpoints/
-saved_models/
-models/*.pkl
-models/*.pth
-models/*.pt
-
-# Data files
-datasets/
-*.csv
-*.json.gz
-*.parquet
-*.feather
-*.hdf
-*.h5
+trading_system.log
 
 # Temporary files
-tmp/
-temp/
-*.tmp
-*.temp
-
-# API keys and secrets
-.env
-.env.local
-.env.production
-.env.staging
-config.json
-secrets.json
-api_keys.txt
-*.pem
-*.key
-
-# System files
-.nfs*
-
-# Poetry
-poetry.lock
-
-# Node.js (for any JS components)
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Kernel modules
-*.ko
-*.mod
-*.mod.c
-.*.cmd
-modules.order
-Module.symvers
-
-# Trading/Finance specific
-backtest_results/
-trading_logs/
-market_data/
-*.ticker
-*.ohlc
-
-# Jupyter notebooks with outputs
-*.ipynb
-!*_clean.ipynb
+=3.9.0

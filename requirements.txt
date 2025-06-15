@@ -1,0 +1,85 @@
+# Lag-Llama Trading System Requirements
+
+# Core ML/AI Libraries
+torch>=2.7.0
+torchvision>=0.22.0
+torchaudio>=0.16.0
+numpy>=1.24.0,<2.0
+pandas>=2.0.0
+scipy>=1.10.0
+scikit-learn>=1.3.0
+
+# Lag-Llama and Time Series
+gluonts>=0.14.0
+lightning>=2.5.1
+transformers>=4.30.0
+lag-llama>=0.1.0
+
+# GH200 GPU Optimizations
+nvidia-ml-py3>=11.525.0
+triton>=2.1.0
+flash-attn>=2.0.0
+transformer-engine>=0.11.0
+
+# Data Sources (Custom Implementations - No SDKs)
+# Custom Polygon.io client using aiohttp and websockets
+# Custom Alpaca client using aiohttp and websockets
+websockets>=11.0.0
+aiohttp>=3.8.0
+httpx>=0.24.0  # Modern async HTTP client
+
+# Async and Concurrency
+asyncio-throttle>=1.0.0
+asyncio>=3.4.3
+uvloop>=0.17.0  # Linux performance boost
+
+# Data Processing
+numpy>=1.24.0
+pandas>=2.0.0
+ta>=0.10.2  # Technical analysis library
+TA-Lib>=0.4.26  # Advanced technical analysis
+
+# Configuration and Settings
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+dataclasses-json>=0.6.0
+
+# Logging and Monitoring
+loguru>=0.7.0
+psutil>=5.9.0
+py-cpuinfo>=9.0.0
+
+# Development and Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-mock>=3.11.0
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.5.0
+
+# Utilities
+click>=8.1.0
+rich>=13.0.0
+tqdm>=4.65.0
+python-dateutil>=2.8.0
+pytz>=2023.3
+
+# Performance optimizations
+orjson>=3.10.18  # Fast JSON library recommended by GluonTS
+
+# Optional: Database (if needed for historical storage)
+# sqlite3  # Built into Python
+# sqlalchemy>=2.0.0
+# aiosqlite>=0.19.0
+
+# Optional: Advanced Analytics
+# plotly>=5.15.0
+# matplotlib>=3.7.0
+# seaborn>=0.12.0
+
+# System Requirements Notes:
+# - Python 3.10 or higher required
+# - CUDA 12.1+ for GH200 GPU support
+# - Minimum 32GB RAM recommended
+# - SSD storage for optimal performance
+# - Linux (Ubuntu 22.04+ recommended) for best performance

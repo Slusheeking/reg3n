@@ -1,0 +1,706 @@
+{
+  "symbols": [
+    {
+      "symbol": "GME",
+      "category": "SymbolCategory.MEME_STOCK",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "SPY",
+      "category": "SymbolCategory.INDEX",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "XLK",
+      "category": "SymbolCategory.ETF",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "XLV",
+      "category": "SymbolCategory.ETF",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "AMC",
+      "category": "SymbolCategory.MEME_STOCK",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "XLU",
+      "category": "SymbolCategory.ETF",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "XLI",
+      "category": "SymbolCategory.ETF",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "SQ",
+      "category": "SymbolCategory.MID_CAP",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "VEA",
+      "category": "SymbolCategory.INDEX",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "AMZN",
+      "category": "SymbolCategory.LARGE_CAP",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "PYPL",
+      "category": "SymbolCategory.MID_CAP",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "PLTR",
+      "category": "SymbolCategory.MID_CAP",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "XLRE",
+      "category": "SymbolCategory.ETF",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "XLF",
+      "category": "SymbolCategory.ETF",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "IWM",
+      "category": "SymbolCategory.INDEX",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "NFLX",
+      "category": "SymbolCategory.MID_CAP",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "ROKU",
+      "category": "SymbolCategory.MID_CAP",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "SHOP",
+      "category": "SymbolCategory.MID_CAP",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "CRWD",
+      "category": "SymbolCategory.MID_CAP",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "NIO",
+      "category": "SymbolCategory.MID_CAP",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "GOOGL",
+      "category": "SymbolCategory.LARGE_CAP",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "AMD",
+      "category": "SymbolCategory.MID_CAP",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "DIA",
+      "category": "SymbolCategory.INDEX",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "XLY",
+      "category": "SymbolCategory.ETF",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "NVDA",
+      "category": "SymbolCategory.LARGE_CAP",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "VTI",
+      "category": "SymbolCategory.INDEX",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "MSFT",
+      "category": "SymbolCategory.LARGE_CAP",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "VWO",
+      "category": "SymbolCategory.INDEX",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "QQQ",
+      "category": "SymbolCategory.INDEX",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "OKTA",
+      "category": "SymbolCategory.MID_CAP",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "ZOOM",
+      "category": "SymbolCategory.MID_CAP",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "XLP",
+      "category": "SymbolCategory.ETF",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "SNOW",
+      "category": "SymbolCategory.MID_CAP",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "AAPL",
+      "category": "SymbolCategory.LARGE_CAP",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "BABA",
+      "category": "SymbolCategory.MID_CAP",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "TSLA",
+      "category": "SymbolCategory.LARGE_CAP",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "META",
+      "category": "SymbolCategory.LARGE_CAP",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    },
+    {
+      "symbol": "XLE",
+      "category": "SymbolCategory.ETF",
+      "status": "SymbolStatus.ACTIVE",
+      "max_position_size": 0.05,
+      "strategies_enabled": [
+        "gap_and_go",
+        "orb",
+        "mean_reversion"
+      ],
+      "last_trade_time": null,
+      "gap_trading_enabled": true,
+      "orb_trading_enabled": true,
+      "mean_reversion_enabled": true,
+      "risk_multiplier": 1.0,
+      "volatility_cap": 0.1
+    }
+  ],
+  "watchlists": {
+    "mega_cap": [
+      "AAPL",
+      "MSFT",
+      "GOOGL",
+      "AMZN",
+      "TSLA",
+      "NVDA",
+      "META",
+      "NFLX"
+    ],
+    "high_volume": [
+      "SPY",
+      "QQQ",
+      "IWM",
+      "AMD",
+      "BABA",
+      "NIO",
+      "PLTR",
+      "AMC",
+      "GME"
+    ],
+    "gap_candidates": [],
+    "earnings": [],
+    "sector_etfs": [
+      "XLK",
+      "XLF",
+      "XLE",
+      "XLI",
+      "XLV",
+      "XLY",
+      "XLP",
+      "XLU",
+      "XLRE"
+    ],
+    "indices": [
+      "SPY",
+      "QQQ",
+      "IWM",
+      "DIA",
+      "VTI",
+      "VEA",
+      "VWO"
+    ],
+    "momentum": [
+      "ROKU",
+      "SHOP",
+      "SQ",
+      "PYPL",
+      "ZOOM",
+      "SNOW",
+      "CRWD",
+      "OKTA"
+    ]
+  },
+  "last_updated": "2025-06-15T01:56:58.451245"
+}

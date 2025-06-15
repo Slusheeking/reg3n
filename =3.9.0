@@ -1,0 +1,6 @@
+Defaulting to user installation because normal site-packages is not writeable
+Collecting orjson
+  Downloading orjson-3.10.18-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl.metadata (41 kB)
+Downloading orjson-3.10.18-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (136 kB)
+Installing collected packages: orjson
+Successfully installed orjson-3.10.18
