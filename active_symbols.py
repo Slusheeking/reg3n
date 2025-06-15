@@ -394,12 +394,344 @@ class SymbolManager:
             metrics.pnl_today = 0.0
             metrics.trades_today = 0
         
-        # TODO: Fetch new gap candidates from Polygon
-        # TODO: Update earnings calendar
-        # TODO: Refresh market cap data
+        # Fetch new gap candidates from Polygon using enhanced market movers API
+        await self._fetch_gap_candidates_from_polygon()
+        
+        # Update earnings calendar using Polygon news API
+        await self._update_earnings_calendar()
+        
+        # Refresh market cap data using Polygon ticker details API
+        await self._refresh_market_cap_data()
         
         self.save_configs()
         logger.info("Daily symbol refresh completed")
+    
+    async def _fetch_gap_candidates_from_polygon(self):
+        """Fetch new gap candidates using enhanced Polygon API - HIGHEST PRIORITY"""
+        try:
+            # Import the enhanced polygon data manager
+            from polygon import get_polygon_data_manager
+            
+            polygon_manager = get_polygon_data_manager()
+            
+            logger.info("Fetching enhanced gap candidates from Polygon API")
+            
+            # Initialize polygon manager if needed
+            if not hasattr(polygon_manager, 'http_client') or polygon_manager.http_client.session is None:
+                await polygon_manager.initialize()
+            
+            # Use the enhanced gap detection method with market movers API
+            gap_candidates = await polygon_manager.get_enhanced_gap_candidates(
+                min_gap_percent=2.0,
+                min_volume_ratio=1.5
+            )
+            
+            # Also get traditional gap candidates as backup
+            traditional_gaps = await polygon_manager.get_gap_candidates(
+                min_gap_percent=2.0,
+                min_volume_ratio=1.5
+            )
+            
+            # Combine and deduplicate
+            all_candidates = gap_candidates + traditional_gaps
+            seen_symbols = set()
+            unique_candidates = []
+            
+            for candidate in all_candidates:
+                symbol = candidate['symbol']
+                if symbol not in seen_symbols:
+                    seen_symbols.add(symbol)
+                    unique_candidates.append(candidate)
+            
+            # Extract symbols for watchlist update (top 50)
+            gap_symbols = [candidate['symbol'] for candidate in unique_candidates[:50]]
+            
+            # Update gap candidates watchlist
+            self.update_watchlist("gap_candidates", gap_symbols)
+            
+            # Update symbol metrics with enhanced data
+            for candidate in unique_candidates:
+                symbol = candidate['symbol']
+                
+                # Add symbol if not already tracked
+                if symbol not in self.symbols:
+                    self.add_symbol(symbol, SymbolCategory.GAP_CANDIDATE)
+                
+                # Update comprehensive metrics
+                self.update_symbol_metrics(
+                    symbol,
+                    prev_close=candidate.get('prev_close', 0.0),
+                    price=candidate.get('price', 0.0),
+                    volume=candidate.get('volume', 0),
+                    gap_percent=candidate.get('gap_percent', 0.0),
+                    volume_ratio=candidate.get('volume_ratio', 1.0)
+                )
+                
+                # Mark as gap candidate in symbol config
+                if symbol in self.symbols:
+                    self.symbols[symbol].category = SymbolCategory.GAP_CANDIDATE
+            
+            logger.info(f"Found {len(unique_candidates)} enhanced gap candidates from Polygon API")
+            
+            # Store gap candidates in database if available
+            try:
+                from database import get_database_manager
+                db_manager = get_database_manager()
+                
+                # Insert gap candidates into database
+                for candidate in unique_candidates[:20]:  # Top 20 for database storage
+                    await db_manager.insert_gap_candidate(
+                        symbol=candidate['symbol'],
+                        gap_type='GAP_UP' if candidate.get('gap_percent', 0) > 0 else 'GAP_DOWN',
+                        gap_percent=candidate.get('gap_percent', 0.0),
+                        previous_close=candidate.get('prev_close', 0.0),
+                        current_price=candidate.get('price', 0.0),
+                        volume=candidate.get('volume', 0),
+                        volume_ratio=candidate.get('volume_ratio', 1.0)
+                    )
+                
+                logger.info(f"Stored top {min(20, len(unique_candidates))} gap candidates in database")
+                
+            except Exception as db_error:
+                logger.warning(f"Could not store gap candidates in database: {db_error}")
+            
+        except Exception as e:
+            logger.error(f"Error fetching enhanced gap candidates from Polygon: {e}")
+    
+    async def _update_earnings_calendar(self):
+        """Update earnings calendar using Polygon API"""
+        try:
+            from polygon import get_polygon_data_manager
+            from datetime import date, timedelta
+            
+            # Initialize Polygon data manager
+            polygon_manager = get_polygon_data_manager()
+            
+            logger.info("Updating earnings calendar from Polygon API")
+            
+            # Initialize polygon manager if needed
+            if not hasattr(polygon_manager, 'http_client') or polygon_manager.http_client.session is None:
+                await polygon_manager.initialize()
+            
+            # Get earnings-related news for the next week
+            today = date.today()
+            next_week = today + timedelta(days=7)
+            
+            earnings_symbols = []
+            
+            # Use our custom Polygon manager to get earnings calendar
+            active_symbols = self.get_active_symbols()
+            earnings_calendar = await polygon_manager.get_earnings_calendar(
+                symbols=active_symbols,
+                days_ahead=7
+            )
+            
+            # Process earnings calendar results
+            for earnings_info in earnings_calendar:
+                symbol = earnings_info['symbol']
+                if symbol not in earnings_symbols:
+                    earnings_symbols.append(symbol)
+                    
+                    # Mark symbol for earnings trading
+                    if symbol in self.symbols:
+                        self.symbols[symbol].category = SymbolCategory.EARNINGS
+            
+            # Also check for earnings using market movers (earnings often cause big moves)
+            try:
+                # Get top gainers and losers which might be earnings-related
+                gainers = await polygon_manager.get_market_movers("gainers")
+                losers = await polygon_manager.get_market_movers("losers")
+                
+                # Look for symbols with significant moves that might be earnings-related
+                for mover in gainers + losers:
+                    symbol = mover['symbol']
+                    change_percent = abs(mover.get('change_percent', 0))
+                    
+                    # If a symbol has moved more than 5%, it might be earnings-related
+                    if change_percent >= 5.0 and symbol in active_symbols:
+                        if symbol not in earnings_symbols:
+                            earnings_symbols.append(symbol)
+                            
+                            # Mark as potential earnings candidate
+                            if symbol in self.symbols:
+                                self.symbols[symbol].category = SymbolCategory.EARNINGS
+                
+                logger.info(f"Added {len(set(earnings_symbols) - set([e['symbol'] for e in earnings_calendar]))} potential earnings symbols from market movers")
+                
+            except Exception as e:
+                logger.warning(f"Could not fetch market movers for earnings detection: {e}")
+            
+            # Update earnings watchlist
+            self.update_watchlist("earnings", earnings_symbols)
+            
+            # Store earnings calendar in database if available
+            try:
+                from database import get_database_manager
+                db_manager = get_database_manager()
+                
+                # Insert earnings calendar into database
+                for earnings_info in earnings_calendar:
+                    await db_manager.insert_earnings_calendar(
+                        symbol=earnings_info['symbol'],
+                        earnings_date=today,  # Simplified - could parse from news
+                        announcement_time='AMC',  # Default to after market close
+                        title=earnings_info.get('title', ''),
+                        description=earnings_info.get('description', '')
+                    )
+                
+                logger.info(f"Stored {len(earnings_calendar)} earnings entries in database")
+                
+            except Exception as db_error:
+                logger.warning(f"Could not store earnings calendar in database: {db_error}")
+            
+            logger.info(f"Updated earnings calendar with {len(earnings_symbols)} symbols")
+            
+        except Exception as e:
+            logger.error(f"Error updating earnings calendar from Polygon: {e}")
+    
+    async def _refresh_market_cap_data(self):
+        """Refresh market cap data using Polygon API"""
+        try:
+            from polygon import get_polygon_data_manager
+            
+            # Initialize Polygon data manager
+            polygon_manager = get_polygon_data_manager()
+            
+            logger.info("Refreshing market cap data from Polygon API")
+            
+            # Initialize polygon manager if needed
+            if not hasattr(polygon_manager, 'http_client') or polygon_manager.http_client.session is None:
+                await polygon_manager.initialize()
+            
+            updated_count = 0
+            
+            # Get ticker details for all active symbols to update market cap
+            active_symbols = self.get_active_symbols()
+            
+            # Process symbols in batches to optimize API usage
+            batch_size = 10
+            for i in range(0, len(active_symbols), batch_size):
+                batch = active_symbols[i:i + batch_size]
+                
+                # Process batch concurrently
+                batch_tasks = []
+                for symbol in batch:
+                    batch_tasks.append(polygon_manager.get_ticker_details(symbol))
+                
+                # Execute batch requests
+                results = await asyncio.gather(*batch_tasks, return_exceptions=True)
+                
+                # Process results
+                for j, symbol in enumerate(batch):
+                    try:
+                        ticker_details = results[j]
+                        
+                        if isinstance(ticker_details, Exception):
+                            logger.warning(f"Error getting details for {symbol}: {ticker_details}")
+                            continue
+                        
+                        if ticker_details:
+                            # Extract comprehensive data
+                            market_cap = ticker_details.get('market_cap')
+                            sector = ticker_details.get('sector')
+                            industry = ticker_details.get('industry')
+                            total_employees = ticker_details.get('total_employees')
+                            primary_exchange = ticker_details.get('primary_exchange')
+                            
+                            # Update symbol metrics with comprehensive data
+                            if symbol in self.metrics:
+                                self.metrics[symbol].market_cap = market_cap
+                                self.metrics[symbol].sector = sector
+                            
+                            # Update symbol category based on market cap
+                            if symbol in self.symbols and market_cap:
+                                if market_cap >= 200_000_000_000:  # $200B+
+                                    self.symbols[symbol].category = SymbolCategory.LARGE_CAP
+                                elif market_cap >= 10_000_000_000:  # $10B+
+                                    self.symbols[symbol].category = SymbolCategory.MID_CAP
+                                else:
+                                    self.symbols[symbol].category = SymbolCategory.SMALL_CAP
+                            
+                            updated_count += 1
+                        
+                    except Exception as e:
+                        logger.warning(f"Could not process market cap for {symbol}: {e}")
+                        continue
+                
+                # Rate limiting between batches
+                if i + batch_size < len(active_symbols):
+                    await asyncio.sleep(2)  # 2 second pause between batches
+            
+            # Also get current market snapshots for real-time data
+            try:
+                logger.info("Getting real-time market snapshots...")
+                
+                # Get snapshots for top symbols
+                priority_symbols = active_symbols[:20]  # Top 20 symbols
+                
+                snapshot_tasks = []
+                for symbol in priority_symbols:
+                    snapshot_tasks.append(polygon_manager.get_snapshot_ticker(symbol))
+                
+                snapshot_results = await asyncio.gather(*snapshot_tasks, return_exceptions=True)
+                
+                # Process snapshot results
+                for j, symbol in enumerate(priority_symbols):
+                    try:
+                        snapshot_data = snapshot_results[j]
+                        
+                        if isinstance(snapshot_data, Exception):
+                            continue
+                        
+                        if snapshot_data:
+                            # Update real-time metrics
+                            self.update_symbol_metrics(
+                                symbol,
+                                price=snapshot_data.get('price', 0.0),
+                                volume=snapshot_data.get('volume', 0),
+                                prev_close=snapshot_data.get('prev_close', 0.0)
+                            )
+                            
+                            # Calculate gap if we have previous close
+                            current_price = snapshot_data.get('price', 0.0)
+                            prev_close = snapshot_data.get('prev_close', 0.0)
+                            
+                            if current_price > 0 and prev_close > 0:
+                                gap_percent = ((current_price - prev_close) / prev_close) * 100
+                                self.update_symbol_metrics(symbol, gap_percent=gap_percent)
+                    
+                    except Exception as e:
+                        logger.warning(f"Could not process snapshot for {symbol}: {e}")
+                        continue
+                
+                logger.info(f"Updated real-time snapshots for {len(priority_symbols)} priority symbols")
+                
+            except Exception as e:
+                logger.warning(f"Could not get market snapshots: {e}")
+            
+            # Store updated market cap data in database if available
+            try:
+                from database import get_database_manager
+                db_manager = get_database_manager()
+                
+                # Update symbols table with market cap data
+                for symbol in active_symbols[:updated_count]:
+                    if symbol in self.metrics and self.metrics[symbol].market_cap:
+                        await db_manager.update_symbol_market_cap(
+                            symbol=symbol,
+                            market_cap=self.metrics[symbol].market_cap,
+                            sector=self.metrics[symbol].sector
+                        )
+                
+                logger.info(f"Stored market cap data for {updated_count} symbols in database")
+                
+            except Exception as db_error:
+                logger.warning(f"Could not store market cap data in database: {db_error}")
+            
+            logger.info(f"Updated market cap data for {updated_count} symbols")
+            
+        except Exception as e:
+            logger.error(f"Error refreshing market cap data from Polygon: {e}")
 
 # Global symbol manager instance
 symbol_manager = SymbolManager()

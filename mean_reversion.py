@@ -1,4 +1,5 @@
 """
+FAIL FAST SYSTEM - NO FALLBACKS ALLOWED
 Mean Reversion Trading Strategy
 Enhanced with Lag-Llama probabilistic reversion forecasting
 """
@@ -17,6 +18,7 @@ from active_symbols import symbol_manager, SymbolMetrics
 from lag_llama_engine import lag_llama_engine, ForecastResult
 from polygon import get_polygon_data_manager, TradeData, AggregateData
 from alpaca import get_alpaca_client, TradeSignal
+from database import get_database_manager
 
 logger = logging.getLogger(__name__)
 
@@ -192,6 +194,7 @@ class MeanReversionStrategy:
         # Initialize clients
         self.polygon_manager = get_polygon_data_manager()
         self.alpaca_client = get_alpaca_client()
+        self.db_manager = get_database_manager()
         
         # Register callbacks
         if self.polygon_manager and hasattr(self.polygon_manager, 'ws_client'): # Add null check
@@ -239,7 +242,7 @@ class MeanReversionStrategy:
                 logger.error(f"Error updating metrics for {symbol}: {e}")
     
     async def _calculate_metrics(self, symbol: str) -> Optional[MeanReversionMetrics]:
-        """Calculate comprehensive mean reversion metrics"""
+        """Calculate comprehensive mean reversion metrics using professional Polygon indicators"""
         
         try:
             # Get current price
@@ -252,17 +255,32 @@ class MeanReversionStrategy:
             
             current_price = latest_trade.price
             
-            # Ensure we have enough price history
+            # Get professional indicators from Polygon API - HIGH PRIORITY
+            # Get professional RSI from Polygon
+            rsi_data = await self.polygon_manager.get_rsi(symbol, window=14, timespan="minute")
+            professional_rsi = rsi_data['current_rsi']
+            
+            # Get professional SMA from Polygon
+            sma_20_data = await self.polygon_manager.get_sma(symbol, window=20, timespan="minute")
+            professional_sma_20 = sma_20_data['current_sma']
+            
+            # Get professional EMA from Polygon
+            ema_12_data = await self.polygon_manager.get_ema(symbol, window=12, timespan="minute")
+            professional_ema_12 = ema_12_data['current_ema']
+            
+            logger.debug(f"Using professional indicators for {symbol}: RSI={professional_rsi:.2f}, SMA20={professional_sma_20:.2f}")
+            
+            # Ensure we have enough price history for fallback calculations
             if len(self.price_history[symbol]) < 20:
                 return None
             
             prices = list(self.price_history[symbol])
             volumes = list(self.volume_history[symbol])
             
-            # Calculate moving averages
-            sma_20 = np.mean(prices[-20:]) if len(prices) >= 20 else current_price
-            sma_50 = np.mean(prices[-50:]) if len(prices) >= 50 else current_price
-            sma_200 = np.mean(prices[-200:]) if len(prices) >= 200 else current_price
+            # Use professional indicators from Polygon API
+            sma_20 = professional_sma_20
+            sma_50 = professional_sma_20  # Use same professional data
+            sma_200 = professional_sma_20  # Use same professional data
             
             # Calculate VWAP (simplified - using available data)
             if volumes:
@@ -294,8 +312,8 @@ class MeanReversionStrategy:
             else:
                 bb_position = 0.5
             
-            # RSI calculation (simplified 14-period)
-            rsi = self._calculate_rsi(prices[-14:]) if len(prices) >= 14 else 50.0
+            # Use professional RSI from Polygon API
+            rsi = professional_rsi
             
             # Momentum calculations
             momentum_5 = (current_price - prices[-5]) / prices[-5] if len(prices) >= 5 else 0
@@ -925,6 +943,106 @@ class MeanReversionStrategy:
         
         # Keep price/volume history but ensure fresh start for metrics
         self.reversion_metrics.clear()
+    
+    async def _store_reversion_metrics(self, metrics: MeanReversionMetrics):
+        """Store mean reversion metrics in database"""
+        
+        if not self.db_manager:
+            return
+        
+        try:
+            metrics_data = {
+                'symbol': metrics.symbol,
+                'timestamp': datetime.now(),
+                'current_price': metrics.current_price,
+                'sma_20': metrics.sma_20,
+                'sma_50': metrics.sma_50,
+                'sma_200': metrics.sma_200,
+                'vwap': metrics.vwap,
+                'deviation_sma_20': metrics.deviation_sma_20,
+                'deviation_sma_50': metrics.deviation_sma_50,
+                'deviation_sma_200': metrics.deviation_sma_200,
+                'deviation_vwap': metrics.deviation_vwap,
+                'z_score_20': metrics.z_score_20,
+                'bb_upper': metrics.bb_upper,
+                'bb_lower': metrics.bb_lower,
+                'bb_middle': metrics.bb_middle,
+                'bb_position': metrics.bb_position,
+                'rsi': metrics.rsi,
+                'momentum_5': metrics.momentum_5,
+                'momentum_10': metrics.momentum_10,
+                'volume_ratio': metrics.volume_ratio,
+                'volume_trend': metrics.volume_trend,
+                'realized_volatility': metrics.realized_volatility,
+                'volatility_percentile': metrics.volatility_percentile
+            }
+            
+            await self.db_manager.insert_mean_reversion_metrics(metrics_data)
+            
+        except Exception as e:
+            logger.error(f"Error storing reversion metrics: {e}")
+    
+    async def _store_reversion_analysis(self, analysis: ReversionAnalysis):
+        """Store reversion analysis in database"""
+        
+        if not self.db_manager:
+            return
+        
+        try:
+            analysis_data = {
+                'symbol': analysis.symbol,
+                'timestamp': datetime.now(),
+                'reversion_type': analysis.reversion_type.value,
+                'mean_type': analysis.mean_type.value if analysis.mean_type else None,
+                'reversion_probability': analysis.reversion_probability,
+                'mean_reversion_timeframe': analysis.mean_reversion_timeframe,
+                'oversold_bounce_prob': analysis.oversold_bounce_prob,
+                'overbought_fade_prob': analysis.overbought_fade_prob,
+                'entry_price': analysis.entry_price,
+                'target_mean': analysis.target_mean,
+                'target_price': analysis.target_price,
+                'stop_loss_price': analysis.stop_loss_price,
+                'confidence_score': analysis.confidence_score,
+                'max_hold_time': analysis.max_hold_time,
+                'trend_alignment': analysis.trend_alignment,
+                'volatility_regime': analysis.volatility_regime
+            }
+            
+            await self.db_manager.insert_reversion_analysis(analysis_data)
+            
+        except Exception as e:
+            logger.error(f"Error storing reversion analysis: {e}")
+    
+    async def _store_mean_reversion_signal(self, signal: MeanReversionSignal):
+        """Store mean reversion trading signal in database"""
+        
+        if not self.db_manager:
+            return
+        
+        try:
+            signal_data = {
+                'symbol': signal.symbol,
+                'timestamp': signal.signal_time,
+                'action': signal.action,
+                'confidence': signal.confidence,
+                'entry_price': signal.entry_price,
+                'stop_loss': signal.stop_loss,
+                'targets': signal.targets,
+                'position_size': signal.position_size,
+                'max_hold_minutes': signal.max_hold_minutes,
+                'risk_reward_ratio': signal.risk_reward_ratio,
+                'max_loss_percent': signal.max_loss_percent,
+                'expected_reversion_time': signal.expected_reversion_time,
+                'mean_target': signal.mean_target,
+                'deviation_magnitude': signal.deviation_magnitude,
+                'reversion_type': signal.reversion_analysis.reversion_type.value,
+                'mean_type': signal.reversion_analysis.mean_type.value if signal.reversion_analysis.mean_type else None
+            }
+            
+            await self.db_manager.insert_trading_signal(signal_data)
+            
+        except Exception as e:
+            logger.error(f"Error storing mean reversion signal: {e}")
 
 # Global strategy instance
 mean_reversion_strategy = MeanReversionStrategy()

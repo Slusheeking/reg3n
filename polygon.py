@@ -19,6 +19,7 @@ from urllib.parse import urlencode
 from settings import config
 from active_symbols import symbol_manager
 from lag_llama_engine import lag_llama_engine
+from database import get_database_manager
 
 logger = logging.getLogger(__name__)
 
@@ -96,7 +97,7 @@ class RateLimiter:
             # Calculate wait time
             wait_time = 60 - (now - self.calls[0])
             if wait_time > 0:
-                logger.debug(f"Rate limit hit, waiting {wait_time:.2f}s")
+                logger.debug(f"Rate limit hit, waiting {wait_time*1000:.0f}ms")
                 await asyncio.sleep(wait_time)
         
         # Check burst limit
@@ -252,6 +253,7 @@ class PolygonWebSocketClient:
     def __init__(self, api_key: str):
         self.api_key = api_key
         self.websocket_url = "wss://socket.polygon.io/stocks"
+        self.indices_websocket_url = "wss://socket.polygon.io/indices"
         self.websocket: Optional[client.WebSocketClientProtocol] = None
         self.connected = False
         self.subscribed_symbols: Set[str] = set()
@@ -335,7 +337,7 @@ class PolygonWebSocketClient:
         else:
             raise ConnectionError("WebSocket is not connected for authentication")
         
-        if auth_data[0].get("status") == "auth_success":
+        if auth_data[0].get("status") in ["auth_success", "connected"]:
             logger.info("WebSocket authentication successful")
         else:
             raise Exception(f"WebSocket authentication failed: {auth_data}")
@@ -587,6 +589,7 @@ class PolygonDataManager:
         self.config = config.polygon
         self.http_client = PolygonHTTPClient(self.config.api_key)
         self.ws_client = PolygonWebSocketClient(self.config.api_key)
+        self.db_manager = None
         
         # Data storage
         self.latest_trades: Dict[str, TradeData] = {}
@@ -607,6 +610,9 @@ class PolygonDataManager:
         try:
             # Initialize HTTP client
             await self.http_client.initialize()
+            
+            # Initialize database manager
+            self.db_manager = get_database_manager()
             
             # Test connection
             await self._test_connection()
@@ -759,6 +765,565 @@ class PolygonDataManager:
             logger.error(f"Error fetching historical data for {symbol}: {e}")
             return []
     
+    async def get_gap_candidates(self, min_gap_percent: float = 2.0, 
+                               min_volume_ratio: float = 1.5) -> List[Dict]:
+        """Get gap candidates from Polygon grouped daily data"""
+        try:
+            # Get previous trading day
+            today = date.today()
+            yesterday = today - timedelta(days=1)
+            
+            # Handle weekends
+            while yesterday.weekday() >= 5:
+                yesterday -= timedelta(days=1)
+            
+            # Get grouped daily aggregates
+            response = await self.http_client._make_request(
+                f"/v2/aggs/grouped/locale/us/market/stocks/{yesterday.strftime('%Y-%m-%d')}"
+            )
+            
+            gap_candidates = []
+            
+            if response.get('results'):
+                for result in response['results']:
+                    symbol = result.get('T')
+                    if not symbol:
+                        continue
+                    
+                    prev_close = float(result.get('c', 0))
+                    volume = int(result.get('v', 0))
+                    
+                    # Get current price
+                    try:
+                        current_data = await self.http_client._make_request(
+                            f"/v2/last/trade/{symbol}"
+                        )
+                        
+                        if current_data.get('results'):
+                            current_price = float(current_data['results'].get('p', prev_close))
+                        else:
+                            current_price = prev_close
+                    except:
+                        current_price = prev_close
+                    
+                    # Calculate gap
+                    gap_percent = ((current_price - prev_close) / prev_close) * 100 if prev_close > 0 else 0
+                    
+                    # Estimate volume ratio (using 30-day average as baseline)
+                    avg_volume = volume  # Simplified - could fetch historical average
+                    volume_ratio = 1.0  # Simplified
+                    
+                    if abs(gap_percent) >= min_gap_percent:
+                        gap_candidates.append({
+                            'symbol': symbol,
+                            'gap_percent': gap_percent,
+                            'prev_close': prev_close,
+                            'current_price': current_price,
+                            'volume': volume,
+                            'volume_ratio': volume_ratio
+                        })
+            
+            # Sort by gap size
+            gap_candidates.sort(key=lambda x: abs(x['gap_percent']), reverse=True)
+            return gap_candidates
+            
+        except Exception as e:
+            logger.error(f"Error fetching gap candidates: {e}")
+            return []
+    
+    async def get_ticker_details(self, symbol: str) -> Optional[Dict]:
+        """Get detailed ticker information including market cap"""
+        try:
+            response = await self.http_client._make_request(f"/v3/reference/tickers/{symbol}")
+            
+            if response.get('results'):
+                details = response['results']
+                return {
+                    'symbol': symbol,
+                    'name': details.get('name'),
+                    'market_cap': details.get('market_cap'),
+                    'sector': details.get('sic_description'),
+                    'industry': details.get('sic_code'),
+                    'description': details.get('description'),
+                    'homepage_url': details.get('homepage_url'),
+                    'total_employees': details.get('total_employees'),
+                    'list_date': details.get('list_date'),
+                    'locale': details.get('locale'),
+                    'primary_exchange': details.get('primary_exchange'),
+                    'type': details.get('type'),
+                    'currency_name': details.get('currency_name'),
+                    'cik': details.get('cik'),
+                    'composite_figi': details.get('composite_figi'),
+                    'share_class_figi': details.get('share_class_figi')
+                }
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error fetching ticker details for {symbol}: {e}")
+            return None
+    
+    async def get_earnings_calendar(self, symbols: List[str], days_ahead: int = 7) -> List[Dict]:
+        """Get earnings calendar information from news data"""
+        try:
+            today = date.today()
+            future_date = today + timedelta(days=days_ahead)
+            
+            earnings_info = []
+            
+            for symbol in symbols:
+                try:
+                    # Get recent news
+                    response = await self.http_client._make_request(
+                        f"/v2/reference/news",
+                        params={
+                            'ticker': symbol,
+                            'published_utc.gte': today.strftime('%Y-%m-%d'),
+                            'published_utc.lte': future_date.strftime('%Y-%m-%d'),
+                            'limit': 10
+                        }
+                    )
+                    
+                    if response.get('results'):
+                        for article in response['results']:
+                            title = article.get('title', '').lower()
+                            description = article.get('description', '').lower()
+                            
+                            # Check for earnings keywords
+                            earnings_keywords = [
+                                'earnings', 'quarterly', 'q1', 'q2', 'q3', 'q4',
+                                'financial results', 'revenue', 'eps', 'guidance',
+                                'earnings call', 'earnings report'
+                            ]
+                            
+                            if any(keyword in title or keyword in description for keyword in earnings_keywords):
+                                earnings_info.append({
+                                    'symbol': symbol,
+                                    'title': article.get('title'),
+                                    'published_utc': article.get('published_utc'),
+                                    'article_url': article.get('article_url'),
+                                    'description': article.get('description')
+                                })
+                                break  # Found earnings news for this symbol
+                
+                except Exception as e:
+                    logger.warning(f"Error getting earnings info for {symbol}: {e}")
+                    continue
+            
+            return earnings_info
+            
+        except Exception as e:
+            logger.error(f"Error fetching earnings calendar: {e}")
+            return []
+    
+    # ========== NEW HIGH-PRIORITY POLYGON API ENDPOINTS ==========
+    
+    async def get_market_movers(self, direction: str = "gainers", include_otc: bool = False) -> List[Dict]:
+        """Get top market movers (gainers/losers) - HIGHEST PRIORITY for gap detection"""
+        try:
+            params = {}
+            if include_otc:
+                params['include_otc'] = 'true'
+            
+            response = await self.http_client._make_request(
+                f"/v2/snapshot/locale/us/markets/stocks/{direction}",
+                params=params
+            )
+            
+            movers = []
+            if response.get('results'):
+                for ticker_data in response['results']:
+                    if ticker_data.get('ticker'):
+                        mover_info = {
+                            'symbol': ticker_data['ticker'],
+                            'price': ticker_data.get('value', 0.0),
+                            'change': ticker_data.get('todaysChange', 0.0),
+                            'change_percent': ticker_data.get('todaysChangePerc', 0.0),
+                            'volume': ticker_data.get('day', {}).get('v', 0) if ticker_data.get('day') else 0,
+                            'prev_close': ticker_data.get('prevDay', {}).get('c', 0.0) if ticker_data.get('prevDay') else 0.0,
+                            'last_updated': ticker_data.get('updated', 0)
+                        }
+                        movers.append(mover_info)
+            
+            logger.info(f"Retrieved {len(movers)} market {direction}")
+            return movers
+            
+        except Exception as e:
+            logger.error(f"Error fetching market {direction}: {e}")
+            return []
+    
+    async def get_rsi(self, symbol: str, window: int = 14, timespan: str = "day", 
+                     limit: int = 10) -> Optional[Dict]:
+        """Get RSI indicator - HIGH PRIORITY for mean reversion strategy"""
+        try:
+            params = {
+                'timespan': timespan,
+                'window': window,
+                'series_type': 'close',
+                'order': 'desc',
+                'limit': limit
+            }
+            
+            response = await self.http_client._make_request(
+                f"/v1/indicators/rsi/{symbol}",
+                params=params
+            )
+            
+            if response.get('results') and response['results'].get('values'):
+                values = response['results']['values']
+                return {
+                    'symbol': symbol,
+                    'current_rsi': values[0].get('value', 0.0) if values else 0.0,
+                    'values': values,
+                    'window': window,
+                    'timespan': timespan
+                }
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error fetching RSI for {symbol}: {e}")
+            return None
+    
+    async def get_macd(self, symbol: str, short_window: int = 12, long_window: int = 26,
+                      signal_window: int = 9, timespan: str = "day", limit: int = 10) -> Optional[Dict]:
+        """Get MACD indicator - HIGH PRIORITY for momentum confirmation"""
+        try:
+            params = {
+                'timespan': timespan,
+                'short_window': short_window,
+                'long_window': long_window,
+                'signal_window': signal_window,
+                'series_type': 'close',
+                'order': 'desc',
+                'limit': limit
+            }
+            
+            response = await self.http_client._make_request(
+                f"/v1/indicators/macd/{symbol}",
+                params=params
+            )
+            
+            if response.get('results') and response['results'].get('values'):
+                values = response['results']['values']
+                current = values[0] if values else {}
+                
+                return {
+                    'symbol': symbol,
+                    'macd_line': current.get('value', 0.0),
+                    'signal_line': current.get('signal', 0.0),
+                    'histogram': current.get('histogram', 0.0),
+                    'values': values,
+                    'short_window': short_window,
+                    'long_window': long_window,
+                    'signal_window': signal_window
+                }
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error fetching MACD for {symbol}: {e}")
+            return None
+    
+    async def get_sma(self, symbol: str, window: int = 20, timespan: str = "day",
+                     limit: int = 10) -> Optional[Dict]:
+        """Get Simple Moving Average - MEDIUM PRIORITY"""
+        try:
+            params = {
+                'timespan': timespan,
+                'window': window,
+                'series_type': 'close',
+                'order': 'desc',
+                'limit': limit
+            }
+            
+            response = await self.http_client._make_request(
+                f"/v1/indicators/sma/{symbol}",
+                params=params
+            )
+            
+            if response.get('results') and response['results'].get('values'):
+                values = response['results']['values']
+                return {
+                    'symbol': symbol,
+                    'current_sma': values[0].get('value', 0.0) if values else 0.0,
+                    'values': values,
+                    'window': window,
+                    'timespan': timespan
+                }
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error fetching SMA for {symbol}: {e}")
+            return None
+    
+    async def get_ema(self, symbol: str, window: int = 20, timespan: str = "day",
+                     limit: int = 10) -> Optional[Dict]:
+        """Get Exponential Moving Average - MEDIUM PRIORITY"""
+        try:
+            params = {
+                'timespan': timespan,
+                'window': window,
+                'series_type': 'close',
+                'order': 'desc',
+                'limit': limit
+            }
+            
+            response = await self.http_client._make_request(
+                f"/v1/indicators/ema/{symbol}",
+                params=params
+            )
+            
+            if response.get('results') and response['results'].get('values'):
+                values = response['results']['values']
+                return {
+                    'symbol': symbol,
+                    'current_ema': values[0].get('value', 0.0) if values else 0.0,
+                    'values': values,
+                    'window': window,
+                    'timespan': timespan
+                }
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error fetching EMA for {symbol}: {e}")
+            return None
+    
+    async def get_grouped_daily_aggs(self, date_str: Optional[str] = None) -> Dict:
+        """Get grouped daily aggregates for all stocks - MEDIUM PRIORITY for batch updates"""
+        try:
+            if date_str is None:
+                # Get previous trading day
+                today = date.today()
+                target_date = today - timedelta(days=1)
+                
+                # Handle weekends
+                while target_date.weekday() >= 5:
+                    target_date -= timedelta(days=1)
+                
+                date_str = target_date.strftime("%Y-%m-%d")
+            
+            response = await self.http_client._make_request(
+                f"/v2/aggs/grouped/locale/us/market/stocks/{date_str}"
+            )
+            
+            return response
+            
+        except Exception as e:
+            logger.error(f"Error fetching grouped daily aggregates: {e}")
+            return {}
+    
+    async def get_snapshot_ticker(self, symbol: str) -> Optional[Dict]:
+        """Get snapshot for specific ticker - MEDIUM PRIORITY for targeted updates"""
+        try:
+            response = await self.http_client._make_request(
+                f"/v2/snapshot/locale/us/markets/stocks/tickers/{symbol}"
+            )
+            
+            if response.get('results'):
+                ticker_data = response['results']
+                return {
+                    'symbol': symbol,
+                    'price': ticker_data.get('value', 0.0),
+                    'change': ticker_data.get('todaysChange', 0.0),
+                    'change_percent': ticker_data.get('todaysChangePerc', 0.0),
+                    'volume': ticker_data.get('day', {}).get('v', 0) if ticker_data.get('day') else 0,
+                    'prev_close': ticker_data.get('prevDay', {}).get('c', 0.0) if ticker_data.get('prevDay') else 0.0,
+                    'day_data': ticker_data.get('day', {}),
+                    'prev_day_data': ticker_data.get('prevDay', {}),
+                    'last_quote': ticker_data.get('lastQuote', {}),
+                    'last_trade': ticker_data.get('lastTrade', {}),
+                    'last_updated': ticker_data.get('updated', 0)
+                }
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error fetching snapshot for {symbol}: {e}")
+            return None
+    
+    # ========== ENHANCED GAP DETECTION METHODS ==========
+    
+    async def get_enhanced_gap_candidates(self, min_gap_percent: float = 2.0,
+                                        min_volume_ratio: float = 1.5) -> List[Dict]:
+        """Enhanced gap detection using market movers API - ULTRA HIGH PRIORITY"""
+        try:
+            logger.info("Fetching enhanced gap candidates using market movers...")
+            
+            # Get both gainers and losers
+            gainers = await self.get_market_movers("gainers")
+            losers = await self.get_market_movers("losers")
+            
+            all_movers = gainers + losers
+            gap_candidates = []
+            
+            # Get our active symbols for filtering
+            active_symbols = set(symbol_manager.get_active_symbols())
+            
+            for mover in all_movers:
+                symbol = mover['symbol']
+                
+                # Only analyze symbols we're tracking
+                if symbol not in active_symbols:
+                    continue
+                
+                gap_percent = mover['change_percent']
+                volume = mover['volume']
+                
+                # Check gap criteria
+                if abs(gap_percent) >= min_gap_percent:
+                    # Get additional data for volume ratio calculation
+                    try:
+                        # Get historical average volume (simplified - using current volume as baseline)
+                        avg_volume = symbol_manager.metrics.get(symbol, type('obj', (object,), {'avg_volume': volume})).avg_volume or volume
+                        volume_ratio = volume / avg_volume if avg_volume > 0 else 1.0
+                        
+                        if volume_ratio >= min_volume_ratio:
+                            gap_candidate = {
+                                'symbol': symbol,
+                                'gap_percent': gap_percent,
+                                'volume_ratio': volume_ratio,
+                                'price': mover['price'],
+                                'prev_close': mover['prev_close'],
+                                'volume': volume,
+                                'change': mover['change'],
+                                'direction': 'up' if gap_percent > 0 else 'down',
+                                'last_updated': mover['last_updated']
+                            }
+                            gap_candidates.append(gap_candidate)
+                            
+                            # Update symbol metrics immediately
+                            symbol_manager.update_symbol_metrics(
+                                symbol,
+                                price=mover['price'],
+                                prev_close=mover['prev_close'],
+                                gap_percent=gap_percent,
+                                volume=volume,
+                                volume_ratio=volume_ratio
+                            )
+                    
+                    except Exception as e:
+                        logger.warning(f"Error processing gap candidate {symbol}: {e}")
+                        continue
+            
+            # Sort by absolute gap percentage
+            gap_candidates.sort(key=lambda x: abs(x['gap_percent']), reverse=True)
+            
+            logger.info(f"Found {len(gap_candidates)} enhanced gap candidates")
+            
+            # Store gap candidates in database
+            await self._store_gap_candidates(gap_candidates)
+            
+            return gap_candidates
+            
+        except Exception as e:
+            logger.error(f"Error fetching enhanced gap candidates: {e}")
+            return []
+    
+    async def get_professional_indicators_batch(self, symbols: List[str]) -> Dict[str, Dict]:
+        """Get professional indicators for multiple symbols - BATCH OPTIMIZATION"""
+        try:
+            logger.info(f"Fetching professional indicators for {len(symbols)} symbols...")
+            
+            indicators_data = {}
+            
+            # Process symbols in batches to avoid overwhelming the API
+            batch_size = 5
+            for i in range(0, len(symbols), batch_size):
+                batch = symbols[i:i + batch_size]
+                
+                # Fetch indicators for this batch
+                batch_tasks = []
+                for symbol in batch:
+                    batch_tasks.extend([
+                        self.get_rsi(symbol),
+                        self.get_macd(symbol),
+                        self.get_sma(symbol, window=20),
+                        self.get_ema(symbol, window=12)
+                    ])
+                
+                # Execute batch requests concurrently
+                results = await asyncio.gather(*batch_tasks, return_exceptions=True)
+                
+                # Process results
+                for j, symbol in enumerate(batch):
+                    base_idx = j * 4
+                    rsi_data = results[base_idx] if not isinstance(results[base_idx], Exception) else None
+                    macd_data = results[base_idx + 1] if not isinstance(results[base_idx + 1], Exception) else None
+                    sma_data = results[base_idx + 2] if not isinstance(results[base_idx + 2], Exception) else None
+                    ema_data = results[base_idx + 3] if not isinstance(results[base_idx + 3], Exception) else None
+                    
+                    indicators_data[symbol] = {
+                        'rsi': rsi_data,
+                        'macd': macd_data,
+                        'sma_20': sma_data,
+                        'ema_12': ema_data,
+                        'timestamp': datetime.now()
+                    }
+                
+                # Rate limiting between batches
+                if i + batch_size < len(symbols):
+                    await asyncio.sleep(2)  # 2 second pause between batches
+            
+            logger.info(f"Retrieved professional indicators for {len(indicators_data)} symbols")
+            return indicators_data
+            
+        except Exception as e:
+            logger.error(f"Error fetching professional indicators batch: {e}")
+            return {}
+    
+    async def get_market_regime_indicators(self) -> Dict:
+        """Get market regime indicators using major indices - MEDIUM PRIORITY"""
+        try:
+            logger.info("Analyzing market regime using index indicators...")
+            
+            # Major indices to analyze
+            indices = ['SPY', 'QQQ', 'IWM', 'DIA']
+            
+            regime_data = {}
+            
+            # Get MACD for each index
+            for index in indices:
+                macd_data = await self.get_macd(index)
+                if macd_data:
+                    regime_data[index] = {
+                        'macd_line': macd_data['macd_line'],
+                        'signal_line': macd_data['signal_line'],
+                        'histogram': macd_data['histogram'],
+                        'momentum': 'bullish' if macd_data['histogram'] > 0 else 'bearish'
+                    }
+            
+            # Determine overall market regime
+            bullish_count = sum(1 for data in regime_data.values() if data.get('momentum') == 'bullish')
+            total_indices = len(regime_data)
+            
+            if bullish_count >= total_indices * 0.75:
+                overall_regime = 'strong_bullish'
+            elif bullish_count >= total_indices * 0.5:
+                overall_regime = 'bullish'
+            elif bullish_count <= total_indices * 0.25:
+                overall_regime = 'strong_bearish'
+            else:
+                overall_regime = 'bearish'
+            
+            regime_analysis = {
+                'overall_regime': overall_regime,
+                'bullish_indices': bullish_count,
+                'total_indices': total_indices,
+                'bullish_percentage': (bullish_count / total_indices) * 100 if total_indices > 0 else 0,
+                'indices_data': regime_data,
+                'timestamp': datetime.now()
+            }
+            
+            logger.info(f"Market regime: {overall_regime} ({bullish_count}/{total_indices} indices bullish)")
+            return regime_analysis
+            
+        except Exception as e:
+            logger.error(f"Error analyzing market regime: {e}")
+            return {}
+    
     def get_latest_trade(self, symbol: str) -> Optional[TradeData]:
         """Get latest trade for symbol"""
         return self.latest_trades.get(symbol)
@@ -810,6 +1375,72 @@ class PolygonDataManager:
         await self.http_client.close()
         
         logger.info("Polygon cleanup completed")
+    
+    async def _store_gap_candidates(self, gap_candidates: List[Dict]):
+        """Store gap candidates in database"""
+        
+        if not self.db_manager or not gap_candidates:
+            return
+        
+        try:
+            for gap in gap_candidates:
+                await self.db_manager.insert_gap_candidate(
+                    symbol=gap['symbol'],
+                    gap_type=gap['direction'],
+                    gap_percent=gap['gap_percent'],
+                    previous_close=gap['prev_close'],
+                    current_price=gap['price'],
+                    volume=gap['volume'],
+                    volume_ratio=gap['volume_ratio']
+                )
+            
+            logger.info(f"Stored {len(gap_candidates)} gap candidates in database")
+            
+        except Exception as e:
+            logger.error(f"Error storing gap candidates: {e}")
+    
+    async def _store_market_data(self, symbol: str, data_type: str, data: Dict):
+        """Store market data in database"""
+        
+        if not self.db_manager:
+            return
+        
+        try:
+            market_data = {
+                'symbol': symbol,
+                'data_type': data_type,
+                'timestamp': datetime.now(),
+                'data': data
+            }
+            
+            await self.db_manager.insert_market_data(market_data)
+            
+        except Exception as e:
+            logger.error(f"Error storing market data: {e}")
+    
+    async def _store_earnings_calendar(self, earnings_data: List[Dict]):
+        """Store earnings calendar data in database"""
+        
+        if not self.db_manager or not earnings_data:
+            return
+        
+        try:
+            for earnings in earnings_data:
+                await self.db_manager.insert_earnings_event(
+                    symbol=earnings['symbol'],
+                    event_date=earnings.get('published_utc'),
+                    event_type='earnings',
+                    description=earnings.get('title', ''),
+                    metadata={
+                        'article_url': earnings.get('article_url'),
+                        'description': earnings.get('description')
+                    }
+                )
+            
+            logger.info(f"Stored {len(earnings_data)} earnings events in database")
+            
+        except Exception as e:
+            logger.error(f"Error storing earnings calendar: {e}")
 
 # Global instance (lazy-initialized)
 polygon_data_manager = None

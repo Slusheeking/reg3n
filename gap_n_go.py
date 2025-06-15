@@ -1,4 +1,5 @@
 """
+FAIL FAST SYSTEM - NO FALLBACKS ALLOWED
 Gap and Go Trading Strategy
 Enhanced with Lag-Llama probabilistic forecasting
 """
@@ -16,6 +17,7 @@ from active_symbols import symbol_manager, SymbolMetrics
 from lag_llama_engine import lag_llama_engine, ForecastResult
 from polygon import get_polygon_data_manager, TradeData
 from alpaca import get_alpaca_client, TradeSignal
+from database import get_database_manager
 
 logger = logging.getLogger(__name__)
 
@@ -101,6 +103,7 @@ class GapAndGoStrategy:
         # Client instances (lazy-initialized)
         self.polygon_data_manager = None
         self.alpaca_client = None
+        self.db_manager = None
         
         # Strategy state
         self.active_signals: Dict[str, GapSignal] = {}
@@ -127,6 +130,7 @@ class GapAndGoStrategy:
         # Initialize clients
         self.polygon_data_manager = get_polygon_data_manager()
         self.alpaca_client = get_alpaca_client()
+        self.db_manager = get_database_manager()
         
         # Reset daily stats
         self.daily_stats = {
@@ -166,10 +170,13 @@ class GapAndGoStrategy:
         
         logger.info(f"Identified {len(gap_candidates)} gap candidates")
         
+        # Store gap candidates in database
+        await self._store_gap_candidates(gap_candidates)
+        
         return gap_candidates
     
     async def _analyze_symbol_gap(self, symbol: str) -> Optional[GapAnalysis]:
-        """Analyze gap for individual symbol"""
+        """Analyze gap for individual symbol with enhanced Polygon API integration"""
         
         try:
             # Get symbol metrics
@@ -233,11 +240,83 @@ class GapAndGoStrategy:
             # Get Lag-Llama predictions
             await self._add_lagllama_predictions(gap_analysis)
             
+            # Add MACD momentum confirmation - HIGH PRIORITY
+            await self._add_macd_momentum_confirmation(gap_analysis)
+            
             return gap_analysis
             
         except Exception as e:
             logger.error(f"Error analyzing gap for {symbol}: {e}")
             return None
+    
+    async def _add_macd_momentum_confirmation(self, gap_analysis: GapAnalysis):
+        """Add MACD momentum confirmation for gap continuation - HIGH PRIORITY"""
+        
+        try:
+            if not self.polygon_data_manager:
+                self.polygon_data_manager = get_polygon_data_manager()
+            
+            # Get professional MACD from Polygon API
+            macd_data = await self.polygon_data_manager.get_macd(
+                gap_analysis.symbol, 
+                timespan="minute",
+                limit=5  # Get last 5 periods for trend analysis
+            )
+            
+            if not macd_data:
+                logger.warning(f"Could not get MACD data for {gap_analysis.symbol}")
+                return
+            
+            macd_line = macd_data['macd_line']
+            signal_line = macd_data['signal_line']
+            histogram = macd_data['histogram']
+            
+            # Analyze momentum confirmation
+            momentum_confirmation = False
+            momentum_strength = 0.0
+            
+            if gap_analysis.gap_type == GapType.GAP_UP:
+                # For gap up, look for bullish MACD momentum
+                if histogram > 0 and macd_line > signal_line:
+                    momentum_confirmation = True
+                    momentum_strength = min(abs(histogram) / 0.5, 1.0)  # Normalize to 0-1
+                    
+                    logger.debug(f"Gap up momentum confirmed for {gap_analysis.symbol}: "
+                               f"MACD={macd_line:.4f}, Signal={signal_line:.4f}, Histogram={histogram:.4f}")
+            
+            elif gap_analysis.gap_type == GapType.GAP_DOWN:
+                # For gap down, look for bearish MACD momentum
+                if histogram < 0 and macd_line < signal_line:
+                    momentum_confirmation = True
+                    momentum_strength = min(abs(histogram) / 0.5, 1.0)  # Normalize to 0-1
+                    
+                    logger.debug(f"Gap down momentum confirmed for {gap_analysis.symbol}: "
+                               f"MACD={macd_line:.4f}, Signal={signal_line:.4f}, Histogram={histogram:.4f}")
+            
+            # Enhance continuation probability with MACD confirmation
+            if momentum_confirmation:
+                # Boost continuation probability by momentum strength
+                momentum_boost = momentum_strength * 0.2  # Up to 20% boost
+                gap_analysis.continuation_probability = min(
+                    gap_analysis.continuation_probability + momentum_boost, 
+                    1.0
+                )
+                
+                logger.info(f"MACD momentum confirmation for {gap_analysis.symbol}: "
+                          f"strength={momentum_strength:.2f}, boosted continuation prob to {gap_analysis.continuation_probability:.2f}")
+            else:
+                # Reduce continuation probability if momentum doesn't confirm
+                momentum_penalty = 0.1  # 10% penalty
+                gap_analysis.continuation_probability = max(
+                    gap_analysis.continuation_probability - momentum_penalty,
+                    0.0
+                )
+                
+                logger.debug(f"MACD momentum divergence for {gap_analysis.symbol}, "
+                           f"reduced continuation prob to {gap_analysis.continuation_probability:.2f}")
+            
+        except Exception as e:
+            logger.error(f"Error adding MACD momentum confirmation for {gap_analysis.symbol}: {e}")
     
     async def _add_technical_levels(self, gap_analysis: GapAnalysis):
         """Add technical support/resistance levels"""
@@ -622,6 +701,10 @@ class GapAndGoStrategy:
                 self.trades_today += 1
                 self.daily_stats['trades_executed'] += 1
                 
+                # Store trading signal and position in database
+                await self._store_trading_signal(signal)
+                await self._store_position(signal, order_id)
+                
                 logger.info(f"Executed gap trade: {signal.action} {signal.symbol}")
         
         return executed_count
@@ -669,6 +752,89 @@ class GapAndGoStrategy:
             'successful_continuations': 0,
             'gap_fills': 0
         }
+    
+    async def _store_gap_candidates(self, gap_candidates: List[GapAnalysis]):
+        """Store gap candidates in database"""
+        
+        if not self.db_manager or not gap_candidates:
+            return
+        
+        try:
+            for gap in gap_candidates:
+                await self.db_manager.insert_gap_candidate(
+                    symbol=gap.symbol,
+                    gap_type=gap.gap_type.value,
+                    gap_percent=gap.gap_percent,
+                    previous_close=gap.previous_close,
+                    current_price=gap.current_price,
+                    volume=gap.premarket_volume,
+                    volume_ratio=gap.volume_ratio
+                )
+            
+            logger.info(f"Stored {len(gap_candidates)} gap candidates in database")
+            
+        except Exception as e:
+            logger.error(f"Error storing gap candidates: {e}")
+    
+    async def _store_trading_signal(self, signal: GapSignal):
+        """Store trading signal in database"""
+        
+        if not self.db_manager:
+            return
+        
+        try:
+            signal_data = {
+                'timestamp': signal.entry_time,
+                'symbol': signal.symbol,
+                'strategy': 'gap_and_go',
+                'signal_type': signal.action,
+                'confidence': signal.confidence,
+                'price': signal.entry_price,
+                'metadata': {
+                    'gap_type': signal.gap_analysis.gap_type.value,
+                    'gap_percent': signal.gap_analysis.gap_percent,
+                    'stop_loss': signal.stop_loss,
+                    'targets': signal.targets,
+                    'position_size': signal.position_size,
+                    'hold_time_minutes': signal.hold_time_minutes,
+                    'risk_reward_ratio': signal.risk_reward_ratio,
+                    'continuation_probability': signal.gap_analysis.continuation_probability
+                }
+            }
+            
+            await self.db_manager.insert_trading_signal(signal_data)
+            
+        except Exception as e:
+            logger.error(f"Error storing trading signal: {e}")
+    
+    async def _store_position(self, signal: GapSignal, order_id: str):
+        """Store position in database"""
+        
+        if not self.db_manager:
+            return
+        
+        try:
+            position_data = {
+                'symbol': signal.symbol,
+                'strategy': 'gap_and_go',
+                'side': 'LONG' if signal.action == 'BUY' else 'SHORT',
+                'quantity': int(signal.position_size),
+                'entry_price': signal.entry_price,
+                'opened_at': signal.entry_time,
+                'metadata': {
+                    'order_id': order_id,
+                    'gap_type': signal.gap_analysis.gap_type.value,
+                    'gap_percent': signal.gap_analysis.gap_percent,
+                    'stop_loss': signal.stop_loss,
+                    'targets': signal.targets,
+                    'expiry_time': signal.expiry_time.isoformat()
+                }
+            }
+            
+            await self.db_manager.insert_position(position_data)
+            
+        except Exception as e:
+            logger.error(f"Error storing position: {e}")
 
 # Global strategy instance
 gap_and_go_strategy = GapAndGoStrategy()

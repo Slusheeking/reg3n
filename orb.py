@@ -1,5 +1,6 @@
 """
-Opening Range Breakout (ORB) Strategy
+FAIL FAST SYSTEM - NO FALLBACKS ALLOWED
+Opening Range Breakout (ORB) Trading Strategy
 Enhanced with Lag-Llama probabilistic breakout forecasting
 """
 
@@ -16,6 +17,7 @@ from active_symbols import symbol_manager, SymbolMetrics
 from lag_llama_engine import lag_llama_engine, ForecastResult
 from polygon import get_polygon_data_manager, TradeData, AggregateData
 from alpaca import get_alpaca_client, TradeSignal
+from database import get_database_manager
 
 logger = logging.getLogger(__name__)
 
@@ -170,6 +172,7 @@ class ORBStrategy:
         # Initialize clients
         self.polygon_data_manager = get_polygon_data_manager()
         self.alpaca_client = get_alpaca_client()
+        self.db_manager = get_database_manager()
         
         # Reset daily stats
         self.daily_stats = {
@@ -180,6 +183,87 @@ class ORBStrategy:
             'false_breakouts': 0,
             'average_range_size': 0.0
         }
+    
+    async def _store_opening_range(self, opening_range: OpeningRange):
+        """Store opening range data in database"""
+        
+        if not self.db_manager:
+            return
+        
+        try:
+            range_data = {
+                'symbol': opening_range.symbol,
+                'timestamp': opening_range.start_time,
+                'high': opening_range.high,
+                'low': opening_range.low,
+                'open': opening_range.open,
+                'close': opening_range.close,
+                'volume': opening_range.volume,
+                'range_size': opening_range.range_size,
+                'range_percent': opening_range.range_percent,
+                'quality': opening_range.quality.value,
+                'vwap': opening_range.volume_weighted_price
+            }
+            
+            await self.db_manager.insert_orb_range(range_data)
+            
+        except Exception as e:
+            logger.error(f"Error storing opening range: {e}")
+    
+    async def _store_orb_signal(self, signal: ORBSignal):
+        """Store ORB trading signal in database"""
+        
+        if not self.db_manager:
+            return
+        
+        try:
+            signal_data = {
+                'symbol': signal.symbol,
+                'timestamp': signal.signal_time,
+                'action': signal.action,
+                'confidence': signal.confidence,
+                'entry_price': signal.entry_price,
+                'stop_loss': signal.stop_loss,
+                'targets': signal.targets,
+                'position_size': signal.position_size,
+                'breakout_direction': signal.breakout_analysis.breakout_direction.value,
+                'sustainability_probability': signal.breakout_analysis.sustainability_probability,
+                'volume_confirmation': signal.breakout_analysis.volume_confirmation,
+                'risk_reward_ratio': signal.risk_reward_ratio,
+                'range_expansion_multiple': signal.range_expansion_multiple
+            }
+            
+            await self.db_manager.insert_trading_signal(signal_data)
+            
+        except Exception as e:
+            logger.error(f"Error storing ORB signal: {e}")
+    
+    async def _store_breakout_analysis(self, analysis: BreakoutAnalysis):
+        """Store breakout analysis in database"""
+        
+        if not self.db_manager:
+            return
+        
+        try:
+            analysis_data = {
+                'symbol': analysis.symbol,
+                'timestamp': datetime.now(),
+                'breakout_direction': analysis.breakout_direction.value,
+                'breakout_price': analysis.breakout_price,
+                'current_price': analysis.current_price,
+                'sustainability_probability': analysis.sustainability_probability,
+                'false_breakout_probability': analysis.false_breakout_probability,
+                'volume_confirmation': analysis.volume_confirmation,
+                'volume_ratio': analysis.volume_ratio,
+                'target_projections': analysis.target_projections,
+                'resistance_levels': analysis.key_resistance_levels,
+                'support_levels': analysis.key_support_levels
+            }
+            
+            await self.db_manager.insert_breakout_analysis(analysis_data)
+            
+        except Exception as e:
+            logger.error(f"Error storing breakout analysis: {e}")
         
         # Register callbacks
         if self.polygon_data_manager:
@@ -475,7 +559,7 @@ class ORBStrategy:
             logger.error(f"Error adding volume confirmation: {e}")
     
     async def _add_breakout_predictions(self, breakout_analysis: BreakoutAnalysis):
-        """Add Lag-Llama predictions for breakout sustainability"""
+        """Add Lag-Llama predictions for breakout sustainability with Polygon momentum confirmation"""
         
         try:
             symbol = breakout_analysis.symbol
@@ -486,6 +570,9 @@ class ORBStrategy:
             
             opening_range = breakout_analysis.opening_range
             current_price = breakout_analysis.current_price
+            
+            # Get Polygon momentum indicators for breakout confirmation - HIGH PRIORITY
+            await self._add_polygon_momentum_confirmation(breakout_analysis)
             
             # Sustainability probability
             if breakout_analysis.breakout_direction == BreakoutDirection.UPWARD:
@@ -557,6 +644,136 @@ class ORBStrategy:
             
         except Exception as e:
             logger.error(f"Error adding breakout predictions: {e}")
+    
+    async def _add_polygon_momentum_confirmation(self, breakout_analysis: BreakoutAnalysis):
+        """Add Polygon professional momentum indicators for breakout confirmation - HIGH PRIORITY"""
+        
+        try:
+            if not self.polygon_data_manager:
+                self.polygon_data_manager = get_polygon_data_manager()
+            
+            symbol = breakout_analysis.symbol
+            
+            # Get professional RSI for momentum confirmation
+            rsi_data = await self.polygon_data_manager.get_rsi(symbol, window=14, timespan="minute")
+            
+            # Get professional MACD for trend confirmation
+            macd_data = await self.polygon_data_manager.get_macd(symbol, timespan="minute")
+            
+            # Get professional Bollinger Bands for volatility expansion
+            bb_data = await self.polygon_data_manager.get_bollinger_bands(
+                symbol, 
+                window=20, 
+                timespan="minute"
+            )
+            
+            momentum_confirmation = False
+            momentum_strength = 0.0
+            
+            if breakout_analysis.breakout_direction == BreakoutDirection.UPWARD:
+                # For upward breakout, look for bullish momentum
+                momentum_factors = []
+                
+                # RSI momentum (should be rising and above 50)
+                if rsi_data and rsi_data.get('current_rsi', 50) > 50:
+                    rsi_strength = min((rsi_data['current_rsi'] - 50) / 30, 1.0)  # Normalize 50-80 to 0-1
+                    momentum_factors.append(rsi_strength)
+                    logger.debug(f"ORB upward breakout RSI confirmation for {symbol}: {rsi_data['current_rsi']:.2f}")
+                
+                # MACD bullish momentum
+                if macd_data:
+                    macd_line = macd_data.get('macd_line', 0)
+                    signal_line = macd_data.get('signal_line', 0)
+                    histogram = macd_data.get('histogram', 0)
+                    
+                    if histogram > 0 and macd_line > signal_line:
+                        macd_strength = min(abs(histogram) / 0.5, 1.0)
+                        momentum_factors.append(macd_strength)
+                        logger.debug(f"ORB upward breakout MACD confirmation for {symbol}: histogram={histogram:.4f}")
+                
+                # Bollinger Band expansion (price above upper band indicates strong momentum)
+                if bb_data:
+                    current_price = breakout_analysis.current_price
+                    upper_band = bb_data.get('upper_band', current_price)
+                    
+                    if current_price > upper_band:
+                        bb_strength = min((current_price - upper_band) / upper_band * 10, 1.0)
+                        momentum_factors.append(bb_strength)
+                        logger.debug(f"ORB upward breakout BB expansion for {symbol}: price={current_price:.2f}, upper={upper_band:.2f}")
+                
+                # Calculate overall momentum strength
+                if momentum_factors:
+                    momentum_strength = np.mean(momentum_factors)
+                    momentum_confirmation = momentum_strength > 0.3  # 30% threshold
+            
+            elif breakout_analysis.breakout_direction == BreakoutDirection.DOWNWARD:
+                # For downward breakout, look for bearish momentum
+                momentum_factors = []
+                
+                # RSI momentum (should be falling and below 50)
+                if rsi_data and rsi_data.get('current_rsi', 50) < 50:
+                    rsi_strength = min((50 - rsi_data['current_rsi']) / 30, 1.0)  # Normalize 50-20 to 0-1
+                    momentum_factors.append(rsi_strength)
+                    logger.debug(f"ORB downward breakout RSI confirmation for {symbol}: {rsi_data['current_rsi']:.2f}")
+                
+                # MACD bearish momentum
+                if macd_data:
+                    macd_line = macd_data.get('macd_line', 0)
+                    signal_line = macd_data.get('signal_line', 0)
+                    histogram = macd_data.get('histogram', 0)
+                    
+                    if histogram < 0 and macd_line < signal_line:
+                        macd_strength = min(abs(histogram) / 0.5, 1.0)
+                        momentum_factors.append(macd_strength)
+                        logger.debug(f"ORB downward breakout MACD confirmation for {symbol}: histogram={histogram:.4f}")
+                
+                # Bollinger Band expansion (price below lower band)
+                if bb_data:
+                    current_price = breakout_analysis.current_price
+                    lower_band = bb_data.get('lower_band', current_price)
+                    
+                    if current_price < lower_band:
+                        bb_strength = min((lower_band - current_price) / lower_band * 10, 1.0)
+                        momentum_factors.append(bb_strength)
+                        logger.debug(f"ORB downward breakout BB expansion for {symbol}: price={current_price:.2f}, lower={lower_band:.2f}")
+                
+                # Calculate overall momentum strength
+                if momentum_factors:
+                    momentum_strength = np.mean(momentum_factors)
+                    momentum_confirmation = momentum_strength > 0.3  # 30% threshold
+            
+            # Enhance sustainability probability with momentum confirmation
+            if momentum_confirmation:
+                # Boost sustainability probability by momentum strength
+                momentum_boost = momentum_strength * 0.25  # Up to 25% boost
+                breakout_analysis.sustainability_probability = min(
+                    breakout_analysis.sustainability_probability + momentum_boost,
+                    1.0
+                )
+                
+                # Reduce false breakout probability
+                false_breakout_reduction = momentum_strength * 0.2  # Up to 20% reduction
+                breakout_analysis.false_breakout_probability = max(
+                    breakout_analysis.false_breakout_probability - false_breakout_reduction,
+                    0.0
+                )
+                
+                logger.info(f"ORB momentum confirmation for {symbol}: "
+                          f"strength={momentum_strength:.2f}, "
+                          f"sustainability boosted to {breakout_analysis.sustainability_probability:.2f}")
+            else:
+                # Penalize if momentum doesn't confirm
+                momentum_penalty = 0.15  # 15% penalty
+                breakout_analysis.sustainability_probability = max(
+                    breakout_analysis.sustainability_probability - momentum_penalty,
+                    0.0
+                )
+                
+                logger.debug(f"ORB momentum divergence for {symbol}, "
+                           f"reduced sustainability to {breakout_analysis.sustainability_probability:.2f}")
+            
+        except Exception as e:
+            logger.error(f"Error adding Polygon momentum confirmation for {symbol}: {e}")
     
     async def _add_technical_levels(self, breakout_analysis: BreakoutAnalysis):
         """Add technical support/resistance levels"""

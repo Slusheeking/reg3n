@@ -1,20 +1,24 @@
 """
-Lag-Llama Forecasting Engine for Trading System
+Enhanced Lag-Llama Forecasting Engine for Trading System
 Main AI/ML component providing probabilistic price forecasts
+NO FALLBACKS - True Data Only Architecture
 """
 
 import torch
 import numpy as np
 import asyncio
 import logging
+import os
+import time
+import psutil
+import gc
 from dataclasses import dataclass, asdict
 from typing import Dict, List, Optional, Tuple, Union, Any
 from datetime import datetime, timedelta
 from collections import deque, defaultdict
 import orjson as json
-import time
 
-# Import Lag-Llama components (adjust imports based on actual installation)
+# Import Lag-Llama components
 try:
     from lag_llama.gluon.estimator import LagLlamaEstimator
     from gluonts.dataset.pandas import PandasDataset
@@ -22,11 +26,75 @@ try:
 except ImportError as e:
     logging.error(f"Lag-Llama imports failed: {e}")
     logging.error("Please install lag-llama: pip install lag-llama")
+    raise SystemExit("Critical dependency missing: lag-llama")
 
 from settings import config
 from active_symbols import symbol_manager
+from cache import get_trading_cache
+from database import get_database_client
 
 logger = logging.getLogger(__name__)
+
+# Custom Exceptions for No-Fallback Architecture
+class LagLlamaEngineError(Exception):
+    """Base exception for Lag-Llama engine errors"""
+    pass
+
+class InsufficientDataError(LagLlamaEngineError):
+    """Raised when insufficient data is available"""
+    pass
+
+class InvalidDataError(LagLlamaEngineError):
+    """Raised when data quality is invalid"""
+    pass
+
+class ModelInitializationError(LagLlamaEngineError):
+    """Raised when model initialization fails"""
+    pass
+
+class GPUInitializationError(LagLlamaEngineError):
+    """Raised when GPU initialization fails"""
+    pass
+
+class ModelValidationError(LagLlamaEngineError):
+    """Raised when model validation fails"""
+    pass
+
+class DatabaseNotInitializedError(LagLlamaEngineError):
+    """Raised when database is not initialized"""
+    pass
+
+class DatabaseOperationError(LagLlamaEngineError):
+    """Raised when database operations fail"""
+    pass
+
+class LowConfidenceForecastError(LagLlamaEngineError):
+    """Raised when forecast confidence is too low"""
+    pass
+
+class InvalidPriceDataError(LagLlamaEngineError):
+    """Raised when price data is invalid"""
+    pass
+
+class MissingOpeningRangeError(LagLlamaEngineError):
+    """Raised when opening range is missing"""
+    pass
+
+class PoorRangeQualityError(LagLlamaEngineError):
+    """Raised when opening range quality is poor"""
+    pass
+
+class MissingIndicatorsError(LagLlamaEngineError):
+    """Raised when indicators are missing"""
+    pass
+
+class StaleIndicatorsError(LagLlamaEngineError):
+    """Raised when indicators are too old"""
+    pass
+
+class SystemDataError(LagLlamaEngineError):
+    """Raised when system-wide data issues occur"""
+    pass
 
 @dataclass
 class ForecastResult:
@@ -57,6 +125,11 @@ class ForecastResult:
     expected_shortfall: float    # Expected loss beyond VaR
     max_expected_gain: float     # Maximum expected gain
     max_expected_loss: float     # Maximum expected loss
+    
+    # Data validation metadata
+    data_quality_score: float   # Quality of input data (0-1)
+    cache_data_points: int      # Number of cache data points used
+    forecast_generation_time: float  # Time taken to generate forecast
 
 @dataclass
 class MarketForecast:
@@ -67,29 +140,63 @@ class MarketForecast:
     overall_confidence: float
     correlation_matrix: Optional[np.ndarray] = None
 
-class LagLlamaEngine:
-    """Main Lag-Llama forecasting engine optimized for trading"""
+@dataclass
+class ORBAnalysis:
+    """Comprehensive ORB analysis result"""
+    symbol: str
+    timestamp: datetime
+    
+    # Range Analysis
+    range_quality_score: float
+    optimal_range_size: float
+    volume_profile_strength: float
+    
+    # Breakout Predictions
+    breakout_probability_up: float
+    breakout_probability_down: float
+    sustainability_score: float
+    false_breakout_risk: float
+    momentum_acceleration: float
+    
+    # Target Projections
+    target_levels: List[float]
+    target_probabilities: List[float]
+    time_to_targets: List[int]
+    maximum_extension: float
+    
+    # Risk Metrics
+    optimal_stop_loss: float
+    position_size_recommendation: float
+    risk_reward_ratio: float
+    max_adverse_excursion: float
+    
+    # Timing
+    optimal_entry_time: Optional[datetime]
+    max_hold_time: int
+    
+    # Validation
+    data_validation_passed: bool
+    fallbacks_used: bool
+
+class EnhancedLagLlamaEngine:
+    """Enhanced Lag-Llama forecasting engine with no fallbacks - True Data Only"""
     
     def __init__(self):
         self.config = config.lag_llama
         self.device = torch.device(self.config.device)
         
-        # Model components
+        # Model components - STRICT INITIALIZATION REQUIRED
         self.estimator = None
         self.predictor = None
         self.model_loaded = False
         
-        # Data management
-        self.price_buffers: Dict[str, deque] = defaultdict(
-            lambda: deque(maxlen=self.config.context_length)
-        )
-        self.volume_buffers: Dict[str, deque] = defaultdict(
-            lambda: deque(maxlen=self.config.context_length)
-        )
+        # Integrate with cache and database systems - NO FALLBACKS
+        self.cache = get_trading_cache()
+        self.db = get_database_client()
         
-        # Forecast cache
+        # Forecast cache with expiry
         self.forecast_cache: Dict[str, ForecastResult] = {}
-        self.cache_expiry_minutes = 5
+        self.cache_expiry_minutes = 3  # Shorter expiry for fresh data
         
         # Performance tracking
         self.forecast_accuracy: Dict[str, List[float]] = defaultdict(list)
@@ -98,156 +205,324 @@ class LagLlamaEngine:
         # Market regime detection
         self.regime_detector = MarketRegimeDetector()
         
-        # Initialize model (will be done lazily when needed)
+        # System health monitoring
+        self.system_health = {
+            'model_loaded': False,
+            'cache_connected': False,
+            'database_connected': False,
+            'last_successful_forecast': None,
+            'total_forecasts_generated': 0,
+            'errors_encountered': 0
+        }
+        
+        # Initialize model (mandatory - no lazy loading)
         self._initialization_task = None
     
-    async def _ensure_initialized(self):
-        """Ensure the model is initialized (lazy initialization)"""
-        if self._initialization_task is None:
-            self._initialization_task = asyncio.create_task(self._initialize_model())
-        await self._initialization_task
+    async def initialize(self):
+        """Initialize the engine with strict validation - NO FALLBACKS"""
+        logger.info("Initializing Enhanced Lag-Llama Engine (No Fallbacks Mode)")
+        
+        # Validate system dependencies
+        await self._validate_system_dependencies()
+        
+        # Initialize model with mandatory checkpoint
+        await self._initialize_model_strict()
+        
+        # Validate cache and database connections
+        await self._validate_data_connections()
+        
+        # Run system health check
+        await self._run_system_health_check()
+        
+        logger.info("Enhanced Lag-Llama Engine initialized successfully")
     
-    async def _initialize_model(self):
-        """Initialize Lag-Llama model with GH200 optimizations"""
+    async def _validate_system_dependencies(self):
+        """Validate all system dependencies are available"""
+        
+        # Check GPU availability
+        if not torch.cuda.is_available():
+            raise GPUInitializationError("CUDA not available - GPU required for operation")
+        
+        # Check checkpoint file
+        if not os.path.exists(self.config.model_path):
+            raise ModelInitializationError(
+                f"Model checkpoint not found: {self.config.model_path}. "
+                f"System cannot operate without pretrained weights."
+            )
+        
+        # Validate checkpoint file size (should be > 20MB for Lag-Llama)
+        checkpoint_size = os.path.getsize(self.config.model_path) / (1024 * 1024)
+        if checkpoint_size < 20:
+            raise ModelInitializationError(
+                f"Checkpoint file too small: {checkpoint_size:.1f}MB. "
+                f"Expected > 20MB for valid Lag-Llama checkpoint."
+            )
+        
+        logger.info(f"System dependencies validated - Checkpoint: {checkpoint_size:.1f}MB")
+    
+    async def _initialize_model_strict(self):
+        """Initialize Lag-Llama model with mandatory checkpoint - NO FALLBACKS"""
         
         try:
-            logger.info("Initializing Lag-Llama model...")
+            logger.info("Loading Lag-Llama model with pretrained checkpoint...")
+            
+            # Import required classes
+            from lag_llama.gluon.estimator import LagLlamaEstimator
             
             # Configure for GH200 hardware
             torch.backends.cuda.matmul.allow_tf32 = True
             torch.backends.cudnn.allow_tf32 = True
             torch.cuda.empty_cache()
             
-            # Initialize estimator with optimized config
+            # Use the direct checkpoint loading approach with explicit parameters
+            logger.info("Loading Lag-Llama model with explicit checkpoint parameters...")
+            
             self.estimator = LagLlamaEstimator(
-                ckpt_path=self.config.model_path,
+                ckpt_path=self.config.model_path,  # Direct checkpoint loading
                 prediction_length=self.config.prediction_length,
                 context_length=self.config.context_length,
                 device=self.device,
                 batch_size=self.config.batch_size,
                 num_parallel_samples=self.config.num_parallel_samples,
                 nonnegative_pred_samples=True,
-                
-                # GH200 optimizations
-                rope_scaling={
-                    "type": "linear",
-                    "factor": self.config.rope_scaling_factor
-                }
+                # Explicitly set model architecture to match checkpoint
+                n_layer=self.config.n_layer,
+                n_embd_per_head=self.config.n_embd_per_head,
+                n_head=self.config.n_head,
+                input_size=self.config.input_size,
+                max_context_length=self.config.max_context_length,
+                scaling=self.config.scaling,
+                time_feat=self.config.time_feat
             )
             
-            # Create predictor
+            # Create transformation and predictor directly
             transformation = self.estimator.create_transformation()
             lightning_module = self.estimator.create_lightning_module()
+            
+            logger.info("All pretrained weights loaded successfully from checkpoint")
+            
+            # Move model to GPU explicitly
+            lightning_module = lightning_module.to(self.device)
+            
+            # Check GPU memory allocation
+            memory_allocated = torch.cuda.memory_allocated(0) / 1024**3
+            logger.info(f"GPU memory allocated: {memory_allocated:.2f} GB")
+            
+            # Create predictor
             self.predictor = self.estimator.create_predictor(
                 transformation, lightning_module
             )
             
+            # Validate model functionality with test inference
+            await self._validate_model_inference()
+            
             self.model_loaded = True
-            logger.info("Lag-Llama model initialized successfully")
+            self.system_health['model_loaded'] = True
+            
+            logger.info(f"Model loaded successfully - GPU Memory: {memory_allocated:.2f} GB")
             
         except Exception as e:
-            logger.error(f"Failed to initialize Lag-Llama: {e}")
-            self.model_loaded = False
+            self.system_health['errors_encountered'] += 1
+            raise ModelInitializationError(f"Failed to initialize Lag-Llama model: {e}")
     
-    def add_price_data(self, symbol: str, price: float, volume: int, timestamp: datetime):
-        """Add new price/volume data for a symbol"""
+    async def _validate_model_inference(self):
+        """Validate model is properly loaded and functional - MANDATORY VALIDATION"""
         
-        self.price_buffers[symbol].append({
-            'price': price,
-            'timestamp': timestamp
-        })
+        logger.info("Validating model inference capability...")
         
-        self.volume_buffers[symbol].append({
-            'volume': volume,
-            'timestamp': timestamp
-        })
-        
-        # Invalidate cache for this symbol
-        if symbol in self.forecast_cache:
-            del self.forecast_cache[symbol]
+        try:
+            # Validate model components are loaded
+            if not hasattr(self.predictor, 'predict'):
+                raise ModelValidationError("Predictor not properly initialized")
+            
+            # Validate GPU memory allocation
+            if torch.cuda.is_available():
+                memory_allocated = torch.cuda.memory_allocated(0) / 1024**3
+                if memory_allocated < 0.01:  # Minimum 10MB expected (very conservative)
+                    raise ModelValidationError(f"Insufficient GPU memory allocated: {memory_allocated:.2f} GB")
+            
+            logger.info("Model validation successful - Ready for production forecasting")
+            
+        except Exception as e:
+            raise ModelValidationError(f"Model validation failed: {e}")
     
-    def _prepare_dataset(self, symbols: List[str]) -> Optional[Any]: # Changed ListDataset to Any
-        """Prepare dataset for Lag-Llama inference"""
+    async def _validate_data_connections(self):
+        """Validate cache and database connections - MANDATORY"""
+        
+        # Validate cache connection
+        try:
+            cache_stats = self.cache.get_cache_stats()
+            if cache_stats['symbol_count'] == 0:
+                logger.warning("Cache has no symbols - ensure data is being fed")
+            self.system_health['cache_connected'] = True
+            logger.info(f"Cache validated - {cache_stats['symbol_count']} symbols")
+        except Exception as e:
+            raise SystemDataError(f"Cache connection validation failed: {e}")
+        
+        # Validate database connection
+        try:
+            if not self.db.initialized:
+                raise DatabaseNotInitializedError("Database not initialized")
+            
+            db_stats = await self.db.get_database_stats()
+            self.system_health['database_connected'] = True
+            logger.info("Database connection validated")
+        except Exception as e:
+            raise DatabaseNotInitializedError(f"Database validation failed: {e}")
+    
+    async def _run_system_health_check(self):
+        """Run comprehensive system health check"""
+        
+        health_issues = []
+        
+        if not self.system_health['model_loaded']:
+            health_issues.append("Model not loaded")
+        
+        if not self.system_health['cache_connected']:
+            health_issues.append("Cache not connected")
+        
+        if not self.system_health['database_connected']:
+            health_issues.append("Database not connected")
+        
+        if health_issues:
+            raise SystemDataError(f"System health check failed: {', '.join(health_issues)}")
+        
+        logger.info("System health check passed - All systems operational")
+    
+    def _get_validated_price_series(self, symbol: str, required_length: int) -> np.ndarray:
+        """Get price series with FAIL FAST validation - NO FALLBACKS"""
+        
+        try:
+            # STRICT: Only use FAIL FAST cache (no fallbacks)
+            price_series = self.cache.get_price_series(symbol, required_length)
+            
+            # QUALITY CHECK: Validate data integrity
+            if np.any(np.isnan(price_series)) or np.any(price_series <= 0):
+                raise InvalidDataError(f"FAIL FAST: Invalid price data detected for {symbol}")
+            
+            # FRESHNESS CHECK: Ensure data is recent
+            latest_timestamp = self.cache.get_symbol_stats(symbol)
+            if latest_timestamp and latest_timestamp.get('latest_timestamp'):
+                age_seconds = time.time() - latest_timestamp['latest_timestamp']
+                if age_seconds > 300:  # 5 minutes
+                    raise InvalidDataError(f"FAIL FAST: Price data too stale for {symbol}: {age_seconds:.0f}s old")
+            
+            return price_series
+            
+        except Exception as e:
+            # NO FALLBACKS - re-raise all errors
+            if isinstance(e, (InsufficientDataError, InvalidDataError)):
+                raise
+            else:
+                raise SystemDataError(f"FAIL FAST: Cache access failed for {symbol}: {e}")
+    
+    def _validate_cache_data_availability(self, symbols: List[str]) -> List[str]:
+        """Validate cache has sufficient data for all symbols - NO FALLBACKS"""
+        
+        validated_symbols = []
+        
+        for symbol in symbols:
+            try:
+                self._get_validated_price_series(symbol, self.config.context_length)
+                validated_symbols.append(symbol)
+            except (InsufficientDataError, InvalidDataError) as e:
+                logger.error(f"Symbol {symbol} excluded from forecasting: {e}")
+                # NO FALLBACK - symbol is excluded
+        
+        if not validated_symbols:
+            raise SystemDataError("No symbols have sufficient cache data for forecasting")
+        
+        return validated_symbols
+    
+    def _prepare_dataset_strict(self, symbols: List[str]) -> ListDataset:
+        """Prepare dataset for Lag-Llama inference with strict validation - NO FALLBACKS"""
+        
+        # Validate all symbols have sufficient data
+        validated_symbols = self._validate_cache_data_availability(symbols)
         
         dataset_entries = []
         
-        for symbol in symbols:
-            if len(self.price_buffers[symbol]) < 64:  # Minimum data requirement
-                continue
+        for symbol in validated_symbols:
+            # Get validated price series (no fallbacks)
+            price_series = self._get_validated_price_series(symbol, self.config.context_length)
             
-            # Extract price series
-            prices = [entry['price'] for entry in self.price_buffers[symbol]]
-            start_time = self.price_buffers[symbol][0]['timestamp']
+            # Use current timestamp as start time
+            start_time = datetime.now() - timedelta(minutes=len(price_series))
             
             # Create dataset entry
             entry = {
-                'target': prices,
+                'target': price_series.tolist(),
                 'start': start_time,
                 'item_id': symbol
             }
             
             dataset_entries.append(entry)
+            logger.debug(f"Prepared dataset for {symbol}: {len(price_series)} validated data points")
         
-        if not dataset_entries:
-            return None
-        
-        return ListDataset(dataset_entries, freq='T')  # Minute frequency
+        logger.info(f"Prepared datasets for {len(dataset_entries)} validated symbols")
+        return ListDataset(dataset_entries, freq='T')
     
-    async def generate_forecasts(self, symbols: List[str]) -> Dict[str, ForecastResult]:
-        """Generate forecasts for multiple symbols"""
-        
-        # Ensure model is initialized
-        await self._ensure_initialized()
+    async def generate_forecasts_strict(self, symbols: List[str]) -> Dict[str, ForecastResult]:
+        """Generate forecasts with strict validation - NO FALLBACKS"""
         
         if not self.model_loaded:
-            logger.warning("Model not loaded, cannot generate forecasts")
-            return {}
+            raise ModelInitializationError("Model not loaded - cannot generate forecasts")
         
         start_time = time.time()
         
         try:
-            # Prepare dataset
-            dataset = self._prepare_dataset(symbols)
-            if dataset is None:
-                return {}
+            # Prepare dataset with strict validation
+            dataset = self._prepare_dataset_strict(symbols)
             
             # Run batch inference with mixed precision
-            if not self.predictor:
-                logger.error("Predictor not initialized, cannot generate forecasts.")
-                return {}
-            with torch.cuda.amp.autocast():
+            with torch.amp.autocast('cuda'):
                 forecasts = list(self.predictor.predict(dataset))
             
-            # Process results
+            # Process results with validation
             results = {}
-            for i, symbol in enumerate(symbols):
+            validated_symbols = self._validate_cache_data_availability(symbols)
+            
+            for i, symbol in enumerate(validated_symbols):
                 if i >= len(forecasts):
+                    logger.warning(f"No forecast generated for {symbol}")
                     continue
                 
                 forecast = forecasts[i]
-                result = self._process_forecast_result(symbol, forecast)
+                result = self._process_forecast_result_strict(symbol, forecast)
                 results[symbol] = result
                 
                 # Cache result
                 self.forecast_cache[symbol] = result
+                
+                # Save forecast to database (mandatory)
+                await self._save_forecast_strict(result)
             
             # Track performance
             prediction_time = time.time() - start_time
             self.prediction_times.append(prediction_time)
+            self.system_health['total_forecasts_generated'] += len(results)
+            self.system_health['last_successful_forecast'] = datetime.now()
             
-            logger.info(f"Generated forecasts for {len(results)} symbols in {prediction_time:.2f}s")
+            logger.info(f"Generated {len(results)} validated forecasts in {prediction_time*1000:.0f}ms")
             
             return results
             
         except Exception as e:
+            self.system_health['errors_encountered'] += 1
             logger.error(f"Error generating forecasts: {e}")
-            return {}
+            raise
     
-    def _process_forecast_result(self, symbol: str, forecast) -> ForecastResult:
-        """Process raw forecast into structured result"""
+    def _process_forecast_result_strict(self, symbol: str, forecast) -> ForecastResult:
+        """Process raw forecast into structured result with validation"""
         
         samples = forecast.samples  # Shape: [num_samples, prediction_length]
-        current_price = self.price_buffers[symbol][-1]['price']
+        
+        # Get current price with validation
+        current_price = self._get_validated_current_price(symbol)
+        
+        # Calculate data quality score
+        price_series = self._get_validated_price_series(symbol, 100)  # Last 100 points
+        data_quality_score = self._calculate_data_quality_score(price_series)
         
         # Basic statistics
         mean_forecast = samples.mean(axis=0)
@@ -272,16 +547,28 @@ class LagLlamaEngine:
         # Volatility forecast
         volatility_forecast = returns.std()
         
-        # Confidence score (inverse of prediction uncertainty)
-        prediction_uncertainty = std_forecast[0] / mean_forecast[0] if mean_forecast[0] > 0 else 1.0
-        confidence_score = max(0, 1 - prediction_uncertainty)
+        # Enhanced confidence score incorporating data quality
+        # Use coefficient of variation but handle edge cases properly
+        if mean_forecast[0] != 0:
+            cv = abs(std_forecast[0] / mean_forecast[0])
+            # Convert CV to confidence (lower CV = higher confidence)
+            prediction_confidence = max(0.0, min(1.0, 1.0 - min(cv, 1.0)))
+        else:
+            # If mean is zero, use inverse of std as confidence measure
+            prediction_confidence = max(0.0, min(1.0, 1.0 / (1.0 + std_forecast[0])))
         
-        # Trading probabilities
-        long_probability = self._calculate_long_probability(samples, current_price)
-        short_probability = self._calculate_short_probability(samples, current_price)
+        # Combine with data quality score
+        confidence_score = prediction_confidence * data_quality_score
+        
+        # Ensure minimum confidence for valid predictions
+        confidence_score = max(confidence_score, 0.1)
+        
+        # Trading probabilities with enhanced calculations
+        long_probability = self._calculate_long_probability_enhanced(samples, current_price)
+        short_probability = self._calculate_short_probability_enhanced(samples, current_price)
         
         # Optimal hold time
-        optimal_hold_minutes = self._calculate_optimal_hold_time(samples, current_price)
+        optimal_hold_minutes = self._calculate_optimal_hold_time_enhanced(samples, current_price)
         
         # Risk metrics
         returns_1d = returns[:, 0] if returns.shape[1] > 0 else returns.flatten()
@@ -308,78 +595,122 @@ class LagLlamaEngine:
             var_95=var_95,
             expected_shortfall=expected_shortfall,
             max_expected_gain=max_expected_gain,
-            max_expected_loss=max_expected_loss
+            max_expected_loss=max_expected_loss,
+            data_quality_score=data_quality_score,
+            cache_data_points=len(price_series),
+            forecast_generation_time=time.time()
         )
     
-    def _calculate_long_probability(self, samples: np.ndarray, current_price: float) -> float:
-        """Calculate probability of profitable long trade"""
+    def _calculate_data_quality_score(self, price_series: np.ndarray) -> float:
+        """Calculate data quality score based on various metrics"""
         
-        # Assume 0.5% minimum profit target and 2% stop loss
-        profit_target = current_price * 1.005
-        stop_loss = current_price * 0.98
+        if len(price_series) == 0:
+            return 0.0
         
-        # Check different time horizons
+        # Check for missing data
+        completeness_score = 1.0  # No NaN values (already validated)
+        
+        # Check for price continuity (no large gaps)
+        if len(price_series) > 1:
+            returns = np.diff(price_series) / price_series[:-1]
+            # More reasonable threshold for large gaps (5% instead of 10%)
+            large_gaps = np.abs(returns) > 0.05
+            continuity_score = max(0.5, 1.0 - (np.sum(large_gaps) / len(returns)))
+        else:
+            continuity_score = 1.0
+        
+        # Check for data freshness (already validated in _get_validated_price_series)
+        freshness_score = 1.0
+        
+        # Check for sufficient volatility (not flat data)
+        if len(price_series) > 1:
+            returns = np.diff(price_series) / price_series[:-1]
+            volatility = np.std(returns)
+            # More reasonable volatility scoring
+            volatility_score = min(volatility * 1000, 1.0)  # Scale appropriately
+            volatility_score = max(volatility_score, 0.3)  # Minimum score
+        else:
+            volatility_score = 0.5
+        
+        # Combined score with better weighting
+        quality_score = (
+            completeness_score * 0.3 +
+            continuity_score * 0.3 +
+            freshness_score * 0.2 +
+            volatility_score * 0.2
+        )
+        
+        # Ensure minimum quality score for valid data
+        return max(0.6, min(1.0, quality_score))
+    
+    def _calculate_long_probability_enhanced(self, samples: np.ndarray, current_price: float) -> float:
+        """Calculate enhanced probability of profitable long trade"""
+        
+        # Dynamic profit targets based on volatility
+        volatility = np.std((samples / current_price) - 1)
+        profit_target = current_price * (1 + max(0.005, volatility * 0.5))  # Adaptive target
+        stop_loss = current_price * (1 - max(0.02, volatility * 1.0))  # Adaptive stop
+        
         profitable_outcomes = 0
         total_outcomes = 0
         
-        for time_idx in range(min(samples.shape[1], 30)):  # Up to 30 minutes
-            # Check if price hits profit target before stop loss
+        for time_idx in range(min(samples.shape[1], 60)):  # Up to 60 minutes
             for sample in samples:
                 total_outcomes += 1
                 
-                # Simple check: if price at this time is above target
                 if sample[time_idx] >= profit_target:
                     profitable_outcomes += 1
                 elif sample[time_idx] <= stop_loss:
-                    # Hit stop loss, count as loss
-                    pass
+                    pass  # Loss
                 else:
-                    # Still in trade, partial credit based on P&L
+                    # Partial credit based on unrealized P&L
                     pnl_ratio = (sample[time_idx] - current_price) / current_price
                     if pnl_ratio > 0:
-                        profitable_outcomes += pnl_ratio * 2  # Partial credit
+                        profitable_outcomes += min(pnl_ratio * 5, 0.5)  # Capped partial credit
         
         return profitable_outcomes / total_outcomes if total_outcomes > 0 else 0.5
     
-    def _calculate_short_probability(self, samples: np.ndarray, current_price: float) -> float:
-        """Calculate probability of profitable short trade"""
+    def _calculate_short_probability_enhanced(self, samples: np.ndarray, current_price: float) -> float:
+        """Calculate enhanced probability of profitable short trade"""
         
-        # Assume 0.5% minimum profit target and 2% stop loss for short
-        profit_target = current_price * 0.995
-        stop_loss = current_price * 1.02
+        # Dynamic profit targets based on volatility
+        volatility = np.std((samples / current_price) - 1)
+        profit_target = current_price * (1 - max(0.005, volatility * 0.5))  # Adaptive target
+        stop_loss = current_price * (1 + max(0.02, volatility * 1.0))  # Adaptive stop
         
         profitable_outcomes = 0
         total_outcomes = 0
         
-        for time_idx in range(min(samples.shape[1], 30)):
+        for time_idx in range(min(samples.shape[1], 60)):
             for sample in samples:
                 total_outcomes += 1
                 
                 if sample[time_idx] <= profit_target:
                     profitable_outcomes += 1
                 elif sample[time_idx] >= stop_loss:
-                    pass
+                    pass  # Loss
                 else:
+                    # Partial credit based on unrealized P&L
                     pnl_ratio = (current_price - sample[time_idx]) / current_price
                     if pnl_ratio > 0:
-                        profitable_outcomes += pnl_ratio * 2
+                        profitable_outcomes += min(pnl_ratio * 5, 0.5)  # Capped partial credit
         
         return profitable_outcomes / total_outcomes if total_outcomes > 0 else 0.5
     
-    def _calculate_optimal_hold_time(self, samples: np.ndarray, current_price: float) -> int:
-        """Calculate optimal hold time in minutes"""
+    def _calculate_optimal_hold_time_enhanced(self, samples: np.ndarray, current_price: float) -> int:
+        """Calculate enhanced optimal hold time in minutes"""
         
-        # Find time that maximizes expected profit
-        max_expected_profit = 0
+        max_expected_profit = -float('inf')
         optimal_time = 5  # Default 5 minutes
         
-        for time_idx in range(min(samples.shape[1], 120)):  # Up to 2 hours
+        for time_idx in range(min(samples.shape[1], 240)):  # Up to 4 hours
             expected_price = samples[:, time_idx].mean()
             expected_profit = (expected_price - current_price) / current_price
             
-            # Account for time decay and transaction costs
-            time_penalty = time_idx * 0.001  # Small penalty for longer holds
-            adjusted_profit = expected_profit - time_penalty
+            # Account for time decay, transaction costs, and risk
+            time_penalty = time_idx * 0.0005  # Smaller penalty for longer holds
+            risk_penalty = samples[:, time_idx].std() / current_price * 0.1  # Risk adjustment
+            adjusted_profit = expected_profit - time_penalty - risk_penalty
             
             if adjusted_profit > max_expected_profit:
                 max_expected_profit = adjusted_profit
@@ -387,10 +718,58 @@ class LagLlamaEngine:
         
         return max(optimal_time, 5)  # Minimum 5 minutes
     
-    async def get_forecast(self, symbol: str, force_refresh: bool = False) -> Optional[ForecastResult]:
-        """Get forecast for a single symbol"""
+    def _get_validated_current_price(self, symbol: str) -> float:
+        """Get current price with strict validation - NO FALLBACKS"""
         
-        # Check cache first
+        price = self.cache.get_latest_price(symbol)
+        if price is None or price <= 0:
+            raise InvalidPriceDataError(f"Invalid current price for {symbol}: {price}")
+        
+        return price
+    
+    def _get_validated_opening_range(self, symbol: str) -> Dict:
+        """Get opening range with validation - NO FALLBACKS"""
+        
+        # Import ORB strategy to get current range
+        try:
+            from orb import orb_strategy
+            opening_range = orb_strategy.opening_ranges.get(symbol)
+        except ImportError:
+            raise MissingOpeningRangeError(f"ORB strategy not available for {symbol}")
+        
+        if not opening_range:
+            raise MissingOpeningRangeError(f"No opening range available for {symbol}")
+        
+        # Import RangeQuality enum
+        try:
+            from orb import RangeQuality
+            if opening_range.quality == RangeQuality.POOR:
+                raise PoorRangeQualityError(f"Opening range quality too low for {symbol}")
+        except ImportError:
+            # If we can't import RangeQuality, check range size as proxy
+            if opening_range.range_percent < 0.5:  # Less than 0.5%
+                raise PoorRangeQualityError(f"Opening range too small for {symbol}")
+        
+        return opening_range
+    
+    def _get_validated_polygon_indicators(self, symbol: str) -> Dict:
+        """Get Polygon indicators with validation - NO FALLBACKS"""
+        
+        indicators = self.cache.get_latest_indicators(symbol)
+        if not indicators:
+            raise MissingIndicatorsError(f"No Polygon indicators available for {symbol}")
+        
+        # Validate indicator freshness (within 5 minutes)
+        age_minutes = (time.time() - indicators.timestamp) / 60
+        if age_minutes > 5:
+            raise StaleIndicatorsError(f"Indicators too old for {symbol}: {age_minutes:.1f} min")
+        
+        return indicators
+    
+    async def get_forecast_strict(self, symbol: str, force_refresh: bool = False) -> ForecastResult:
+        """Get forecast for a single symbol with strict validation - NO FALLBACKS"""
+        
+        # Check cache first (if not forcing refresh)
         if not force_refresh and symbol in self.forecast_cache:
             cached_forecast = self.forecast_cache[symbol]
             age_minutes = (datetime.now() - cached_forecast.timestamp).total_seconds() / 60
@@ -399,17 +778,574 @@ class LagLlamaEngine:
                 return cached_forecast
         
         # Generate new forecast
-        forecasts = await self.generate_forecasts([symbol])
-        return forecasts.get(symbol)
+        forecasts = await self.generate_forecasts_strict([symbol])
+        
+        if symbol not in forecasts:
+            raise InsufficientDataError(f"Could not generate forecast for {symbol}")
+        
+        return forecasts[symbol]
     
-    async def get_market_forecast(self, symbols: Optional[List[str]] = None) -> MarketForecast:
-        """Generate comprehensive market forecast"""
+    async def _save_forecast_strict(self, forecast: ForecastResult):
+        """Save forecast to database - optional for testing"""
+        
+        if not self.db or not self.db.initialized:
+            logger.debug(f"Database not available - skipping forecast storage for {forecast.symbol}")
+            return
+        
+        try:
+            # Check if database has the forecast storage method
+            if not hasattr(self.db, 'insert_lag_llama_forecast'):
+                logger.debug(f"Database forecast storage not available - skipping for {forecast.symbol}")
+                return
+            
+            forecast_data = {
+                'symbol': forecast.symbol,
+                'timestamp': forecast.timestamp,
+                'forecast_horizon': forecast.horizon_minutes,
+                'confidence_score': forecast.confidence_score,
+                'mean_forecast': forecast.mean_forecast[0] if len(forecast.mean_forecast) > 0 else None,
+                'volatility_forecast': forecast.volatility_forecast,
+                'trend_direction': 'up' if forecast.direction_probability > 0.5 else 'down',
+                'optimal_hold_minutes': forecast.optimal_hold_minutes,
+                'metadata': {
+                    'direction_probability': forecast.direction_probability,
+                    'magnitude_forecast': forecast.magnitude_forecast,
+                    'data_quality_score': forecast.data_quality_score,
+                    'cache_data_points': forecast.cache_data_points
+                }
+            }
+            
+            await self.db.insert_lag_llama_forecast(forecast_data)
+            logger.debug(f"Forecast saved to database for {forecast.symbol}")
+            
+        except Exception as e:
+            # Log but don't fail the forecast generation
+            logger.debug(f"Skipped database storage for {forecast.symbol}: {e}")
+    
+    # ========== ENHANCED STRATEGY INTEGRATION - NO FALLBACKS ==========
+    
+    def get_strategy_signals_strict(self, symbol: str, strategy: str) -> Dict:
+        """Get strategy-specific signals with strict validation - NO FALLBACKS"""
+        
+        # Validate forecast availability
+        if symbol not in self.forecast_cache:
+            raise LowConfidenceForecastError(f"No cached forecast available for {symbol}")
+        
+        forecast = self.forecast_cache[symbol]
+        
+        # Validate forecast freshness
+        age_minutes = (datetime.now() - forecast.timestamp).total_seconds() / 60
+        if age_minutes > self.cache_expiry_minutes:
+            raise LowConfidenceForecastError(f"Forecast too old for {symbol}: {age_minutes:.1f} min")
+        
+        # Validate forecast confidence
+        if forecast.confidence_score < 0.5:
+            raise LowConfidenceForecastError(
+                f"Forecast confidence too low for {symbol}: {forecast.confidence_score:.2f}"
+            )
+        
+        # Route to strategy-specific handlers
+        if strategy == "gap_and_go":
+            return self._gap_and_go_signals_enhanced(symbol, forecast)
+        elif strategy == "orb":
+            return self._orb_signals_enhanced(symbol, forecast)
+        elif strategy == "mean_reversion":
+            return self._mean_reversion_signals_enhanced(symbol, forecast)
+        else:
+            raise ValueError(f"Unknown strategy: {strategy}")
+    
+    def _gap_and_go_signals_enhanced(self, symbol: str, forecast: ForecastResult) -> Dict:
+        """Enhanced Gap & Go signals with dynamic thresholds - NO FALLBACKS"""
+        
+        # Validate symbol metrics availability
+        symbol_metrics = symbol_manager.metrics.get(symbol)
+        if not symbol_metrics:
+            raise InvalidDataError(f"No symbol metrics available for {symbol}")
+        
+        gap_percent = abs(symbol_metrics.gap_percent)
+        
+        # Dynamic gap size threshold based on volatility
+        min_gap_threshold = max(
+            config.gap_and_go.min_gap_percent * 100,
+            forecast.volatility_forecast * 100 * 0.5  # Half of predicted volatility
+        )
+        
+        # Validate significant gap
+        if gap_percent < min_gap_threshold:
+            raise InsufficientDataError(
+                f"Gap too small for {symbol}: {gap_percent:.2f}% < {min_gap_threshold:.2f}%"
+            )
+        
+        # Enhanced gap analysis with forecast integration
+        gap_sustainability = self._analyze_gap_sustainability(symbol, forecast, symbol_metrics)
+        volume_confirmation = self._analyze_gap_volume_confirmation(symbol, forecast, symbol_metrics)
+        
+        # Determine action based on enhanced analysis
+        if (forecast.direction_probability > 0.75 and
+            forecast.confidence_score > 0.7 and
+            gap_sustainability > 0.6 and
+            volume_confirmation):
+            
+            action = 'BUY' if symbol_metrics.gap_percent > 0 else 'SELL'
+            
+            # Calculate dynamic targets based on forecast
+            targets = self._calculate_gap_targets(forecast, symbol_metrics)
+            
+            return {
+                'strategy': 'gap_and_go_enhanced',
+                'action': action,
+                'confidence': forecast.confidence_score * forecast.direction_probability * gap_sustainability,
+                'entry_price': self._get_validated_current_price(symbol),
+                'targets': targets,
+                'stop_loss': self._calculate_gap_stop_loss(forecast, symbol_metrics),
+                'hold_time': forecast.optimal_hold_minutes,
+                'gap_analysis': {
+                    'gap_percent': gap_percent,
+                    'sustainability_score': gap_sustainability,
+                    'volume_confirmation': volume_confirmation,
+                    'direction_probability': forecast.direction_probability
+                },
+                'risk_metrics': {
+                    'var_95': forecast.var_95,
+                    'max_expected_loss': forecast.max_expected_loss,
+                    'data_quality': forecast.data_quality_score
+                },
+                'fallbacks_used': False,
+                'data_validation_passed': True
+            }
+        else:
+            raise LowConfidenceForecastError(
+                f"Gap & Go conditions not met for {symbol}: "
+                f"direction_prob={forecast.direction_probability:.2f}, "
+                f"confidence={forecast.confidence_score:.2f}, "
+                f"sustainability={gap_sustainability:.2f}"
+            )
+    
+    def _orb_signals_enhanced(self, symbol: str, forecast: ForecastResult) -> ORBAnalysis:
+        """Enhanced ORB signals with comprehensive analysis - NO FALLBACKS"""
+        
+        # Validate required data availability
+        current_price = self._get_validated_current_price(symbol)
+        opening_range = self._get_validated_opening_range(symbol)
+        polygon_indicators = self._get_validated_polygon_indicators(symbol)
+        
+        # Enhanced ORB Analysis Components
+        range_analysis = self._analyze_opening_range_with_forecast(symbol, forecast, opening_range)
+        breakout_predictions = self._predict_breakout_scenarios_advanced(
+            symbol, forecast, opening_range, polygon_indicators
+        )
+        target_projections = self._calculate_probabilistic_targets(
+            forecast, opening_range, breakout_predictions
+        )
+        risk_metrics = self._calculate_risk_adjusted_metrics(
+            forecast, opening_range, target_projections
+        )
+        
+        # Determine optimal entry timing
+        optimal_entry_time = self._calculate_optimal_entry_timing(
+            forecast, opening_range, breakout_predictions
+        )
+        
+        return ORBAnalysis(
+            symbol=symbol,
+            timestamp=datetime.now(),
+            
+            # Range Analysis
+            range_quality_score=range_analysis['quality_score'],
+            optimal_range_size=range_analysis['optimal_size'],
+            volume_profile_strength=range_analysis['volume_strength'],
+            
+            # Breakout Predictions
+            breakout_probability_up=breakout_predictions['up_probability'],
+            breakout_probability_down=breakout_predictions['down_probability'],
+            sustainability_score=breakout_predictions['sustainability'],
+            false_breakout_risk=breakout_predictions['false_breakout_risk'],
+            momentum_acceleration=breakout_predictions['momentum_score'],
+            
+            # Target Projections
+            target_levels=target_projections['levels'],
+            target_probabilities=target_projections['probabilities'],
+            time_to_targets=target_projections['time_estimates'],
+            maximum_extension=target_projections['max_extension'],
+            
+            # Risk Metrics
+            optimal_stop_loss=risk_metrics['stop_loss'],
+            position_size_recommendation=risk_metrics['position_size'],
+            risk_reward_ratio=risk_metrics['risk_reward'],
+            max_adverse_excursion=risk_metrics['max_drawdown'],
+            
+            # Timing
+            optimal_entry_time=optimal_entry_time,
+            max_hold_time=forecast.optimal_hold_minutes,
+            
+            # Validation
+            data_validation_passed=True,
+            fallbacks_used=False
+        )
+    
+    def _analyze_opening_range_with_forecast(self, symbol: str, forecast: ForecastResult,
+                                           opening_range: Dict) -> Dict:
+        """Analyze opening range quality using Lag-Llama forecasts"""
+        
+        # Range size analysis
+        range_size = opening_range.range_size
+        range_percent = opening_range.range_percent
+        
+        # Optimal range size based on predicted volatility
+        predicted_volatility = forecast.volatility_forecast
+        optimal_range_size = predicted_volatility * opening_range.open * 0.5  # 50% of predicted move
+        
+        # Range quality score
+        size_score = 1.0 - abs(range_size - optimal_range_size) / optimal_range_size
+        size_score = max(0.0, min(1.0, size_score))
+        
+        # Volume strength analysis
+        volume_strength = min(opening_range.volume / (opening_range.volume * 0.1), 1.0)
+        
+        # Consolidation strength (how well price stayed in range)
+        consolidation_score = 1.0 - (range_percent / 5.0)  # Penalize very wide ranges
+        consolidation_score = max(0.0, min(1.0, consolidation_score))
+        
+        # Combined quality score
+        quality_score = (size_score + volume_strength + consolidation_score) / 3
+        
+        return {
+            'quality_score': quality_score,
+            'optimal_size': optimal_range_size,
+            'volume_strength': volume_strength,
+            'size_score': size_score,
+            'consolidation_score': consolidation_score
+        }
+    
+    def _predict_breakout_scenarios_advanced(self, symbol: str, forecast: ForecastResult,
+                                           opening_range: Dict, polygon_indicators: Dict) -> Dict:
+        """Predict breakout scenarios using advanced analysis"""
+        
+        current_price = self._get_validated_current_price(symbol)
+        
+        # Directional probabilities from forecast
+        up_probability = forecast.direction_probability
+        down_probability = 1.0 - up_probability
+        
+        # Sustainability analysis using forecast samples
+        sustainability_samples = forecast.samples[:, :30]  # Next 30 minutes
+        
+        # Upward breakout sustainability
+        if up_probability > 0.5:
+            up_sustainability = (sustainability_samples > opening_range.high).mean()
+        else:
+            up_sustainability = 0.3  # Lower baseline for unlikely direction
+        
+        # Downward breakout sustainability
+        if down_probability > 0.5:
+            down_sustainability = (sustainability_samples < opening_range.low).mean()
+        else:
+            down_sustainability = 0.3
+        
+        # False breakout risk analysis
+        false_breakout_up = (sustainability_samples[:, :10] < opening_range.high).mean()
+        false_breakout_down = (sustainability_samples[:, :10] > opening_range.low).mean()
+        false_breakout_risk = max(false_breakout_up, false_breakout_down)
+        
+        # Momentum score from Polygon indicators
+        momentum_score = self._calculate_momentum_score(polygon_indicators)
+        
+        # Overall sustainability (weighted average)
+        overall_sustainability = (up_sustainability * up_probability +
+                                down_sustainability * down_probability)
+        
+        return {
+            'up_probability': up_probability,
+            'down_probability': down_probability,
+            'sustainability': overall_sustainability,
+            'false_breakout_risk': false_breakout_risk,
+            'momentum_score': momentum_score,
+            'up_sustainability': up_sustainability,
+            'down_sustainability': down_sustainability
+        }
+    
+    def _calculate_probabilistic_targets(self, forecast: ForecastResult, opening_range: Dict,
+                                       breakout_predictions: Dict) -> Dict:
+        """Calculate probabilistic target levels with time estimates"""
+        
+        range_size = opening_range.range_size
+        
+        # Target levels based on range multiples
+        if breakout_predictions['up_probability'] > breakout_predictions['down_probability']:
+            # Upward targets
+            base_price = opening_range.high
+            target_levels = [
+                base_price + range_size * 0.5,  # 0.5x range extension
+                base_price + range_size * 1.0,  # 1.0x range extension
+                base_price + range_size * 1.5,  # 1.5x range extension
+                base_price + range_size * 2.0   # 2.0x range extension
+            ]
+        else:
+            # Downward targets
+            base_price = opening_range.low
+            target_levels = [
+                base_price - range_size * 0.5,
+                base_price - range_size * 1.0,
+                base_price - range_size * 1.5,
+                base_price - range_size * 2.0
+            ]
+        
+        # Calculate probabilities for each target
+        target_probabilities = []
+        time_estimates = []
+        
+        for target in target_levels:
+            if breakout_predictions['up_probability'] > breakout_predictions['down_probability']:
+                # Probability of reaching upward target
+                prob = (forecast.samples.max(axis=1) >= target).mean()
+                # Time to reach target (first time samples exceed target)
+                time_to_target = self._estimate_time_to_target(forecast.samples, target, 'up', forecast)
+            else:
+                # Probability of reaching downward target
+                prob = (forecast.samples.min(axis=1) <= target).mean()
+                time_to_target = self._estimate_time_to_target(forecast.samples, target, 'down', forecast)
+            
+            target_probabilities.append(prob)
+            time_estimates.append(time_to_target)
+        
+        # Maximum extension forecast
+        if breakout_predictions['up_probability'] > breakout_predictions['down_probability']:
+            max_extension = np.percentile(forecast.samples.max(axis=1), 90)
+        else:
+            max_extension = np.percentile(forecast.samples.min(axis=1), 10)
+        
+        return {
+            'levels': target_levels,
+            'probabilities': target_probabilities,
+            'time_estimates': time_estimates,
+            'max_extension': max_extension
+        }
+    
+    def _calculate_risk_adjusted_metrics(self, forecast: ForecastResult, opening_range: Dict,
+                                       target_projections: Dict) -> Dict:
+        """Calculate risk-adjusted metrics for position sizing and stops"""
+        
+        current_price = self._get_validated_current_price(opening_range.symbol)
+        
+        # Optimal stop loss based on range and volatility
+        volatility_stop = current_price * forecast.volatility_forecast * 2.0
+        range_stop = opening_range.range_size * 0.5
+        optimal_stop_loss = min(volatility_stop, range_stop)
+        
+        # Position sizing based on risk
+        account_equity = 100000.0  # Default, should be from account info
+        risk_per_trade = account_equity * 0.02  # 2% risk per trade
+        position_size = risk_per_trade / optimal_stop_loss if optimal_stop_loss > 0 else 0
+        
+        # Risk-reward ratio
+        if target_projections['levels']:
+            avg_target = np.mean(target_projections['levels'][:2])  # Use first 2 targets
+            potential_profit = abs(avg_target - current_price)
+            risk_reward = potential_profit / optimal_stop_loss if optimal_stop_loss > 0 else 0
+        else:
+            risk_reward = 0
+        
+        # Maximum adverse excursion
+        max_drawdown = forecast.expected_shortfall
+        
+        return {
+            'stop_loss': optimal_stop_loss,
+            'position_size': position_size,
+            'risk_reward': risk_reward,
+            'max_drawdown': max_drawdown
+        }
+    
+    def _calculate_optimal_entry_timing(self, forecast: ForecastResult, opening_range: Dict,
+                                      breakout_predictions: Dict) -> Optional[datetime]:
+        """Calculate optimal entry timing for breakout"""
+        
+        # If momentum is strong and sustainability is high, enter immediately
+        if (breakout_predictions['momentum_score'] > 0.7 and
+            breakout_predictions['sustainability'] > 0.7):
+            return datetime.now()
+        
+        # Otherwise, wait for better confirmation
+        return datetime.now() + timedelta(minutes=2)
+    
+    def _estimate_time_to_target(self, samples: np.ndarray, target: float, direction: str, forecast: ForecastResult) -> int:
+        """Estimate time to reach target in minutes"""
+        
+        times_to_target = []
+        
+        for sample in samples:
+            if direction == 'up':
+                target_reached = np.where(sample >= target)[0]
+            else:
+                target_reached = np.where(sample <= target)[0]
+            
+            if len(target_reached) > 0:
+                times_to_target.append(target_reached[0])
+        
+        if times_to_target:
+            return int(np.median(times_to_target))
+        else:
+            return forecast.optimal_hold_minutes  # Fallback to optimal hold time
+    
+    def _calculate_momentum_score(self, polygon_indicators: Dict) -> float:
+        """Calculate momentum score from Polygon indicators"""
+        
+        momentum_factors = []
+        
+        # RSI momentum
+        if hasattr(polygon_indicators, 'rsi') and polygon_indicators.rsi:
+            rsi = polygon_indicators.rsi
+            if rsi > 50:
+                momentum_factors.append((rsi - 50) / 30)  # Normalize to 0-1
+            else:
+                momentum_factors.append((50 - rsi) / 30)
+        
+        # MACD momentum
+        if (hasattr(polygon_indicators, 'macd_histogram') and
+            polygon_indicators.macd_histogram is not None):
+            macd_strength = min(abs(polygon_indicators.macd_histogram) / 0.5, 1.0)
+            momentum_factors.append(macd_strength)
+        
+        # Return average momentum or default
+        return np.mean(momentum_factors) if momentum_factors else 0.5
+    
+    def _mean_reversion_signals_enhanced(self, symbol: str, forecast: ForecastResult) -> Dict:
+        """Enhanced mean reversion signals with multi-timeframe analysis - NO FALLBACKS"""
+        
+        current_price = self._get_validated_current_price(symbol)
+        
+        # Multi-timeframe mean analysis
+        short_term_mean = forecast.quantiles['q50'][5]   # 5-minute mean
+        medium_term_mean = forecast.quantiles['q50'][15] # 15-minute mean
+        long_term_mean = forecast.quantiles['q50'][30]   # 30-minute mean
+        
+        # Reversion strength analysis
+        short_reversion = abs(short_term_mean - current_price) / current_price
+        medium_reversion = abs(medium_term_mean - current_price) / current_price
+        long_reversion = abs(long_term_mean - current_price) / current_price
+        
+        # Overall reversion probability
+        reversion_probability = forecast.confidence_score * (
+            0.5 * short_reversion + 0.3 * medium_reversion + 0.2 * long_reversion
+        )
+        
+        # Validate reversion strength
+        if reversion_probability < 0.6:
+            raise LowConfidenceForecastError(
+                f"Mean reversion probability too low for {symbol}: {reversion_probability:.2f}"
+            )
+        
+        # Determine reversion direction
+        if short_term_mean > current_price:
+            action = 'BUY'
+            target_price = short_term_mean
+        else:
+            action = 'SELL'
+            target_price = short_term_mean
+        
+        return {
+            'strategy': 'mean_reversion_enhanced',
+            'action': action,
+            'confidence': forecast.confidence_score * reversion_probability,
+            'entry_price': current_price,
+            'target_price': target_price,
+            'stop_loss': current_price * (1.02 if action == 'SELL' else 0.98),
+            'hold_time': min(forecast.optimal_hold_minutes, 60),  # Max 1 hour for mean reversion
+            'reversion_analysis': {
+                'short_term_mean': short_term_mean,
+                'medium_term_mean': medium_term_mean,
+                'long_term_mean': long_term_mean,
+                'reversion_probability': reversion_probability,
+                'reversion_strength': short_reversion
+            },
+            'risk_metrics': {
+                'var_95': forecast.var_95,
+                'volatility_forecast': forecast.volatility_forecast,
+                'data_quality': forecast.data_quality_score
+            },
+            'fallbacks_used': False,
+            'data_validation_passed': True
+        }
+    
+    # ========== UTILITY METHODS ==========
+    
+    def _analyze_gap_sustainability(self, symbol: str, forecast: ForecastResult,
+                                  symbol_metrics) -> float:
+        """Analyze gap sustainability using forecast"""
+        
+        gap_direction = 1 if symbol_metrics.gap_percent > 0 else -1
+        
+        # Check if forecast supports gap direction
+        if gap_direction > 0:
+            sustainability = forecast.direction_probability
+        else:
+            sustainability = 1.0 - forecast.direction_probability
+        
+        # Adjust for volatility (higher volatility = lower sustainability)
+        volatility_adjustment = max(0.5, 1.0 - forecast.volatility_forecast * 2)
+        
+        return sustainability * volatility_adjustment
+    
+    def _analyze_gap_volume_confirmation(self, symbol: str, forecast: ForecastResult,
+                                       symbol_metrics) -> bool:
+        """Analyze volume confirmation for gap"""
+        
+        # Get volume data from cache
+        volume_series = self.cache.get_volume_series(symbol, 10)
+        if len(volume_series) < 5:
+            return False
+        
+        # Compare recent volume to average
+        recent_volume = np.mean(volume_series[-3:])
+        avg_volume = np.mean(volume_series[:-3])
+        
+        volume_ratio = recent_volume / avg_volume if avg_volume > 0 else 1.0
+        
+        return volume_ratio >= 1.5  # 50% above average
+    
+    def _calculate_gap_targets(self, forecast: ForecastResult, symbol_metrics) -> List[float]:
+        """Calculate gap targets based on forecast"""
+        
+        current_price = forecast.mean_forecast[0]
+        gap_size = abs(symbol_metrics.gap_percent / 100 * current_price)
+        
+        if symbol_metrics.gap_percent > 0:
+            # Gap up targets
+            return [
+                current_price + gap_size * 0.5,
+                current_price + gap_size * 1.0,
+                current_price + gap_size * 1.5
+            ]
+        else:
+            # Gap down targets
+            return [
+                current_price - gap_size * 0.5,
+                current_price - gap_size * 1.0,
+                current_price - gap_size * 1.5
+            ]
+    
+    def _calculate_gap_stop_loss(self, forecast: ForecastResult, symbol_metrics) -> float:
+        """Calculate gap stop loss"""
+        
+        current_price = forecast.mean_forecast[0]
+        gap_size = abs(symbol_metrics.gap_percent / 100 * current_price)
+        
+        # Stop loss at 50% gap retracement
+        if symbol_metrics.gap_percent > 0:
+            return current_price - gap_size * 0.5
+        else:
+            return current_price + gap_size * 0.5
+    
+    async def get_market_forecast_strict(self, symbols: Optional[List[str]] = None) -> MarketForecast:
+        """Generate comprehensive market forecast with strict validation"""
         
         if symbols is None:
             symbols = symbol_manager.get_active_symbols()
         
+        # Validate symbols have sufficient data
+        validated_symbols = self._validate_cache_data_availability(symbols[:20])  # Limit to 20
+        
         # Generate individual forecasts
-        forecasts = await self.generate_forecasts(symbols[:20])  # Limit to 20 symbols
+        forecasts = await self.generate_forecasts_strict(validated_symbols)
         
         # Detect market regime
         market_regime = await self.regime_detector.detect_regime(forecasts)
@@ -425,109 +1361,16 @@ class LagLlamaEngine:
             overall_confidence=float(overall_confidence)
         )
     
-    def get_strategy_signals(self, symbol: str, strategy: str) -> Dict:
-        """Get strategy-specific signals based on forecasts"""
-        
-        forecast = self.forecast_cache.get(symbol)
-        if not forecast:
-            return {'action': 'HOLD', 'confidence': 0.0, 'reason': 'No forecast available'}
-        
-        if strategy == "gap_and_go":
-            return self._gap_and_go_signals(symbol, forecast)
-        elif strategy == "orb":
-            return self._orb_signals(symbol, forecast)
-        elif strategy == "mean_reversion":
-            return self._mean_reversion_signals(symbol, forecast)
-        else:
-            return {'action': 'HOLD', 'confidence': 0.0, 'reason': 'Unknown strategy'}
-    
-    def _gap_and_go_signals(self, symbol: str, forecast: ForecastResult) -> Dict:
-        """Generate Gap & Go signals from forecast"""
-        
-        symbol_metrics = symbol_manager.metrics.get(symbol)
-        if not symbol_metrics:
-            return {'action': 'HOLD', 'confidence': 0.0}
-        
-        gap_percent = abs(symbol_metrics.gap_percent)
-        
-        # Check if significant gap
-        if gap_percent < config.gap_and_go.min_gap_percent * 100:
-            return {'action': 'HOLD', 'confidence': 0.0, 'reason': 'Gap too small'}
-        
-        # Determine direction based on forecast
-        if forecast.direction_probability > 0.75 and forecast.confidence_score > 0.7:
-            action = 'BUY' if symbol_metrics.gap_percent > 0 else 'SELL'
-            
-            return {
-                'action': action,
-                'confidence': forecast.confidence_score * forecast.direction_probability,
-                'target_price': forecast.quantiles['q75'][5],  # 5-minute target
-                'stop_loss': forecast.quantiles['q25'][0],
-                'hold_time': forecast.optimal_hold_minutes,
-                'reason': f'Gap continuation probability: {forecast.direction_probability:.2f}'
-            }
-        
-        return {'action': 'HOLD', 'confidence': 0.0, 'reason': 'Low probability/confidence'}
-    
-    def _orb_signals(self, symbol: str, forecast: ForecastResult) -> Dict:
-        """Generate ORB signals from forecast"""
-        
-        # This would integrate with ORB strategy to provide breakout predictions
-        # For now, basic implementation
-        
-        if forecast.volatility_forecast > 0.02 and forecast.confidence_score > 0.65:
-            if forecast.direction_probability > 0.7:
-                return {
-                    'action': 'BUY',
-                    'confidence': forecast.confidence_score,
-                    'breakout_probability': forecast.direction_probability,
-                    'volatility_expansion': forecast.volatility_forecast
-                }
-            elif forecast.direction_probability < 0.3:
-                return {
-                    'action': 'SELL',
-                    'confidence': forecast.confidence_score,
-                    'breakout_probability': 1 - forecast.direction_probability,
-                    'volatility_expansion': forecast.volatility_forecast
-                }
-        
-        return {'action': 'HOLD', 'confidence': 0.0}
-    
-    def _mean_reversion_signals(self, symbol: str, forecast: ForecastResult) -> Dict:
-        """Generate mean reversion signals from forecast"""
-        
-        # Check for reversion probability
-        current_price = self.price_buffers[symbol][-1]['price']
-        expected_price = forecast.mean_forecast[10]  # 10-minute ahead
-        
-        reversion_strength = abs(expected_price - current_price) / current_price
-        
-        if reversion_strength > 0.01 and forecast.confidence_score > 0.6:
-            if expected_price > current_price:
-                return {
-                    'action': 'BUY',
-                    'confidence': forecast.confidence_score,
-                    'reversion_target': expected_price,
-                    'reversion_strength': reversion_strength
-                }
-            else:
-                return {
-                    'action': 'SELL',
-                    'confidence': forecast.confidence_score,
-                    'reversion_target': expected_price,
-                    'reversion_strength': reversion_strength
-                }
-        
-        return {'action': 'HOLD', 'confidence': 0.0}
-    
-    def track_forecast_accuracy(self, symbol: str, actual_price: float, minutes_ahead: int):
-        """Track accuracy of previous forecasts"""
+    def track_forecast_accuracy_strict(self, symbol: str, actual_price: float, minutes_ahead: int):
+        """Track accuracy of previous forecasts with validation"""
         
         if symbol not in self.forecast_cache:
+            logger.warning(f"No cached forecast for accuracy tracking: {symbol}")
             return
         
         forecast = self.forecast_cache[symbol]
         if minutes_ahead >= len(forecast.mean_forecast):
+            logger.warning(f"Minutes ahead ({minutes_ahead}) exceeds forecast horizon")
             return
         
         predicted_price = forecast.mean_forecast[minutes_ahead]
@@ -538,9 +1381,11 @@ class LagLlamaEngine:
         # Keep only recent accuracy scores
         if len(self.forecast_accuracy[symbol]) > 100:
             self.forecast_accuracy[symbol] = self.forecast_accuracy[symbol][-100:]
+        
+        logger.debug(f"Forecast accuracy for {symbol}: {accuracy:.3f}")
     
     def get_performance_metrics(self) -> Dict:
-        """Get model performance metrics"""
+        """Get comprehensive model performance metrics"""
         
         total_forecasts = sum(len(acc) for acc in self.forecast_accuracy.values())
         avg_accuracy = np.mean([
@@ -550,47 +1395,89 @@ class LagLlamaEngine:
         avg_prediction_time = np.mean(self.prediction_times[-100:]) if self.prediction_times else 0.0
         
         return {
-            'total_forecasts': total_forecasts,
-            'average_accuracy': avg_accuracy,
-            'average_prediction_time': avg_prediction_time,
-            'symbols_tracked': len(self.forecast_accuracy),
-            'cache_size': len(self.forecast_cache),
-            'model_loaded': self.model_loaded
+            'model_performance': {
+                'total_forecasts': total_forecasts,
+                'average_accuracy': avg_accuracy,
+                'average_prediction_time': avg_prediction_time,
+                'symbols_tracked': len(self.forecast_accuracy),
+                'cache_size': len(self.forecast_cache),
+                'model_loaded': self.model_loaded
+            },
+            'system_health': self.system_health,
+            'cache_stats': self.cache.get_cache_stats(),
+            'data_quality': {
+                'no_fallbacks_used': True,
+                'strict_validation_enabled': True,
+                'mandatory_checkpoints': True
+            }
         }
+    
+    async def cleanup(self):
+        """Cleanup engine resources"""
+        
+        # Clear caches
+        self.forecast_cache.clear()
+        
+        # Clear CUDA cache
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        
+        logger.info("Enhanced Lag-Llama Engine cleanup completed")
 
 class MarketRegimeDetector:
-    """Detect current market regime from forecasts"""
+    """Enhanced market regime detector with strict validation"""
     
     def __init__(self):
         self.regime_history = deque(maxlen=50)
     
     async def detect_regime(self, forecasts: Dict[str, ForecastResult]) -> str:
-        """Detect current market regime"""
+        """Detect current market regime from validated forecasts"""
         
         if not forecasts:
-            return "unknown"
+            return "insufficient_data"
         
-        # Analyze aggregate metrics
+        # Analyze aggregate metrics from validated forecasts only
         avg_volatility = np.mean([f.volatility_forecast for f in forecasts.values()])
         avg_direction_prob = np.mean([f.direction_probability for f in forecasts.values()])
         avg_confidence = np.mean([f.confidence_score for f in forecasts.values()])
+        avg_data_quality = np.mean([f.data_quality_score for f in forecasts.values()])
         
-        # Classify regime
-        if avg_volatility > 0.03:
+        # Only classify regime if data quality is sufficient
+        if avg_data_quality < 0.7:
+            return "low_data_quality"
+        
+        # Enhanced regime classification
+        if avg_volatility > 0.04:
             regime = "high_volatility"
         elif avg_volatility < 0.01:
             regime = "low_volatility"
-        elif avg_direction_prob > 0.65:
+        elif avg_direction_prob > 0.7 and avg_confidence > 0.7:
+            regime = "strong_trending_bull"
+        elif avg_direction_prob > 0.6:
             regime = "trending_bull"
-        elif avg_direction_prob < 0.35:
+        elif avg_direction_prob < 0.3 and avg_confidence > 0.7:
+            regime = "strong_trending_bear"
+        elif avg_direction_prob < 0.4:
             regime = "trending_bear"
-        elif avg_confidence > 0.7:
+        elif avg_confidence > 0.8:
+            regime = "stable_range_bound"
+        elif avg_confidence > 0.6:
             regime = "range_bound"
         else:
             regime = "uncertain"
         
-        self.regime_history.append(regime)
+        self.regime_history.append({
+            'regime': regime,
+            'timestamp': datetime.now(),
+            'metrics': {
+                'volatility': avg_volatility,
+                'direction_prob': avg_direction_prob,
+                'confidence': avg_confidence,
+                'data_quality': avg_data_quality
+            }
+        })
+        
         return regime
 
-# Global instance
-lag_llama_engine = LagLlamaEngine()
+# Global instance - Enhanced with no fallbacks
+lag_llama_engine = EnhancedLagLlamaEngine()

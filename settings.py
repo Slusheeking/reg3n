@@ -25,17 +25,31 @@ class StrategyType(Enum):
 
 @dataclass
 class LagLlamaConfig:
-    """Lag-Llama Model Configuration"""
-    model_path: str = "lag-llama.ckpt"
-    context_length: int = 512
-    prediction_length: int = 64
-    batch_size: int = 32
+    """Lag-Llama Model Configuration - Matches Pretrained Checkpoint"""
+    model_path: str = "ai_llama/models/lag_llama/lag-llama.ckpt"
+    
+    # EXACT MATCH to pretrained checkpoint (144 dimensions)
+    context_length: int = 32
+    prediction_length: int = 15  # FAIL FAST: Minimum 15 minutes for meaningful direction analysis
+    n_layer: int = 8
+    n_embd_per_head: int = 16
+    n_head: int = 9  # 16 * 9 = 144 total dimensions
+    input_size: int = 1
+    max_context_length: int = 2048
+    scaling: str = "robust"
+    time_feat: bool = True
+    
+    # Training parameters from checkpoint
+    batch_size: int = 64  # Can be adjusted for inference
     device: str = "cuda:0"
-    precision: str = "bf16"
+    precision: str = "bf16"  # GH200 optimized
     num_parallel_samples: int = 100
     rope_scaling_factor: float = 8.0
     attention_optimization: str = "flash_attention_2"
     memory_efficient: bool = True
+    
+    # Exact lag sequence from checkpoint
+    lags_seq: List[int] = field(default_factory=lambda: [0, 7, 8, 10, 11, 12, 13, 14, 19, 20, 21, 22, 23, 24, 26, 27, 28, 29, 30, 34, 35, 36, 46, 47, 48, 50, 51, 52, 55, 57, 58, 59, 60, 61, 70, 71, 72, 83, 94, 95, 96, 102, 103, 104, 117, 118, 119, 120, 121, 142, 143, 144, 154, 155, 156, 166, 167, 168, 177, 178, 179, 180, 181, 334, 335, 336, 362, 363, 364, 502, 503, 504, 670, 671, 672, 718, 719, 720, 726, 727, 728, 1090, 1091, 1092])
     
     # Forecasting horizons (minutes)
     forecast_horizons: List[int] = field(default_factory=lambda: [5, 15, 30, 60, 120])
@@ -59,6 +73,33 @@ class PolygonConfig:
     subscribe_quotes: bool = True
     subscribe_aggregates: bool = True
     subscribe_indices: bool = True
+    
+    # Professional indicators configuration - HIGH PRIORITY
+    indicators_enabled: bool = True
+    rsi_window: int = 14
+    macd_fast: int = 12
+    macd_slow: int = 26
+    macd_signal: int = 9
+    bollinger_window: int = 20
+    bollinger_std: float = 2.0
+    sma_windows: List[int] = field(default_factory=lambda: [20, 50, 200])
+    ema_windows: List[int] = field(default_factory=lambda: [12, 26, 50])
+    
+    # Market data configuration
+    market_movers_limit: int = 50
+    earnings_lookback_days: int = 7
+    earnings_lookahead_days: int = 14
+    news_sentiment_enabled: bool = True
+    
+    # Rate limiting for professional endpoints
+    indicators_rate_limit: float = 0.2  # 200ms between indicator calls
+    market_data_rate_limit: float = 0.1  # 100ms between market data calls
+    
+    def __post_init__(self):
+        if not hasattr(self, 'sma_windows') or not self.sma_windows:
+            self.sma_windows = [20, 50, 200]
+        if not hasattr(self, 'ema_windows') or not self.ema_windows:
+            self.ema_windows = [12, 26, 50]
 
 @dataclass
 class AlpacaConfig:

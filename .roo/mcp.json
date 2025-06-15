@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresel://tradeing_user:secure_password@localhost:5432/trading_system"
+      ]
+    }
+  }
+}
