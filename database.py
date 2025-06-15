@@ -70,6 +70,18 @@ class TimescaleDBClient:
     async def _initialize_schema(self):
         """Initialize database schema and hypertables"""
         
+        # Check if tables already exist to avoid conflicts
+        async with self.pool.acquire() as conn:
+            existing_tables = await conn.fetch("""
+                SELECT tablename FROM pg_tables WHERE schemaname = 'public'
+            """)
+            existing_table_names = {row['tablename'] for row in existing_tables}
+        
+        # Skip schema creation if key tables already exist
+        if 'model_versions' in existing_table_names and 'lag_llama_forecasts' in existing_table_names:
+            logger.info("Database schema already exists - skipping initialization")
+            return
+        
         schema_sql = """
         -- Enable TimescaleDB extension
         CREATE EXTENSION IF NOT EXISTS timescaledb;
@@ -255,6 +267,87 @@ class TimescaleDBClient:
         -- Retention policies (keep data for 2 years)
         SELECT add_retention_policy('realtime_bars', INTERVAL '2 years', if_not_exists => TRUE);
         SELECT add_retention_policy('system_metrics', INTERVAL '1 year', if_not_exists => TRUE);
+        
+        -- Model versions table (regular table, not hypertable)
+        CREATE TABLE IF NOT EXISTS model_versions (
+            version_id SERIAL PRIMARY KEY,
+            model_name TEXT NOT NULL,
+            version TEXT NOT NULL,
+            model_path TEXT NOT NULL,
+            training_config JSONB,
+            performance_metrics JSONB,
+            training_data_hash TEXT,
+            validation_metrics JSONB,
+            is_active BOOLEAN DEFAULT false,
+            created_at TIMESTAMPTZ DEFAULT NOW(),
+            updated_at TIMESTAMPTZ DEFAULT NOW(),
+            created_by TEXT DEFAULT 'system',
+            UNIQUE(model_name, version)
+        );
+        
+        -- Lag-Llama forecasts table (hypertable with timestamp in primary key)
+        CREATE TABLE IF NOT EXISTS lag_llama_forecasts (
+            timestamp TIMESTAMPTZ NOT NULL,
+            symbol TEXT NOT NULL,
+            forecast_horizon INTEGER NOT NULL,
+            confidence_score NUMERIC(4,3),
+            mean_forecast NUMERIC(12,4),
+            median_forecast NUMERIC(12,4),
+            quantile_10 NUMERIC(12,4),
+            quantile_25 NUMERIC(12,4),
+            quantile_75 NUMERIC(12,4),
+            quantile_90 NUMERIC(12,4),
+            volatility_forecast NUMERIC(8,4),
+            trend_direction TEXT,
+            optimal_hold_minutes INTEGER,
+            metadata JSONB,
+            created_at TIMESTAMPTZ DEFAULT NOW(),
+            PRIMARY KEY (timestamp, symbol, forecast_horizon)
+        );
+        
+        -- Create hypertable for lag_llama_forecasts
+        SELECT create_hypertable('lag_llama_forecasts', 'timestamp',
+                                chunk_time_interval => INTERVAL '1 day',
+                                if_not_exists => TRUE);
+        
+        -- Multi-timeframe forecasts table (hypertable with timestamp in primary key)
+        CREATE TABLE IF NOT EXISTS multi_timeframe_forecasts (
+            timestamp TIMESTAMPTZ NOT NULL,
+            symbol TEXT NOT NULL,
+            model_version_id INTEGER REFERENCES model_versions(version_id),
+            horizon_5min JSONB,
+            horizon_15min JSONB,
+            horizon_30min JSONB,
+            horizon_60min JSONB,
+            horizon_120min JSONB,
+            confidence_scores JSONB,
+            volatility_forecasts JSONB,
+            trend_directions JSONB,
+            metadata JSONB,
+            created_at TIMESTAMPTZ DEFAULT NOW(),
+            PRIMARY KEY (timestamp, symbol, model_version_id)
+        );
+        
+        -- Create hypertable for multi_timeframe_forecasts
+        SELECT create_hypertable('multi_timeframe_forecasts', 'timestamp',
+                                chunk_time_interval => INTERVAL '1 day',
+                                if_not_exists => TRUE);
+        
+        -- Additional indexes for model versioning
+        CREATE INDEX IF NOT EXISTS idx_model_versions_name_active
+            ON model_versions (model_name, is_active, created_at DESC);
+        CREATE INDEX IF NOT EXISTS idx_lag_llama_forecasts_symbol_time
+            ON lag_llama_forecasts (symbol, timestamp DESC);
+        CREATE INDEX IF NOT EXISTS idx_multi_timeframe_forecasts_symbol_time
+            ON multi_timeframe_forecasts (symbol, timestamp DESC);
+        
+        -- Compression policies for new tables
+        SELECT add_compression_policy('lag_llama_forecasts', INTERVAL '7 days', if_not_exists => TRUE);
+        SELECT add_compression_policy('multi_timeframe_forecasts', INTERVAL '7 days', if_not_exists => TRUE);
+        
+        -- Retention policies for new tables
+        SELECT add_retention_policy('lag_llama_forecasts', INTERVAL '1 year', if_not_exists => TRUE);
+        SELECT add_retention_policy('multi_timeframe_forecasts', INTERVAL '1 year', if_not_exists => TRUE);
         """
         
         async with self.pool.acquire() as conn:
@@ -1062,6 +1155,214 @@ class TimescaleDBClient:
             self.pool = None
         self.initialized = False
         logger.info("Database connections cleaned up")
+    
+    # ========== MODEL VERSIONING METHODS ==========
+    
+    async def insert_model_version(self, model_data: Dict[str, Any]) -> int:
+        """Insert new model version and return id (using existing schema)"""
+        try:
+            async with self.get_connection() as conn:
+                row = await conn.fetchrow("""
+                    INSERT INTO model_versions
+                    (version_id, model_type, checkpoint_path, training_start, training_end,
+                     training_data_period, performance_metrics, validation_loss, is_active)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                    RETURNING id
+                """,
+                    model_data.get('version', 'v1.0.0'),
+                    model_data.get('model_name', 'lag_llama'),
+                    model_data.get('model_path', ''),
+                    model_data.get('training_start', datetime.now()),
+                    model_data.get('training_end', datetime.now()),
+                    model_data.get('training_data_period', 30),
+                    orjson.dumps(model_data.get('performance_metrics', {})).decode(),
+                    model_data.get('validation_loss', 0.0),
+                    model_data.get('is_active', False)
+                )
+                
+                return row['id']
+                
+        except Exception as e:
+            logger.error(f"Error inserting model version: {e}")
+            raise
+    
+    async def get_active_model_version(self, model_type: str) -> Optional[Dict]:
+        """Get active model version (using existing schema)"""
+        try:
+            async with self.get_connection() as conn:
+                row = await conn.fetchrow("""
+                    SELECT id, version_id, model_type, checkpoint_path, training_start,
+                           training_end, training_data_period, performance_metrics,
+                           validation_loss, is_active, created_at, updated_at
+                    FROM model_versions
+                    WHERE model_type = $1 AND is_active = true
+                    ORDER BY created_at DESC
+                    LIMIT 1
+                """, model_type)
+                
+                return dict(row) if row else None
+                
+        except Exception as e:
+            logger.error(f"Error fetching active model version: {e}")
+            return None
+    
+    async def get_model_versions(self, model_type: str, limit: int = 10) -> List[Dict]:
+        """Get model version history (using existing schema)"""
+        try:
+            async with self.get_connection() as conn:
+                rows = await conn.fetch("""
+                    SELECT id, version_id, model_type, checkpoint_path, training_start,
+                           training_end, training_data_period, performance_metrics,
+                           validation_loss, is_active, created_at, updated_at
+                    FROM model_versions
+                    WHERE model_type = $1
+                    ORDER BY created_at DESC
+                    LIMIT $2
+                """, model_type, limit)
+                
+                return [dict(row) for row in rows]
+                
+        except Exception as e:
+            logger.error(f"Error fetching model versions: {e}")
+            return []
+    
+    async def activate_model_version(self, model_id: int):
+        """Activate a model version (deactivates others, using existing schema)"""
+        try:
+            async with self.get_connection() as conn:
+                async with conn.transaction():
+                    # Get model type for this version
+                    model_row = await conn.fetchrow("""
+                        SELECT model_type FROM model_versions WHERE id = $1
+                    """, model_id)
+                    
+                    if not model_row:
+                        raise ValueError(f"Model version {model_id} not found")
+                    
+                    model_type = model_row['model_type']
+                    
+                    # Deactivate all versions for this model type
+                    await conn.execute("""
+                        UPDATE model_versions
+                        SET is_active = false, updated_at = NOW()
+                        WHERE model_type = $1
+                    """, model_type)
+                    
+                    # Activate the specified version
+                    await conn.execute("""
+                        UPDATE model_versions
+                        SET is_active = true, updated_at = NOW()
+                        WHERE id = $1
+                    """, model_id)
+                
+        except Exception as e:
+            logger.error(f"Error activating model version: {e}")
+            raise
+    
+    async def update_model_performance(self, model_id: int, performance_metrics: Dict[str, Any]):
+        """Update model performance metrics (using existing schema)"""
+        try:
+            async with self.get_connection() as conn:
+                await conn.execute("""
+                    UPDATE model_versions
+                    SET performance_metrics = $1, updated_at = NOW()
+                    WHERE id = $2
+                """, orjson.dumps(performance_metrics).decode(), model_id)
+                
+        except Exception as e:
+            logger.error(f"Error updating model performance: {e}")
+            raise
+    
+    # ========== MULTI-TIMEFRAME FORECASTS ==========
+    
+    async def insert_multi_timeframe_forecast(self, forecast_data: Dict[str, Any]):
+        """Insert multi-timeframe Lag-Llama forecast"""
+        try:
+            async with self.get_connection() as conn:
+                await conn.execute("""
+                    INSERT INTO multi_timeframe_forecasts
+                    (timestamp, symbol, model_version_id, horizon_5min, horizon_15min,
+                     horizon_30min, horizon_60min, horizon_120min, confidence_scores,
+                     volatility_forecasts, trend_directions, metadata)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+                    ON CONFLICT (timestamp, symbol, model_version_id) DO UPDATE SET
+                        horizon_5min = EXCLUDED.horizon_5min,
+                        horizon_15min = EXCLUDED.horizon_15min,
+                        horizon_30min = EXCLUDED.horizon_30min,
+                        horizon_60min = EXCLUDED.horizon_60min,
+                        horizon_120min = EXCLUDED.horizon_120min,
+                        confidence_scores = EXCLUDED.confidence_scores,
+                        volatility_forecasts = EXCLUDED.volatility_forecasts,
+                        trend_directions = EXCLUDED.trend_directions,
+                        metadata = EXCLUDED.metadata
+                """,
+                    forecast_data['timestamp'], forecast_data['symbol'],
+                    forecast_data.get('model_version_id'),
+                    orjson.dumps(forecast_data.get('horizon_5min', {})).decode(),
+                    orjson.dumps(forecast_data.get('horizon_15min', {})).decode(),
+                    orjson.dumps(forecast_data.get('horizon_30min', {})).decode(),
+                    orjson.dumps(forecast_data.get('horizon_60min', {})).decode(),
+                    orjson.dumps(forecast_data.get('horizon_120min', {})).decode(),
+                    orjson.dumps(forecast_data.get('confidence_scores', {})).decode(),
+                    orjson.dumps(forecast_data.get('volatility_forecasts', {})).decode(),
+                    orjson.dumps(forecast_data.get('trend_directions', {})).decode(),
+                    orjson.dumps(forecast_data.get('metadata', {})).decode()
+                )
+                
+        except Exception as e:
+            logger.error(f"Error inserting multi-timeframe forecast: {e}")
+            raise
+    
+    async def get_latest_multi_timeframe_forecast(self, symbol: str, model_version_id: Optional[int] = None) -> Optional[Dict]:
+        """Get latest multi-timeframe forecast for symbol"""
+        try:
+            async with self.get_connection() as conn:
+                if model_version_id:
+                    row = await conn.fetchrow("""
+                        SELECT timestamp, symbol, model_version_id, horizon_5min, horizon_15min,
+                               horizon_30min, horizon_60min, horizon_120min, confidence_scores,
+                               volatility_forecasts, trend_directions, metadata
+                        FROM multi_timeframe_forecasts
+                        WHERE symbol = $1 AND model_version_id = $2
+                        ORDER BY timestamp DESC
+                        LIMIT 1
+                    """, symbol, model_version_id)
+                else:
+                    row = await conn.fetchrow("""
+                        SELECT timestamp, symbol, model_version_id, horizon_5min, horizon_15min,
+                               horizon_30min, horizon_60min, horizon_120min, confidence_scores,
+                               volatility_forecasts, trend_directions, metadata
+                        FROM multi_timeframe_forecasts
+                        WHERE symbol = $1
+                        ORDER BY timestamp DESC
+                        LIMIT 1
+                    """, symbol)
+                
+                return dict(row) if row else None
+                
+        except Exception as e:
+            logger.error(f"Error fetching multi-timeframe forecast: {e}")
+            return None
+    
+    async def get_multi_timeframe_forecasts(self, symbol: str, hours: int = 24) -> List[Dict]:
+        """Get recent multi-timeframe forecasts"""
+        try:
+            async with self.get_connection() as conn:
+                rows = await conn.fetch("""
+                    SELECT timestamp, symbol, model_version_id, horizon_5min, horizon_15min,
+                           horizon_30min, horizon_60min, horizon_120min, confidence_scores,
+                           volatility_forecasts, trend_directions, metadata
+                    FROM multi_timeframe_forecasts
+                    WHERE symbol = $1 AND timestamp >= NOW() - INTERVAL '%s hours'
+                    ORDER BY timestamp DESC
+                    LIMIT 50
+                """ % hours, symbol)
+                
+                return [dict(row) for row in rows]
+                
+        except Exception as e:
+            logger.error(f"Error fetching multi-timeframe forecasts: {e}")
+            return []
 
 # Global database client instance
 db_client = None
@@ -1393,6 +1694,211 @@ def get_database_client() -> TimescaleDBClient:
         except Exception as e:
             logger.error(f"Error inserting enhanced system metrics: {e}")
             raise
+    
+    # ========== MODEL VERSIONING METHODS ==========
+    
+    async def insert_model_version(self, model_data: Dict[str, Any]) -> int:
+        """Insert new model version and return version_id"""
+        try:
+            async with self.get_connection() as conn:
+                row = await conn.fetchrow("""
+                    INSERT INTO model_versions
+                    (model_name, version, model_path, training_config, performance_metrics,
+                     training_data_hash, validation_metrics, is_active, created_by)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                    RETURNING version_id
+                """,
+                    model_data['model_name'], model_data['version'], model_data['model_path'],
+                    orjson.dumps(model_data.get('training_config', {})).decode(),
+                    orjson.dumps(model_data.get('performance_metrics', {})).decode(),
+                    model_data.get('training_data_hash'),
+                    orjson.dumps(model_data.get('validation_metrics', {})).decode(),
+                    model_data.get('is_active', False), model_data.get('created_by', 'system')
+                )
+                
+                return row['version_id']
+                
+        except Exception as e:
+            logger.error(f"Error inserting model version: {e}")
+            raise
+    
+    async def get_active_model_version(self, model_name: str) -> Optional[Dict]:
+        """Get active model version"""
+        try:
+            async with self.get_connection() as conn:
+                row = await conn.fetchrow("""
+                    SELECT version_id, model_name, version, model_path, training_config,
+                           performance_metrics, training_data_hash, validation_metrics,
+                           is_active, created_at, created_by
+                    FROM model_versions
+                    WHERE model_name = $1 AND is_active = true
+                    ORDER BY created_at DESC
+                    LIMIT 1
+                """, model_name)
+                
+                return dict(row) if row else None
+                
+        except Exception as e:
+            logger.error(f"Error fetching active model version: {e}")
+            return None
+    
+    async def get_model_versions(self, model_name: str, limit: int = 10) -> List[Dict]:
+        """Get model version history"""
+        try:
+            async with self.get_connection() as conn:
+                rows = await conn.fetch("""
+                    SELECT version_id, model_name, version, model_path, training_config,
+                           performance_metrics, training_data_hash, validation_metrics,
+                           is_active, created_at, created_by
+                    FROM model_versions
+                    WHERE model_name = $1
+                    ORDER BY created_at DESC
+                    LIMIT $2
+                """, model_name, limit)
+                
+                return [dict(row) for row in rows]
+                
+        except Exception as e:
+            logger.error(f"Error fetching model versions: {e}")
+            return []
+    
+    async def activate_model_version(self, version_id: int):
+        """Activate a model version (deactivates others)"""
+        try:
+            async with self.get_connection() as conn:
+                async with conn.transaction():
+                    # Get model name for this version
+                    model_name_row = await conn.fetchrow("""
+                        SELECT model_name FROM model_versions WHERE version_id = $1
+                    """, version_id)
+                    
+                    if not model_name_row:
+                        raise ValueError(f"Model version {version_id} not found")
+                    
+                    model_name = model_name_row['model_name']
+                    
+                    # Deactivate all versions for this model
+                    await conn.execute("""
+                        UPDATE model_versions
+                        SET is_active = false, updated_at = NOW()
+                        WHERE model_name = $1
+                    """, model_name)
+                    
+                    # Activate the specified version
+                    await conn.execute("""
+                        UPDATE model_versions
+                        SET is_active = true, updated_at = NOW()
+                        WHERE version_id = $1
+                    """, version_id)
+                
+        except Exception as e:
+            logger.error(f"Error activating model version: {e}")
+            raise
+    
+    async def update_model_performance(self, version_id: int, performance_metrics: Dict[str, Any]):
+        """Update model performance metrics"""
+        try:
+            async with self.get_connection() as conn:
+                await conn.execute("""
+                    UPDATE model_versions
+                    SET performance_metrics = $1, updated_at = NOW()
+                    WHERE version_id = $2
+                """, orjson.dumps(performance_metrics).decode(), version_id)
+                
+        except Exception as e:
+            logger.error(f"Error updating model performance: {e}")
+            raise
+    
+    # ========== MULTI-TIMEFRAME FORECASTS ==========
+    
+    async def insert_multi_timeframe_forecast(self, forecast_data: Dict[str, Any]):
+        """Insert multi-timeframe Lag-Llama forecast"""
+        try:
+            async with self.get_connection() as conn:
+                await conn.execute("""
+                    INSERT INTO multi_timeframe_forecasts
+                    (symbol, timestamp, model_version_id, horizon_5min, horizon_15min,
+                     horizon_30min, horizon_60min, horizon_120min, confidence_scores,
+                     volatility_forecasts, trend_directions, metadata)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+                    ON CONFLICT (symbol, timestamp, model_version_id) DO UPDATE SET
+                        horizon_5min = EXCLUDED.horizon_5min,
+                        horizon_15min = EXCLUDED.horizon_15min,
+                        horizon_30min = EXCLUDED.horizon_30min,
+                        horizon_60min = EXCLUDED.horizon_60min,
+                        horizon_120min = EXCLUDED.horizon_120min,
+                        confidence_scores = EXCLUDED.confidence_scores,
+                        volatility_forecasts = EXCLUDED.volatility_forecasts,
+                        trend_directions = EXCLUDED.trend_directions,
+                        metadata = EXCLUDED.metadata
+                """,
+                    forecast_data['symbol'], forecast_data['timestamp'],
+                    forecast_data.get('model_version_id'),
+                    orjson.dumps(forecast_data.get('horizon_5min', {})).decode(),
+                    orjson.dumps(forecast_data.get('horizon_15min', {})).decode(),
+                    orjson.dumps(forecast_data.get('horizon_30min', {})).decode(),
+                    orjson.dumps(forecast_data.get('horizon_60min', {})).decode(),
+                    orjson.dumps(forecast_data.get('horizon_120min', {})).decode(),
+                    orjson.dumps(forecast_data.get('confidence_scores', {})).decode(),
+                    orjson.dumps(forecast_data.get('volatility_forecasts', {})).decode(),
+                    orjson.dumps(forecast_data.get('trend_directions', {})).decode(),
+                    orjson.dumps(forecast_data.get('metadata', {})).decode()
+                )
+                
+        except Exception as e:
+            logger.error(f"Error inserting multi-timeframe forecast: {e}")
+            raise
+    
+    async def get_latest_multi_timeframe_forecast(self, symbol: str, model_version_id: Optional[int] = None) -> Optional[Dict]:
+        """Get latest multi-timeframe forecast for symbol"""
+        try:
+            async with self.get_connection() as conn:
+                if model_version_id:
+                    row = await conn.fetchrow("""
+                        SELECT symbol, timestamp, model_version_id, horizon_5min, horizon_15min,
+                               horizon_30min, horizon_60min, horizon_120min, confidence_scores,
+                               volatility_forecasts, trend_directions, metadata
+                        FROM multi_timeframe_forecasts
+                        WHERE symbol = $1 AND model_version_id = $2
+                        ORDER BY timestamp DESC
+                        LIMIT 1
+                    """, symbol, model_version_id)
+                else:
+                    row = await conn.fetchrow("""
+                        SELECT symbol, timestamp, model_version_id, horizon_5min, horizon_15min,
+                               horizon_30min, horizon_60min, horizon_120min, confidence_scores,
+                               volatility_forecasts, trend_directions, metadata
+                        FROM multi_timeframe_forecasts
+                        WHERE symbol = $1
+                        ORDER BY timestamp DESC
+                        LIMIT 1
+                    """, symbol)
+                
+                return dict(row) if row else None
+                
+        except Exception as e:
+            logger.error(f"Error fetching multi-timeframe forecast: {e}")
+            return None
+    
+    async def get_multi_timeframe_forecasts(self, symbol: str, hours: int = 24) -> List[Dict]:
+        """Get recent multi-timeframe forecasts"""
+        try:
+            async with self.get_connection() as conn:
+                rows = await conn.fetch("""
+                    SELECT symbol, timestamp, model_version_id, horizon_5min, horizon_15min,
+                           horizon_30min, horizon_60min, horizon_120min, confidence_scores,
+                           volatility_forecasts, trend_directions, metadata
+                    FROM multi_timeframe_forecasts
+                    WHERE symbol = $1 AND timestamp >= NOW() - INTERVAL '%s hours'
+                    ORDER BY timestamp DESC
+                    LIMIT 50
+                """ % hours, symbol)
+                
+                return [dict(row) for row in rows]
+                
+        except Exception as e:
+            logger.error(f"Error fetching multi-timeframe forecasts: {e}")
+            return []
     
     # ========== QUERY METHODS ==========
     

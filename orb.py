@@ -14,7 +14,7 @@ import numpy as np
 
 from settings import config
 from active_symbols import symbol_manager, SymbolMetrics
-from lag_llama_engine import lag_llama_engine, ForecastResult
+from lag_llama_engine import lag_llama_engine, ForecastResult, MultiTimeframeForecast
 from polygon import get_polygon_data_manager, TradeData, AggregateData
 from alpaca import get_alpaca_client, TradeSignal
 from database import get_database_manager
@@ -559,13 +559,13 @@ class ORBStrategy:
             logger.error(f"Error adding volume confirmation: {e}")
     
     async def _add_breakout_predictions(self, breakout_analysis: BreakoutAnalysis):
-        """Add Lag-Llama predictions for breakout sustainability with Polygon momentum confirmation"""
+        """Add multi-timeframe Lag-Llama predictions for breakout sustainability with Polygon momentum confirmation"""
         
         try:
             symbol = breakout_analysis.symbol
-            forecast = await lag_llama_engine.get_forecast(symbol)
+            multi_forecast = await lag_llama_engine.generate_multi_timeframe_forecasts_strict(symbol)
             
-            if not forecast:
+            if not multi_forecast:
                 return
             
             opening_range = breakout_analysis.opening_range
@@ -574,76 +574,59 @@ class ORBStrategy:
             # Get Polygon momentum indicators for breakout confirmation - HIGH PRIORITY
             await self._add_polygon_momentum_confirmation(breakout_analysis)
             
-            # Sustainability probability
+            # Use multi-timeframe analysis for enhanced breakout predictions
+            breakout_analysis.sustainability_probability = multi_forecast.momentum_alignment_score
+            breakout_analysis.false_breakout_probability = 1.0 - multi_forecast.trend_consistency_score
+            
+            # Generate targets from multi-timeframe forecasts
+            targets = []
+            range_size = opening_range.range_size
+            
             if breakout_analysis.breakout_direction == BreakoutDirection.UPWARD:
-                # Probability price stays above range high
-                sustainability_samples = forecast.samples[:, :30]  # Next 30 minutes
-                sustainability_prob = (sustainability_samples > opening_range.high).mean()
-                
-                # False breakout probability (price goes back into range)
-                false_breakout_prob = (sustainability_samples < opening_range.high).mean()
-                
-                # Target projections based on range size
-                range_size = opening_range.range_size
-                targets = [
-                    opening_range.high + range_size * 0.5,
-                    opening_range.high + range_size * 1.0,
-                    opening_range.high + range_size * 1.5,
-                    opening_range.high + range_size * 2.0
-                ]
-                
-                # Calculate probability of reaching each target
-                target_probabilities = []
-                for target in targets:
-                    prob = (forecast.samples.max(axis=1) >= target).mean()
-                    target_probabilities.append(prob)
-                
-                # Keep targets with >30% probability
-                breakout_analysis.target_projections = [
-                    targets[i] for i, prob in enumerate(target_probabilities) if prob > 0.3
-                ]
+                # Use upward targets from different timeframes
+                for horizon_min, forecast_data in multi_forecast.forecasts.items():
+                    if horizon_min <= 120:  # Use up to 2-hour forecasts for ORB
+                        # Calculate range-based target
+                        range_multiple = 0.5 + (horizon_min / 60) * 0.5  # 0.5x to 1.5x range
+                        target = opening_range.high + range_size * range_multiple
+                        targets.append(target)
+                        
+                        # Also use forecast quantiles
+                        q75_target = forecast_data.quantiles.get('q75', target)
+                        if isinstance(q75_target, (list, tuple)) and len(q75_target) > 0:
+                            targets.append(q75_target[0])
+                        elif isinstance(q75_target, (int, float)):
+                            targets.append(q75_target)
                 
             else:  # DOWNWARD breakout
-                # Probability price stays below range low
-                sustainability_samples = forecast.samples[:, :30]
-                sustainability_prob = (sustainability_samples < opening_range.low).mean()
-                
-                # False breakout probability
-                false_breakout_prob = (sustainability_samples > opening_range.low).mean()
-                
-                # Downside targets
-                range_size = opening_range.range_size
-                targets = [
-                    opening_range.low - range_size * 0.5,
-                    opening_range.low - range_size * 1.0,
-                    opening_range.low - range_size * 1.5,
-                    opening_range.low - range_size * 2.0
-                ]
-                
-                target_probabilities = []
-                for target in targets:
-                    prob = (forecast.samples.min(axis=1) <= target).mean()
-                    target_probabilities.append(prob)
-                
-                breakout_analysis.target_projections = [
-                    targets[i] for i, prob in enumerate(target_probabilities) if prob > 0.3
-                ]
+                # Use downward targets from different timeframes
+                for horizon_min, forecast_data in multi_forecast.forecasts.items():
+                    if horizon_min <= 120:  # Use up to 2-hour forecasts for ORB
+                        # Calculate range-based target
+                        range_multiple = 0.5 + (horizon_min / 60) * 0.5  # 0.5x to 1.5x range
+                        target = opening_range.low - range_size * range_multiple
+                        targets.append(target)
+                        
+                        # Also use forecast quantiles
+                        q25_target = forecast_data.quantiles.get('q25', target)
+                        if isinstance(q25_target, (list, tuple)) and len(q25_target) > 0:
+                            targets.append(q25_target[0])
+                        elif isinstance(q25_target, (int, float)):
+                            targets.append(q25_target)
             
-            breakout_analysis.sustainability_probability = sustainability_prob
-            breakout_analysis.false_breakout_probability = false_breakout_prob
+            # Filter and sort targets
+            valid_targets = [t for t in targets if t > 0]
+            breakout_analysis.target_projections = sorted(set(valid_targets))[:4]  # Top 4 unique targets
             
-            # Pullback probability (temporary move back toward range)
-            if breakout_analysis.breakout_direction == BreakoutDirection.UPWARD:
-                pullback_threshold = opening_range.high + (opening_range.range_size * 0.2)
-                pullback_prob = (forecast.samples[:, :10].min(axis=1) < pullback_threshold).mean()
-            else:
-                pullback_threshold = opening_range.low - (opening_range.range_size * 0.2)
-                pullback_prob = (forecast.samples[:, :10].max(axis=1) > pullback_threshold).mean()
+            # Enhanced pullback probability using cross-timeframe analysis
+            breakout_analysis.pullback_probability = multi_forecast.risk_adjusted_confidence
             
-            breakout_analysis.pullback_probability = pullback_prob
+            logger.debug(f"Multi-timeframe ORB analysis for {symbol}: "
+                        f"sustainability={breakout_analysis.sustainability_probability:.2f}, "
+                        f"targets={len(breakout_analysis.target_projections)}")
             
         except Exception as e:
-            logger.error(f"Error adding breakout predictions: {e}")
+            logger.error(f"Error adding multi-timeframe breakout predictions: {e}")
     
     async def _add_polygon_momentum_confirmation(self, breakout_analysis: BreakoutAnalysis):
         """Add Polygon professional momentum indicators for breakout confirmation - HIGH PRIORITY"""

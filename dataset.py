@@ -34,9 +34,15 @@ class DatasetInfo:
 class PolygonDatasetGenerator:
     """Generate datasets from real Polygon historical data"""
     
-    def __init__(self):
+    def __init__(self, custom_symbols=None):
         self.polygon_client = PolygonHTTPClient(config.polygon.api_key)
-        self.test_symbols = ['PLTR', 'AMD', 'CRCL', 'SPY', 'QQQ']
+        
+        # Use custom symbols if provided, otherwise use default
+        if custom_symbols:
+            self.test_symbols = custom_symbols
+        else:
+            self.test_symbols = ['PLTR', 'AMD', 'CRCL', 'SPY', 'QQQ']
+            
         self.required_data_points = 600  # Minimum for Lag-Llama + testing
         self.datasets_dir = "datasets"
         

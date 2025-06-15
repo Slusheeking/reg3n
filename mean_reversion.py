@@ -15,7 +15,7 @@ from collections import deque
 
 from settings import config
 from active_symbols import symbol_manager, SymbolMetrics
-from lag_llama_engine import lag_llama_engine, ForecastResult
+from lag_llama_engine import lag_llama_engine, ForecastResult, MultiTimeframeForecast
 from polygon import get_polygon_data_manager, TradeData, AggregateData
 from alpaca import get_alpaca_client, TradeSignal
 from database import get_database_manager
@@ -431,14 +431,14 @@ class MeanReversionStrategy:
                     await self._execute_reversion_signal(signal)
     
     async def _analyze_reversion_opportunity(self, metrics: MeanReversionMetrics) -> Optional[ReversionAnalysis]:
-        """Analyze potential mean reversion opportunity"""
+        """Analyze potential mean reversion opportunity using multi-timeframe analysis"""
         
         try:
             symbol = metrics.symbol
             
-            # Get Lag-Llama forecast
-            forecast = await lag_llama_engine.get_forecast(symbol)
-            if not forecast:
+            # Get multi-timeframe Lag-Llama forecast
+            multi_forecast = await lag_llama_engine.generate_multi_timeframe_forecasts_strict(symbol)
+            if not multi_forecast:
                 return None
             
             # Determine reversion type and target
@@ -447,8 +447,8 @@ class MeanReversionStrategy:
             if reversion_type is None:
                 return None
             
-            # Calculate reversion probabilities using Lag-Llama
-            reversion_probs = self._calculate_reversion_probabilities(metrics, forecast, target_mean)
+            # Calculate reversion probabilities using multi-timeframe analysis
+            reversion_probs = self._calculate_multi_timeframe_reversion_probabilities(metrics, multi_forecast, target_mean)
             
             if reversion_probs['reversion_probability'] < 0.6:  # Minimum 60% probability
                 return None
@@ -458,8 +458,8 @@ class MeanReversionStrategy:
             target_price = target_mean
             stop_loss_price = self._calculate_stop_loss(metrics, reversion_type)
             
-            # Calculate confidence score
-            confidence_score = self._calculate_confidence_score(metrics, reversion_probs, forecast)
+            # Calculate confidence score using multi-timeframe data
+            confidence_score = self._calculate_multi_timeframe_confidence_score(metrics, reversion_probs, multi_forecast)
             
             # Market context analysis
             trend_alignment = self._assess_trend_alignment(metrics, reversion_type)
@@ -480,7 +480,7 @@ class MeanReversionStrategy:
                 stop_loss_price=stop_loss_price,
                 confidence_score=confidence_score,
                 optimal_entry_time=datetime.now(),
-                max_hold_time=min(forecast.optimal_hold_minutes, self.config.max_hold_minutes),
+                max_hold_time=min(multi_forecast.optimal_hold_minutes, self.config.max_hold_minutes),
                 trend_alignment=trend_alignment,
                 volatility_regime=volatility_regime
             )
@@ -528,52 +528,56 @@ class MeanReversionStrategy:
         
         return None, None, 0.0
     
-    def _calculate_reversion_probabilities(self, metrics: MeanReversionMetrics, 
-                                         forecast: ForecastResult, target_mean: float) -> Dict:
-        """Calculate reversion probabilities using Lag-Llama"""
+    def _calculate_multi_timeframe_reversion_probabilities(self, metrics: MeanReversionMetrics,
+                                                         multi_forecast: MultiTimeframeForecast, target_mean: float) -> Dict:
+        """Calculate reversion probabilities using multi-timeframe Lag-Llama analysis"""
         
         current_price = metrics.current_price
-        samples = forecast.samples
         
-        # Mean reversion probability (price moving toward target mean)
-        if current_price > target_mean:
-            # Price above mean, looking for reversion down
-            reversion_samples = samples <= target_mean
+        # Use cross-timeframe correlation as primary reversion probability
+        base_reversion_prob = multi_forecast.cross_timeframe_correlation
+        
+        # Enhance with trend consistency
+        trend_enhanced_prob = base_reversion_prob * multi_forecast.trend_consistency_score
+        
+        # Calculate timeframe-specific probabilities
+        timeframe_probs = []
+        best_timeframe = 60  # Default
+        
+        for horizon_min, forecast_data in multi_forecast.forecasts.items():
+            if horizon_min <= 120:  # Use up to 2-hour forecasts
+                # Calculate reversion probability for this timeframe
+                if current_price > target_mean:
+                    # Looking for reversion down
+                    reversion_prob = forecast_data.confidence_score if forecast_data.mean_prediction < current_price else 0.3
+                else:
+                    # Looking for reversion up
+                    reversion_prob = forecast_data.confidence_score if forecast_data.mean_prediction > current_price else 0.3
+                
+                timeframe_probs.append((horizon_min, reversion_prob))
+        
+        # Find best timeframe
+        if timeframe_probs:
+            best_timeframe, best_prob = max(timeframe_probs, key=lambda x: x[1])
+            # Combine with multi-timeframe analysis
+            final_reversion_prob = (trend_enhanced_prob + best_prob) / 2
         else:
-            # Price below mean, looking for reversion up
-            reversion_samples = samples >= target_mean
+            final_reversion_prob = trend_enhanced_prob
         
-        # Calculate probability across different timeframes
-        timeframes = [5, 15, 30, 60]  # 5min, 15min, 30min, 1hr
-        reversion_probs = []
-        
-        for tf in timeframes:
-            if tf < samples.shape[1]:
-                prob = reversion_samples[:, tf].mean()
-                reversion_probs.append(prob)
-        
-        if not reversion_probs:
-            return {'reversion_probability': 0.0, 'timeframe': 60}
-        
-        # Find optimal timeframe (highest probability)
-        best_timeframe_idx = np.argmax(reversion_probs)
-        best_probability = reversion_probs[best_timeframe_idx]
-        best_timeframe = timeframes[best_timeframe_idx]
-        
-        # Oversold bounce probability (for oversold conditions)
+        # Enhanced oversold/overbought probabilities using multi-timeframe data
         oversold_bounce_prob = 0.0
-        if metrics.rsi < 30:
-            bounce_threshold = current_price * 1.02  # 2% bounce
-            oversold_bounce_prob = (samples[:, :15].max(axis=1) >= bounce_threshold).mean()
-        
-        # Overbought fade probability (for overbought conditions)
         overbought_fade_prob = 0.0
+        
+        if metrics.rsi < 30:
+            # Use momentum alignment for oversold bounce probability
+            oversold_bounce_prob = multi_forecast.momentum_alignment_score
+        
         if metrics.rsi > 70:
-            fade_threshold = current_price * 0.98  # 2% fade
-            overbought_fade_prob = (samples[:, :15].min(axis=1) <= fade_threshold).mean()
+            # Use inverse momentum alignment for overbought fade probability
+            overbought_fade_prob = 1.0 - multi_forecast.momentum_alignment_score
         
         return {
-            'reversion_probability': best_probability,
+            'reversion_probability': final_reversion_prob,
             'timeframe': best_timeframe,
             'oversold_bounce_prob': oversold_bounce_prob,
             'overbought_fade_prob': overbought_fade_prob
@@ -600,14 +604,23 @@ class MeanReversionStrategy:
             ]
             return max(stop_candidates)
     
-    def _calculate_confidence_score(self, metrics: MeanReversionMetrics, 
-                                  reversion_probs: Dict, forecast: ForecastResult) -> float:
-        """Calculate overall confidence score for reversion trade"""
+    def _calculate_multi_timeframe_confidence_score(self, metrics: MeanReversionMetrics,
+                                                  reversion_probs: Dict, multi_forecast: MultiTimeframeForecast) -> float:
+        """Calculate overall confidence score for reversion trade using multi-timeframe analysis"""
         
         confidence_factors = []
         
-        # Lag-Llama probability
+        # Multi-timeframe reversion probability (highest weight)
         confidence_factors.append(reversion_probs['reversion_probability'])
+        
+        # Cross-timeframe correlation strength
+        confidence_factors.append(multi_forecast.cross_timeframe_correlation)
+        
+        # Trend consistency across timeframes
+        confidence_factors.append(multi_forecast.trend_consistency_score)
+        
+        # Risk-adjusted confidence
+        confidence_factors.append(multi_forecast.risk_adjusted_confidence)
         
         # RSI extremity
         if metrics.rsi < 30:
@@ -638,11 +651,8 @@ class MeanReversionStrategy:
         volume_score = min(metrics.volume_ratio / 1.5, 1.0)  # Prefer higher volume
         confidence_factors.append(volume_score)
         
-        # Lag-Llama forecast confidence
-        confidence_factors.append(forecast.confidence_score)
-        
-        # Calculate weighted average
-        weights = [0.3, 0.15, 0.15, 0.15, 0.1, 0.15]  # Lag-Llama gets highest weight
+        # Calculate weighted average with emphasis on multi-timeframe factors
+        weights = [0.25, 0.2, 0.15, 0.1, 0.1, 0.1, 0.05, 0.05]  # Multi-timeframe factors get highest weights
         
         if len(confidence_factors) == len(weights):
             confidence_score = sum(f * w for f, w in zip(confidence_factors, weights))

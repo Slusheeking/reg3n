@@ -14,7 +14,7 @@ import numpy as np
 
 from settings import config
 from active_symbols import symbol_manager, SymbolMetrics
-from lag_llama_engine import lag_llama_engine, ForecastResult
+from lag_llama_engine import lag_llama_engine, ForecastResult, MultiTimeframeForecast
 from polygon import get_polygon_data_manager, TradeData
 from alpaca import get_alpaca_client, TradeSignal
 from database import get_database_manager
@@ -364,64 +364,53 @@ class GapAndGoStrategy:
             logger.error(f"Error adding technical levels for {gap_analysis.symbol}: {e}")
     
     async def _add_lagllama_predictions(self, gap_analysis: GapAnalysis):
-        """Add Lag-Llama predictions to gap analysis"""
+        """Add multi-timeframe Lag-Llama predictions to gap analysis"""
         
         try:
-            # Get forecast from Lag-Llama
-            forecast = await lag_llama_engine.get_forecast(gap_analysis.symbol)
+            # Get multi-timeframe forecast from Lag-Llama
+            multi_forecast = await lag_llama_engine.generate_multi_timeframe_forecasts_strict(gap_analysis.symbol)
             
-            if not forecast:
+            if not multi_forecast:
                 return
             
             current_price = gap_analysis.current_price
             previous_close = gap_analysis.previous_close
             
-            # Calculate continuation probability
-            if gap_analysis.gap_type == GapType.GAP_UP:
-                # For gap up, continuation means staying above previous close
-                continuation_samples = forecast.samples[:, :30]  # First 30 minutes
-                continuation_prob = (continuation_samples > previous_close).mean()
-            else:
-                # For gap down, continuation means staying below previous close
-                continuation_samples = forecast.samples[:, :30]
-                continuation_prob = (continuation_samples < previous_close).mean()
+            # Use cross-timeframe analysis for enhanced predictions
+            gap_analysis.continuation_probability = multi_forecast.cross_timeframe_correlation
+            gap_analysis.fill_probability = 1.0 - multi_forecast.trend_consistency_score
             
-            gap_analysis.continuation_probability = continuation_prob
-            
-            # Calculate fill probability (price returning to previous close)
-            fill_threshold = 0.01  # Within 1% of previous close
-            fill_samples = forecast.samples
-            
-            if gap_analysis.gap_type == GapType.GAP_UP:
-                fill_prob = (fill_samples <= previous_close * (1 + fill_threshold)).mean()
-            else:
-                fill_prob = (fill_samples >= previous_close * (1 - fill_threshold)).mean()
-            
-            gap_analysis.fill_probability = fill_prob
-            
-            # Generate target levels based on forecast quantiles
+            # Generate targets from multi-timeframe analysis
             targets = []
             
             if gap_analysis.gap_type == GapType.GAP_UP:
-                # Upside targets
-                targets.extend([
-                    forecast.quantiles['q75'][5],   # 5-minute 75th percentile
-                    forecast.quantiles['q75'][15],  # 15-minute 75th percentile
-                    forecast.quantiles['q90'][30]   # 30-minute 90th percentile
-                ])
+                # Use upward targets from different timeframes
+                for horizon_min, forecast_data in multi_forecast.forecasts.items():
+                    if horizon_min <= 60:  # Use up to 1-hour forecasts for gap trading
+                        target = forecast_data.quantiles.get('q75', current_price * 1.02)
+                        if isinstance(target, (list, tuple)) and len(target) > 0:
+                            targets.append(target[0] if hasattr(target, '__getitem__') else target)
+                        elif isinstance(target, (int, float)):
+                            targets.append(target)
             else:
-                # Downside targets
-                targets.extend([
-                    forecast.quantiles['q25'][5],   # 5-minute 25th percentile
-                    forecast.quantiles['q25'][15],  # 15-minute 25th percentile
-                    forecast.quantiles['q10'][30]   # 30-minute 10th percentile
-                ])
+                # Use downward targets from different timeframes
+                for horizon_min, forecast_data in multi_forecast.forecasts.items():
+                    if horizon_min <= 60:  # Use up to 1-hour forecasts for gap trading
+                        target = forecast_data.quantiles.get('q25', current_price * 0.98)
+                        if isinstance(target, (list, tuple)) and len(target) > 0:
+                            targets.append(target[0] if hasattr(target, '__getitem__') else target)
+                        elif isinstance(target, (int, float)):
+                            targets.append(target)
             
             gap_analysis.target_levels = [t for t in targets if t > 0]
-            gap_analysis.optimal_hold_time = forecast.optimal_hold_minutes
+            gap_analysis.optimal_hold_time = multi_forecast.optimal_hold_minutes
+            
+            logger.debug(f"Multi-timeframe gap analysis for {gap_analysis.symbol}: "
+                        f"continuation_prob={gap_analysis.continuation_probability:.2f}, "
+                        f"targets={len(gap_analysis.target_levels)}")
             
         except Exception as e:
-            logger.error(f"Error adding Lag-Llama predictions for {gap_analysis.symbol}: {e}")
+            logger.error(f"Error adding multi-timeframe Lag-Llama predictions for {gap_analysis.symbol}: {e}")
     
     def _is_valid_gap(self, gap_analysis: GapAnalysis) -> bool:
         """Validate if gap meets trading criteria"""

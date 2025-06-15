@@ -132,6 +132,31 @@ class ForecastResult:
     forecast_generation_time: float  # Time taken to generate forecast
 
 @dataclass
+class MultiTimeframeForecast:
+    """Multi-timeframe forecast container"""
+    symbol: str
+    timestamp: datetime
+    model_version_id: Optional[int]
+    
+    # Individual timeframe forecasts
+    horizon_5min: Optional[ForecastResult]
+    horizon_15min: Optional[ForecastResult]
+    horizon_30min: Optional[ForecastResult]
+    horizon_60min: Optional[ForecastResult]
+    horizon_120min: Optional[ForecastResult]
+    
+    # Aggregated metrics across timeframes
+    overall_confidence: float
+    dominant_trend: str  # 'bullish', 'bearish', 'neutral'
+    trend_consistency: float  # How consistent trends are across timeframes
+    optimal_timeframe: int  # Best timeframe for this symbol
+    
+    # Cross-timeframe analysis
+    momentum_alignment: float  # How well momentum aligns across timeframes
+    volatility_profile: Dict[int, float]  # Volatility by timeframe
+    risk_adjusted_signals: Dict[int, Dict]  # Risk-adjusted signals per timeframe
+
+@dataclass
 class MarketForecast:
     """Multi-symbol market forecast"""
     timestamp: datetime
@@ -462,11 +487,15 @@ class EnhancedLagLlamaEngine:
         logger.info(f"Prepared datasets for {len(dataset_entries)} validated symbols")
         return ListDataset(dataset_entries, freq='T')
     
-    async def generate_forecasts_strict(self, symbols: List[str]) -> Dict[str, ForecastResult]:
+    async def generate_forecasts_strict(self, symbols: List[str], horizon_minutes: int = None) -> Dict[str, ForecastResult]:
         """Generate forecasts with strict validation - NO FALLBACKS"""
         
         if not self.model_loaded:
             raise ModelInitializationError("Model not loaded - cannot generate forecasts")
+        
+        # Use default horizon if not specified
+        if horizon_minutes is None:
+            horizon_minutes = self.config.prediction_length
         
         start_time = time.time()
         
@@ -488,7 +517,7 @@ class EnhancedLagLlamaEngine:
                     continue
                 
                 forecast = forecasts[i]
-                result = self._process_forecast_result_strict(symbol, forecast)
+                result = self._process_forecast_result_strict(symbol, forecast, horizon_minutes)
                 results[symbol] = result
                 
                 # Cache result
@@ -512,8 +541,285 @@ class EnhancedLagLlamaEngine:
             logger.error(f"Error generating forecasts: {e}")
             raise
     
-    def _process_forecast_result_strict(self, symbol: str, forecast) -> ForecastResult:
+    async def generate_multi_timeframe_forecasts_strict(self, symbols: List[str]) -> Dict[str, MultiTimeframeForecast]:
+        """Generate multi-timeframe forecasts with strict validation - NO FALLBACKS"""
+        
+        if not self.model_loaded:
+            raise ModelInitializationError("Model not loaded - cannot generate forecasts")
+        
+        # Get forecast horizons from config
+        horizons = config.lag_llama.forecast_horizons  # [5, 15, 30, 60, 120]
+        
+        start_time = time.time()
+        results = {}
+        
+        try:
+            # Generate forecasts for each timeframe
+            timeframe_forecasts = {}
+            
+            for horizon in horizons:
+                logger.info(f"Generating {horizon}-minute forecasts for {len(symbols)} symbols")
+                
+                # Update prediction length for this horizon
+                original_prediction_length = self.config.prediction_length
+                self.config.prediction_length = horizon
+                
+                try:
+                    # Generate forecasts for this timeframe
+                    horizon_results = await self.generate_forecasts_strict(symbols, horizon)
+                    timeframe_forecasts[horizon] = horizon_results
+                    
+                finally:
+                    # Restore original prediction length
+                    self.config.prediction_length = original_prediction_length
+            
+            # Combine results into multi-timeframe forecasts
+            for symbol in symbols:
+                if symbol not in self._validate_cache_data_availability([symbol]):
+                    continue
+                
+                multi_forecast = await self._create_multi_timeframe_forecast(
+                    symbol, timeframe_forecasts
+                )
+                
+                if multi_forecast:
+                    results[symbol] = multi_forecast
+                    
+                    # Save to database
+                    await self._save_multi_timeframe_forecast(multi_forecast)
+            
+            # Track performance
+            prediction_time = time.time() - start_time
+            logger.info(f"Generated multi-timeframe forecasts for {len(results)} symbols in {prediction_time:.1f}s")
+            
+            return results
+            
+        except Exception as e:
+            self.system_health['errors_encountered'] += 1
+            logger.error(f"Error generating multi-timeframe forecasts: {e}")
+            raise
+    
+    async def _create_multi_timeframe_forecast(self, symbol: str, timeframe_forecasts: Dict[int, Dict[str, ForecastResult]]) -> Optional[MultiTimeframeForecast]:
+        """Create multi-timeframe forecast from individual timeframe results"""
+        
+        try:
+            # Extract forecasts for each horizon
+            horizon_5min = timeframe_forecasts.get(5, {}).get(symbol)
+            horizon_15min = timeframe_forecasts.get(15, {}).get(symbol)
+            horizon_30min = timeframe_forecasts.get(30, {}).get(symbol)
+            horizon_60min = timeframe_forecasts.get(60, {}).get(symbol)
+            horizon_120min = timeframe_forecasts.get(120, {}).get(symbol)
+            
+            # Require at least 3 timeframes for valid multi-timeframe analysis
+            available_forecasts = [f for f in [horizon_5min, horizon_15min, horizon_30min, horizon_60min, horizon_120min] if f is not None]
+            if len(available_forecasts) < 3:
+                logger.warning(f"Insufficient timeframe forecasts for {symbol}: {len(available_forecasts)}")
+                return None
+            
+            # Calculate aggregated metrics
+            confidences = [f.confidence_score for f in available_forecasts]
+            overall_confidence = np.mean(confidences)
+            
+            # Determine dominant trend
+            direction_probs = [f.direction_probability for f in available_forecasts]
+            avg_direction_prob = np.mean(direction_probs)
+            
+            if avg_direction_prob > 0.6:
+                dominant_trend = 'bullish'
+            elif avg_direction_prob < 0.4:
+                dominant_trend = 'bearish'
+            else:
+                dominant_trend = 'neutral'
+            
+            # Calculate trend consistency (how similar direction probabilities are)
+            trend_consistency = 1.0 - np.std(direction_probs)
+            trend_consistency = max(0.0, min(1.0, trend_consistency))
+            
+            # Find optimal timeframe (highest confidence)
+            optimal_timeframe = 15  # Default
+            max_confidence = 0
+            for horizon, forecasts in timeframe_forecasts.items():
+                if symbol in forecasts and forecasts[symbol].confidence_score > max_confidence:
+                    max_confidence = forecasts[symbol].confidence_score
+                    optimal_timeframe = horizon
+            
+            # Calculate momentum alignment
+            momentum_alignment = self._calculate_momentum_alignment(available_forecasts)
+            
+            # Build volatility profile
+            volatility_profile = {}
+            for horizon, forecasts in timeframe_forecasts.items():
+                if symbol in forecasts:
+                    volatility_profile[horizon] = forecasts[symbol].volatility_forecast
+            
+            # Generate risk-adjusted signals
+            risk_adjusted_signals = self._generate_risk_adjusted_signals(timeframe_forecasts, symbol)
+            
+            # Get active model version
+            active_model = None
+            try:
+                if hasattr(self.db, 'get_active_model_version'):
+                    active_model = await self.db.get_active_model_version('lag_llama')
+            except:
+                pass
+            
+            model_version_id = active_model['version_id'] if active_model else None
+            
+            return MultiTimeframeForecast(
+                symbol=symbol,
+                timestamp=datetime.now(),
+                model_version_id=model_version_id,
+                horizon_5min=horizon_5min,
+                horizon_15min=horizon_15min,
+                horizon_30min=horizon_30min,
+                horizon_60min=horizon_60min,
+                horizon_120min=horizon_120min,
+                overall_confidence=overall_confidence,
+                dominant_trend=dominant_trend,
+                trend_consistency=trend_consistency,
+                optimal_timeframe=optimal_timeframe,
+                momentum_alignment=momentum_alignment,
+                volatility_profile=volatility_profile,
+                risk_adjusted_signals=risk_adjusted_signals
+            )
+            
+        except Exception as e:
+            logger.error(f"Error creating multi-timeframe forecast for {symbol}: {e}")
+            return None
+    
+    def _calculate_momentum_alignment(self, forecasts: List[ForecastResult]) -> float:
+        """Calculate how well momentum aligns across timeframes"""
+        
+        if len(forecasts) < 2:
+            return 0.5
+        
+        # Use direction probabilities as momentum indicators
+        direction_probs = [f.direction_probability for f in forecasts]
+        
+        # Calculate alignment as inverse of standard deviation
+        alignment = 1.0 - np.std(direction_probs)
+        return max(0.0, min(1.0, alignment))
+    
+    def _generate_risk_adjusted_signals(self, timeframe_forecasts: Dict[int, Dict[str, ForecastResult]], symbol: str) -> Dict[int, Dict]:
+        """Generate risk-adjusted trading signals for each timeframe"""
+        
+        signals = {}
+        
+        for horizon, forecasts in timeframe_forecasts.items():
+            if symbol not in forecasts:
+                continue
+            
+            forecast = forecasts[symbol]
+            
+            # Risk-adjusted signal strength
+            base_signal_strength = forecast.confidence_score * abs(forecast.direction_probability - 0.5) * 2
+            
+            # Adjust for volatility (higher vol = lower signal strength)
+            volatility_adjustment = max(0.5, 1.0 - forecast.volatility_forecast * 2)
+            
+            # Adjust for data quality
+            quality_adjustment = forecast.data_quality_score
+            
+            # Final signal strength
+            signal_strength = base_signal_strength * volatility_adjustment * quality_adjustment
+            
+            # Determine action
+            if forecast.direction_probability > 0.6 and signal_strength > 0.6:
+                action = 'BUY'
+            elif forecast.direction_probability < 0.4 and signal_strength > 0.6:
+                action = 'SELL'
+            else:
+                action = 'HOLD'
+            
+            signals[horizon] = {
+                'action': action,
+                'signal_strength': signal_strength,
+                'confidence': forecast.confidence_score,
+                'direction_probability': forecast.direction_probability,
+                'volatility_forecast': forecast.volatility_forecast,
+                'optimal_hold_minutes': forecast.optimal_hold_minutes,
+                'risk_metrics': {
+                    'var_95': forecast.var_95,
+                    'max_expected_loss': forecast.max_expected_loss,
+                    'max_expected_gain': forecast.max_expected_gain
+                }
+            }
+        
+        return signals
+    
+    async def _save_multi_timeframe_forecast(self, forecast: MultiTimeframeForecast):
+        """Save multi-timeframe forecast to database"""
+        
+        if not self.db or not self.db.initialized:
+            logger.debug(f"Database not available - skipping multi-timeframe forecast storage for {forecast.symbol}")
+            return
+        
+        try:
+            # Check if database has the multi-timeframe forecast storage method
+            if not hasattr(self.db, 'insert_multi_timeframe_forecast'):
+                logger.debug(f"Database multi-timeframe forecast storage not available - skipping for {forecast.symbol}")
+                return
+            
+            # Prepare forecast data for database
+            forecast_data = {
+                'symbol': forecast.symbol,
+                'timestamp': forecast.timestamp,
+                'model_version_id': forecast.model_version_id,
+                'horizon_5min': self._serialize_forecast_result(forecast.horizon_5min),
+                'horizon_15min': self._serialize_forecast_result(forecast.horizon_15min),
+                'horizon_30min': self._serialize_forecast_result(forecast.horizon_30min),
+                'horizon_60min': self._serialize_forecast_result(forecast.horizon_60min),
+                'horizon_120min': self._serialize_forecast_result(forecast.horizon_120min),
+                'confidence_scores': {
+                    'overall': forecast.overall_confidence,
+                    'trend_consistency': forecast.trend_consistency,
+                    'momentum_alignment': forecast.momentum_alignment
+                },
+                'volatility_forecasts': forecast.volatility_profile,
+                'trend_directions': {
+                    'dominant_trend': forecast.dominant_trend,
+                    'optimal_timeframe': forecast.optimal_timeframe
+                },
+                'metadata': {
+                    'risk_adjusted_signals': forecast.risk_adjusted_signals
+                }
+            }
+            
+            await self.db.insert_multi_timeframe_forecast(forecast_data)
+            logger.debug(f"Multi-timeframe forecast saved to database for {forecast.symbol}")
+            
+        except Exception as e:
+            # Log but don't fail the forecast generation
+            logger.debug(f"Skipped database storage for multi-timeframe forecast {forecast.symbol}: {e}")
+    
+    def _serialize_forecast_result(self, forecast: Optional[ForecastResult]) -> Optional[Dict]:
+        """Serialize ForecastResult for database storage"""
+        
+        if forecast is None:
+            return None
+        
+        return {
+            'horizon_minutes': forecast.horizon_minutes,
+            'confidence_score': forecast.confidence_score,
+            'mean_forecast': forecast.mean_forecast[0] if len(forecast.mean_forecast) > 0 else None,
+            'direction_probability': forecast.direction_probability,
+            'magnitude_forecast': forecast.magnitude_forecast,
+            'volatility_forecast': forecast.volatility_forecast,
+            'long_probability': forecast.long_probability,
+            'short_probability': forecast.short_probability,
+            'optimal_hold_minutes': forecast.optimal_hold_minutes,
+            'var_95': forecast.var_95,
+            'expected_shortfall': forecast.expected_shortfall,
+            'max_expected_gain': forecast.max_expected_gain,
+            'max_expected_loss': forecast.max_expected_loss,
+            'data_quality_score': forecast.data_quality_score
+        }
+    
+    def _process_forecast_result_strict(self, symbol: str, forecast, horizon_minutes: int = None) -> ForecastResult:
         """Process raw forecast into structured result with validation"""
+        
+        if horizon_minutes is None:
+            horizon_minutes = self.config.prediction_length
         
         samples = forecast.samples  # Shape: [num_samples, prediction_length]
         
@@ -580,7 +886,7 @@ class EnhancedLagLlamaEngine:
         return ForecastResult(
             symbol=symbol,
             timestamp=datetime.now(),
-            horizon_minutes=self.config.prediction_length,
+            horizon_minutes=horizon_minutes,
             mean_forecast=mean_forecast,
             std_forecast=std_forecast,
             quantiles=quantiles,

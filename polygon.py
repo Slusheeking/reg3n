@@ -227,6 +227,25 @@ class PolygonHTTPClient:
         }
         return await self._make_request(endpoint, params)
     
+    async def get_multi_timeframe_aggregates(self, symbol: str, timeframes: List[int],
+                                           from_date: str, to_date: str) -> Dict[int, Dict]:
+        """Get aggregate bars for multiple timeframes (5, 15, 30, 60, 120 minutes)"""
+        results = {}
+        
+        for timeframe in timeframes:
+            try:
+                data = await self.get_aggregates(symbol, timeframe, "minute", from_date, to_date)
+                results[timeframe] = data
+                
+                # Small delay between requests to respect rate limits
+                await asyncio.sleep(0.2)
+                
+            except Exception as e:
+                logger.error(f"Error fetching {timeframe}min data for {symbol}: {e}")
+                results[timeframe] = {}
+        
+        return results
+    
     async def get_daily_bars(self, symbol: str, date_str: str) -> Dict:
         """Get daily bars for specific date"""
         return await self.get_aggregates(symbol, 1, "day", date_str, date_str)
@@ -723,7 +742,7 @@ class PolygonDataManager:
                     aggregate_data.volume, avg_volume
                 )
     
-    async def get_historical_data(self, symbol: str, days: int = 30, 
+    async def get_historical_data(self, symbol: str, days: int = 30,
                                 timespan: str = "minute") -> List[Dict]:
         """Get historical data for a symbol"""
         cache_key = f"{symbol}_{days}_{timespan}"
@@ -764,6 +783,53 @@ class PolygonDataManager:
         except Exception as e:
             logger.error(f"Error fetching historical data for {symbol}: {e}")
             return []
+    
+    async def get_multi_timeframe_historical_data(self, symbol: str, days: int = 30) -> Dict[int, List[Dict]]:
+        """Get historical data for multiple timeframes (5, 15, 30, 60, 120 minutes) - HIGH PRIORITY for Lag-Llama"""
+        
+        # Standard timeframes for multi-timeframe analysis
+        timeframes = [5, 15, 30, 60, 120]
+        results = {}
+        
+        try:
+            end_date = date.today()
+            start_date = end_date - timedelta(days=days)
+            
+            # Get data for all timeframes
+            multi_data = await self.http_client.get_multi_timeframe_aggregates(
+                symbol, timeframes,
+                start_date.strftime("%Y-%m-%d"),
+                end_date.strftime("%Y-%m-%d")
+            )
+            
+            # Process each timeframe
+            for timeframe_min, response in multi_data.items():
+                data = []
+                if response.get('results'):
+                    for bar in response['results']:
+                        data.append({
+                            'timestamp': datetime.fromtimestamp(bar.get('t', 0) / 1000),
+                            'open': bar.get('o', 0.0),
+                            'high': bar.get('h', 0.0),
+                            'low': bar.get('l', 0.0),
+                            'close': bar.get('c', 0.0),
+                            'volume': bar.get('v', 0),
+                            'vwap': bar.get('vw', 0.0),
+                            'timeframe_minutes': timeframe_min
+                        })
+                
+                results[timeframe_min] = data
+                
+                # Cache each timeframe separately
+                cache_key = f"{symbol}_{days}_{timeframe_min}min"
+                self.historical_cache[cache_key] = (datetime.now(), data)
+            
+            logger.info(f"Retrieved multi-timeframe data for {symbol}: {[f'{tf}min({len(data)})' for tf, data in results.items()]}")
+            return results
+            
+        except Exception as e:
+            logger.error(f"Error fetching multi-timeframe historical data for {symbol}: {e}")
+            return {}
     
     async def get_gap_candidates(self, min_gap_percent: float = 2.0, 
                                min_volume_ratio: float = 1.5) -> List[Dict]:
@@ -1090,6 +1156,91 @@ class PolygonDataManager:
         except Exception as e:
             logger.error(f"Error fetching EMA for {symbol}: {e}")
             return None
+    
+    async def get_bollinger_bands(self, symbol: str, window: int = 20, timespan: str = "day",
+                                limit: int = 10) -> Optional[Dict]:
+        """Get Bollinger Bands - MEDIUM PRIORITY for volatility analysis"""
+        try:
+            params = {
+                'timespan': timespan,
+                'window': window,
+                'series_type': 'close',
+                'order': 'desc',
+                'limit': limit
+            }
+            
+            response = await self.http_client._make_request(
+                f"/v1/indicators/bb/{symbol}",
+                params=params
+            )
+            
+            if response.get('results') and response['results'].get('values'):
+                values = response['results']['values']
+                current = values[0] if values else {}
+                
+                return {
+                    'symbol': symbol,
+                    'upper_band': current.get('upper_band', 0.0),
+                    'middle_band': current.get('middle_band', 0.0),
+                    'lower_band': current.get('lower_band', 0.0),
+                    'values': values,
+                    'window': window,
+                    'timespan': timespan
+                }
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error fetching Bollinger Bands for {symbol}: {e}")
+            return None
+    
+    async def get_multi_timeframe_indicators(self, symbol: str, timeframes: List[str] = None) -> Dict[str, Dict]:
+        """Get professional indicators across multiple timeframes - ULTRA HIGH PRIORITY for multi-timeframe analysis"""
+        
+        if timeframes is None:
+            timeframes = ["minute", "hour"]  # Focus on intraday timeframes
+        
+        results = {}
+        
+        try:
+            logger.info(f"Fetching multi-timeframe indicators for {symbol} across {timeframes}")
+            
+            for timespan in timeframes:
+                timeframe_data = {}
+                
+                # Batch fetch all indicators for this timeframe
+                tasks = [
+                    self.get_rsi(symbol, window=14, timespan=timespan),
+                    self.get_macd(symbol, timespan=timespan),
+                    self.get_sma(symbol, window=20, timespan=timespan),
+                    self.get_ema(symbol, window=12, timespan=timespan),
+                    self.get_bollinger_bands(symbol, window=20, timespan=timespan)
+                ]
+                
+                # Execute all requests concurrently
+                rsi_data, macd_data, sma_data, ema_data, bb_data = await asyncio.gather(
+                    *tasks, return_exceptions=True
+                )
+                
+                # Process results
+                timeframe_data['rsi'] = rsi_data if not isinstance(rsi_data, Exception) else None
+                timeframe_data['macd'] = macd_data if not isinstance(macd_data, Exception) else None
+                timeframe_data['sma_20'] = sma_data if not isinstance(sma_data, Exception) else None
+                timeframe_data['ema_12'] = ema_data if not isinstance(ema_data, Exception) else None
+                timeframe_data['bollinger_bands'] = bb_data if not isinstance(bb_data, Exception) else None
+                timeframe_data['timestamp'] = datetime.now()
+                
+                results[timespan] = timeframe_data
+                
+                # Rate limiting between timeframes
+                await asyncio.sleep(1)
+            
+            logger.info(f"Retrieved multi-timeframe indicators for {symbol}: {list(results.keys())}")
+            return results
+            
+        except Exception as e:
+            logger.error(f"Error fetching multi-timeframe indicators for {symbol}: {e}")
+            return {}
     
     async def get_grouped_daily_aggs(self, date_str: Optional[str] = None) -> Dict:
         """Get grouped daily aggregates for all stocks - MEDIUM PRIORITY for batch updates"""
